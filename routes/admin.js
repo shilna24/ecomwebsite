@@ -25,6 +25,14 @@ router.post('/editProduct/:id',adminController.posteditproduct)
 /*---------admin deleteproduct-------*/
 router.get('/deleteProduct/:id',adminController.deleteproduct)
 
+/*---------view users----------------*/
+router.get('/viewUser',adminController.viewusers)
+ /*--------block user----------------*/
+ router.get('/blockUser/',adminController.blockUsers)
+
+ /*--------unblock user---------------*/
+ router.get('/unblockUser/',adminController.unblockUsers)
+
 /*---------admin logout------------*/
 router.get('/logout',adminController.adminlogout)
 

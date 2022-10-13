@@ -15,6 +15,7 @@ module.exports = {
 /*------------------user loginPage-----------------------*/
     
     getlogin: (req, res, next) => {
+    
         if(req.session.userloggedin)
         res.redirect('/')
         else
@@ -38,7 +39,10 @@ module.exports = {
                             req.session.userloggedin = true
                             req.session.user = user
                             console.log('/')
+                            if(req.session.user.Access)
                             res.redirect('/')
+                            else
+                            res.render('/userLogin')
                         }
                         else {
                             res.redirect('/userLogin')
@@ -73,17 +77,20 @@ module.exports = {
             const Name = req.body.Name
             const Email = req.body.Email
             const Phone = req.body.Phone
+            const Access=true
             const Password =await bcrypt.hash(req.body.Password,10)
             const user = new User({
                 Name: Name,
                 Email: Email,
                 Phone:Phone,
-                Password: Password
+                Password: Password,
+                Access:Access
             })
 
             console.log(user);
             user.save()
                 .then(result => {
+                    console.log(result);
                     login="true"
                     req.session.userloggedin = true
                     req.session.user = result

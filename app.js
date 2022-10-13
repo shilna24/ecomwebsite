@@ -9,10 +9,10 @@ const mongoose = require('./config/connection')
 // const bodyParser = require ('body-parser')
 const nocache = require("nocache");
 // let db=require('./config/connection')
-let logger = require('morgan');
+// let logger = require('morgan');
 let userRouter = require('./routes/user');
 let adminRouter = require('./routes/admin');
-app.use(logger('dev'));
+// app.use(logger('dev'));
 app.use(nocache());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

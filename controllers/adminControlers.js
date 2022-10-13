@@ -1,7 +1,9 @@
 const Admin = require('../models/admin')
 const Product = require('../models/productSchema')
+const User=require('../models/user')
 const bcrypt = require("bcrypt");
 const db = require('../config/connection');
+const user = require('../models/user');
 // const session = require('express-session');
 module.exports = {
 
@@ -37,6 +39,7 @@ module.exports = {
       if (data) {
 
         if (password == data.password) {
+          
           req.session.adminloggedin = true
           req.session.adminData = data
           res.redirect('/admin')
@@ -96,7 +99,29 @@ module.exports = {
 
 
   },
+  viewusers:(req,res,next)=>{
+    User.find().then(users => {
+      console.log(users)
+      res.render('admin/viewUser', { users })
+    })
+      .catch(err => {
+        console.log(err)
+      })
+  },
+blockUsers:(req,res)=>{
+  console.log(req.query.id);
+  user.updateOne({_id:req.query.id},{$set:{Access:false}}).then(result=>{
+    res.redirect('/admin/viewUser')
+  })
 
+},
+unblockUsers:(req,res)=>{
+  console.log(req.query.id);
+  user.updateOne({_id:req.query.id},{$set:{Access:true}}).then(result=>{
+    res.redirect('/admin/viewUser')
+  })
+
+},
   /*---------admin getproductdetails---*/
   // getproductdetails:(req,res,next)=>{
   // const prodId=req.params.id

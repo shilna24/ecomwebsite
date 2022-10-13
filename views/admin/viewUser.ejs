@@ -1,0 +1,67 @@
+<%- include('./includes/headers.ejs') -%>
+    <%- include('./includes/navbar.ejs') -%>
+<section>
+    <div class="container">
+        <div class="">
+            <!-- <a href="/admin/add-user" class="btn btn-success my-5">Add Users</a> -->
+        </div>
+        <div>
+          <br>  <input style="box-sizing: border-box; background-image: url('/css/searchicon.png');
+  background-position: 10px 10px;
+  background-repeat: no-repeat;
+  width: 30%;
+  font-size: 16px;
+  padding: 12px 20px 12px 40px;
+  border: 1px solid #ddd;
+  margin-bottom: 12px;" type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name">
+        </div>
+        <table class="table mt-5 display" id="myTable">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(u of users){ %>
+                <tr>
+                    <td><%= u.Name %> </td>
+                    <td><%= u.Email %> </td>
+                    <td><%= u.Phone %> </td>
+                    <td>
+                        <% if(u.Access===true){%>
+                        <a href="/admin/blockUser/?id=<%= u.id %>" class="btn btn-primary">Block</a>
+                        <%}else{%> 
+                        <a href="/admin/unblockUser/?id=<%= u.id %>" class="btn btn-danger"
+                            onclick="return confirm('Are you sure to delete  ')">unBlock</a>
+                        <% } %>
+                    </td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+</section>
+<script>
+function myFunction() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
+}
+</script>
+<%- include('./includes/footers.ejs') -%>

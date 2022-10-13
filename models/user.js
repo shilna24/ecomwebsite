@@ -17,6 +17,11 @@ const userSchema=new Schema({
     Password:{
         type:String,
         required:true
+    
+    },
+    Access:{
+        type:Boolean,
+        required:true
     }
 })
 module.exports=mongoose.model('user',userSchema)
