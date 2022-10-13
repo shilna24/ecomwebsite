@@ -14,7 +14,8 @@ router.get('/userLogin',userController.getlogin)
 router.post('/login',userController.postlogin)
 
 /*--------user signup-----------*/
-router.get('/userSignup',userController.getsignup)
+router.get('/signup',userController.dosignup)
+// router.get('/userSignup',userController.getsignup)
 
 
 router.post('/signup',userController.postsignup)

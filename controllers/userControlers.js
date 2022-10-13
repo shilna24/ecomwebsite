@@ -58,22 +58,26 @@ module.exports = {
     
 /*-----------------user signup---------------------------*/
     
-    
-    getsignup: (req, res) => {
-        res.render('user/userSignup')
+    dosignup:(req,res)=>{
+    res.render('user/signup');
     },
+    // getsignup: (req, res) => {
+    //     res.render('user/userSignup')
+    // },
     postsignup: (req, res, next) => {
-        
+        console.log(req.body);
         User.find({ Email:req.body.Email },async(err,data)=>{
             console.log(data);
         if(data.length==0)
         {
             const Name = req.body.Name
             const Email = req.body.Email
+            const Phone = req.body.Phone
             const Password =await bcrypt.hash(req.body.Password,10)
             const user = new User({
                 Name: Name,
                 Email: Email,
+                Phone:Phone,
                 Password: Password
             })
 
