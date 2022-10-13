@@ -1,0 +1,31 @@
+<%- include('./includes/header.ejs') %> 
+<%- include('./includes/nav.ejs') %>
+
+<section >
+    
+    <div style="margin-top: 10rem;" class="col-md-4 ml-auto mr-auto  offset-xl-1  ">
+        <form action="/verifyotp" method="post" >
+          <h4 class="my-4 text-center mt-5 ">Verify OTP</h4>
+
+          <!-- Email input -->
+          <div class="form-outline mb-4">
+             <label class="form-label" for="form1Example13">Enter your OTP</label>
+            <input type="text" id="form1Example13" name="otp" class="form-control form-control-lg" required />
+          </div>
+         <!-- Submit button -->
+          <button type="submit" class="btn btn-primary btn-lg btn-block">Verify</button>
+
+          <!-- <div class="divider d-flex align-items-center my-4">
+            <p class="text-center fw-bold mx-3 mb-0 text-muted">OR</p>
+          </div> -->
+
+          
+           
+
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('./includes/footer.ejs') -%>

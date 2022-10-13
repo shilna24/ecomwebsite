@@ -1,0 +1,41 @@
+<%- include('./includes/headers.ejs') -%>
+    <%- include('./includes/navbar.ejs') -%>
+<section>
+    <div class="container mt-5">
+        <div class="">
+            <a href="/admin/addProduct" class="btn btn-success  ml-auto">Add Product</a>
+        </div>
+
+        <table class="table mt-5">
+
+            <thead>
+                <tr>
+                    <th scope="col">No</th>
+                    <th scope="col">Productname</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Quantity</th>
+                    <th>Image</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(p of products){ %>
+                <tr>
+                    <th scope="row">1</th>
+                    <td><%= p.name %></td>
+                    <td><%= p.description %></td>
+                    <td><%= p.quantity %></td>
+                    <td><%= p.price %></td>
+                    <td><img style="width: 50px; height:50px;" src="../product-images/<%= p.id %>.jpg" alt=""></td>
+                    <td><a href="/admin/editproduct/<%= p.id %>" class="btn btn-primary">edit</a></td>
+                    <td><a href="/admin/deleteproduct/<%= p.id %>" class="btn btn-danger"
+                            onclick="return confirm('Are you want to delete<% p.Name %>?')">delete</a></td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+        
+
+    </div>
+</section>
+<%- include('./includes/footers.ejs') -%>
