@@ -111,6 +111,7 @@ module.exports = {
 blockUsers:(req,res)=>{
   console.log(req.query.id);
   user.updateOne({_id:req.query.id},{$set:{Access:false}}).then(result=>{
+    
     res.redirect('/admin/viewUser')
   })
 
@@ -118,6 +119,7 @@ blockUsers:(req,res)=>{
 unblockUsers:(req,res)=>{
   console.log(req.query.id);
   user.updateOne({_id:req.query.id},{$set:{Access:true}}).then(result=>{
+    
     res.redirect('/admin/viewUser')
   })
 
@@ -155,7 +157,9 @@ unblockUsers:(req,res)=>{
         name: req.body.name,
         price: req.body.price,
         description: req.body.description,
-        quantity: req.body.quantity
+        quantity: req.body.quantity,
+        category:req.body.category,
+        size:req.body.size
 
       }
     }).then((err, data) => {

@@ -1,14 +1,17 @@
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
 const db = require('../config/connection')
+// const twili = require('../config/twilio')
+// const client=require('twilio')(twili.accountSid,twili. authToken); 
 login=false
+
 module.exports = {
 /*---------------------user homepage---------------------*/
 
     get: (req, res) => {
         // res.send('index')
-        console.log("hi");
-        console.log(req.session.userloggedin);
+        // console.log("hi");
+        // console.log(req.session.userloggedin);
         res.render('user/home',{login : req.session.userloggedin})
     },
 
@@ -17,6 +20,7 @@ module.exports = {
     getlogin: (req, res, next) => {
     
         if(req.session.userloggedin)
+        
         res.redirect('/')
         else
         res.render('user/userLogin')
@@ -30,19 +34,20 @@ module.exports = {
             let response = {}
            await User.findOne({ Email: userData.Email }).then((user) => {
                 
-                console.log(user);
+                // console.log(user);
                 if (user) {
                     
                     bcrypt.compare(userData.Password, user.Password, function (error, isMatch) {
                         if (isMatch) {
-                            login="true"
                             req.session.userloggedin = true
                             req.session.user = user
-                            console.log('/')
-                            if(req.session.user.Access)
+                            if(req.session.user.Access){
                             res.redirect('/')
-                            else
-                            res.render('/userLogin')
+                            }else{
+                                res.render('user/blockPage')
+                            }
+                            
+                            
                         }
                         else {
                             res.redirect('/userLogin')
@@ -70,6 +75,7 @@ module.exports = {
     // },
     postsignup: (req, res, next) => {
         console.log(req.body);
+        
         User.find({ Email:req.body.Email },async(err,data)=>{
             console.log(data);
         if(data.length==0)
@@ -90,6 +96,7 @@ module.exports = {
             console.log(user);
             user.save()
                 .then(result => {
+                    req.session.otpgen=otpgen
                     console.log(result);
                     login="true"
                     req.session.userloggedin = true
