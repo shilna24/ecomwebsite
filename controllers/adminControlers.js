@@ -1,6 +1,7 @@
 const Admin = require('../models/admin')
 const Product = require('../models/productSchema')
 const User=require('../models/user')
+const Category=require('../models/categorySchema')
 const bcrypt = require("bcrypt");
 const db = require('../config/connection');
 const user = require('../models/user');
@@ -57,6 +58,49 @@ module.exports = {
     })
 
   },
+  /*---------admin view category---------*/
+  getCategory:(req,res)=>{
+  res.render('admin/addCategory')
+  },
+
+  /*---------admin post category----------*/
+  postCategory:(req,res,next)=>{
+  console.log(req.body)
+  const categoryName=req.body.categoryname
+  const category = new Category({ categoryname: categoryName})
+  category.save().then(result=>{
+    console.log(result);
+    res.render('admin/viewCategory')
+  })
+  .catch(err=>{
+    console.log(err)
+  })
+  },
+
+  /*----------admin edit category---------*/
+  editCategary: (req, res, next) => {
+
+    Category.findById(req.params.id).then(category => {
+      res.render('admin/editCategory', { category })
+    })
+  },
+
+  /*----------admin post editCategory-------*/
+  posteditCategory: (req, res) => {
+    const catId = req.params.id
+    Category.updateOne({ id: catId }, {
+      $set: {
+        Categoryname: req.body.categoryname,
+            }
+    }).then((err, data) => {
+      console.log("Hi")
+
+      // console.log(data)
+      res.redirect('/admin/viewCategory')
+
+    })
+
+  },
 
 
   /*----------admin viewproduct----------*/
@@ -87,6 +131,31 @@ module.exports = {
       })
     })
   },
+/*------------view category list------------*/
+getviewCategory: (req, res, next) => {
+  Category.find().then(categories => {
+    console.log(categories)
+    res.render('admin/viewCategory', { categories })
+  })
+    .catch(err => {
+      console.log(err)
+    })
+
+
+},
+
+/*---------admin deleteCategory-------*/
+deleteCategory: (req, res, next) => {
+  const catId = req.params.id
+  console.log(catId)
+  Category.findByIdAndRemove(catId).then(() => {
+    console.log('Category Removed')
+    res.redirect('/admin/viewCategory')
+  })
+    .catch(err => console.log(err))
+},
+
+
   /*-----------view product list-------------*/
   getviewproductlist: (req, res, next) => {
     Product.find().then(products => {

@@ -3,9 +3,11 @@ const Schema = mongoose.Schema
 
 
 const categorySchema = new Schema({
-    Category:String,
-    required:true
+    categoryname:{
+        type:String,
+        required:true
+    }
+    
     })
 
-const category=mongoose.model('category',categorySchema)
-module.exports=category
+module.exports=mongoose.model('categories',categorySchema)

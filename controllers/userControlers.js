@@ -1,8 +1,7 @@
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
 const db = require('../config/connection')
-// const twili = require('../config/twilio')
-// const client=require('twilio')(twili.accountSid,twili. authToken); 
+
 login=false
 
 module.exports = {
@@ -96,7 +95,7 @@ module.exports = {
             console.log(user);
             user.save()
                 .then(result => {
-                    req.session.otpgen=otpgen
+                    
                     console.log(result);
                     login="true"
                     req.session.userloggedin = true
@@ -113,6 +112,34 @@ module.exports = {
         }
     })
 
+    },
+    getotp:(req,res,next)=>{
+UserData=req.body
+console.log(UserData.Phone);
+User.find({$or:[{Email:UserData.Email},{Phone:UserData.Phone}]},async(err,data)=>{
+if(err)
+{
+    console.log(err)
+}else{
+    if(data.length==0)
+    {
+        UserData.Password=await bcrypt.hash(Password,10)
+        req.session.userData=userData
+        let otpgen=otpGenerator.generate(6,{upperCaseAlphabets:false,specialChars:false})
+req.session.otpgen=otpgen
+client.messages 
+      .create({ 
+         body: 'otpgen',  
+         messagingServiceSid: 'MG9e71b0d653b8bb096a865985d7fde294',      
+         to: '+918129066716' 
+       }) 
+      .then(message => console.log(message.sid)) 
+      .done();
+      res.redirect('/verifyotp')
+      console.log(UserData.Password);
+    }
+}
+})
     },
     
 /*---------------user logout----------------------------*/

@@ -5,12 +5,15 @@
     
     <div style="margin-top: 10rem;" class="col-md-4 ml-auto mr-auto  offset-xl-1  ">
         <form action="/verifyotp" method="post" >
-          <h4 class="my-4 text-center mt-5 ">Verify OTP</h4>
-
+          <h4 class="my-4 text-center mt-5 ">OTP VERIFICATION</h4>
+        
+          <div>
+              <small>code has been send to +91****{{number}}</small>
+          </div>
           <!-- Email input -->
           <div class="form-outline mb-4">
              <label class="form-label" for="form1Example13">Enter your OTP</label>
-            <input type="text" id="form1Example13" name="otp" class="form-control form-control-lg" required />
+            <input type="number" id="form1Example13" name="otp" class="form-control form-control-lg" required />
           </div>
          <!-- Submit button -->
           <button type="submit" class="btn btn-primary btn-lg btn-block">Verify</button>

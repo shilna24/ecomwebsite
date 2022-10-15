@@ -1,0 +1,41 @@
+<%- include('./includes/headers.ejs') -%>
+    <%- include('./includes/navbar.ejs') -%>
+<section>
+    <div class="container mt-5">
+        <div class="">
+            <a href="/admin/addCategory" class="btn btn-success  ml-auto">Add Category</a>
+        </div>
+
+        <table class="table mt-5">
+
+            <thead>
+                <tr>
+                
+                    
+                                            <th scope="col">Catgory Name</th>
+                                            <th scope="col">Created Date</th>
+                                            <th scope="col">Updated Date</th>
+                                            <!-- <th scope="col">Revenue</th> -->
+                                            <th scope="col">Edit Category</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(c of categories){ %>
+                <tr>
+                    
+                    <td><%= c.categoryname %></td>
+                    <td><%= c.categoryname %></td>
+                    <td><%= c.categoryname %></td>
+                    <td><%= c.categoryname %></td>
+                    <td><a href="/admin/editCategory/<%= c.id %>" class="btn btn-primary">edit</a></td>
+                    <td><a href="/admin/deleteCategory/<%= c.id %>" class="btn btn-danger"
+                            onclick="return confirm('Do you want to delete?')">delete</a></td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+       
+
+    </div>
+</section>
+<%- include('./includes/footers.ejs') -%>
