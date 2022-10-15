@@ -1,8 +1,14 @@
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
 const db = require('../config/connection')
-
+const twilo=require('../twilo/twilio')
+const client = require('twilio')(twilo.accountSid, twilo.authToken);
+const otpGenerator=require('otp-generator');
+const user = require('../models/user');
+const session = require('express-session');
 login=false
+
+// let otpgen=otpGenerator.generate(6,{upperCaseAlphabets:false,specialChars:false})
 
 module.exports = {
 /*---------------------user homepage---------------------*/
@@ -29,8 +35,7 @@ module.exports = {
         
         userData = req.body
         return new Promise(async (resolve, reject) => {
-            let loginStatus = false
-            let response = {}
+            
            await User.findOne({ Email: userData.Email }).then((user) => {
                 
                 // console.log(user);
@@ -74,73 +79,71 @@ module.exports = {
     // },
     postsignup: (req, res, next) => {
         console.log(req.body);
+        let details= req.body
+        req.session.details =details
         
         User.find({ Email:req.body.Email },async(err,data)=>{
-            console.log(data);
-        if(data.length==0)
-        {
-            const Name = req.body.Name
-            const Email = req.body.Email
-            const Phone = req.body.Phone
-            const Access=true
-            const Password =await bcrypt.hash(req.body.Password,10)
-            const user = new User({
-                Name: Name,
-                Email: Email,
-                Phone:Phone,
-                Password: Password,
-                Access:Access
-            })
-
-            console.log(user);
-            user.save()
-                .then(result => {
-                    
-                    console.log(result);
-                    login="true"
-                    req.session.userloggedin = true
-                    req.session.user = result
-                    res.redirect('/')
-                    
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-        }else{
-            
-            res.redirect('/userLogin')
-        }
-    })
-
-    },
-    getotp:(req,res,next)=>{
-UserData=req.body
-console.log(UserData.Phone);
-User.find({$or:[{Email:UserData.Email},{Phone:UserData.Phone}]},async(err,data)=>{
-if(err)
-{
-    console.log(err)
-}else{
-    if(data.length==0)
-    {
-        UserData.Password=await bcrypt.hash(Password,10)
-        req.session.userData=userData
-        let otpgen=otpGenerator.generate(6,{upperCaseAlphabets:false,specialChars:false})
-req.session.otpgen=otpgen
-client.messages 
-      .create({ 
-         body: 'otpgen',  
+            // console.log('ooooooooooooooooooooooooooooooooooooooooooooooooooooo');
+            // console.log(data);
+            if(data.length==0)
+            {
+                req.session.otp =otpGenerator.generate(6,{upperCaseAlphabets:false,specialChars:false})
+                console.log('pppppppppppppppppppppppppppppp');
+            details.Password=await bcrypt.hash(details.Password,10)
+            client.messages 
+            .create({ 
+        
+         body: req.session.otp,  
          messagingServiceSid: 'MG9e71b0d653b8bb096a865985d7fde294',      
          to: '+918129066716' 
        }) 
       .then(message => console.log(message.sid)) 
       .done();
-      res.redirect('/verifyotp')
-      console.log(UserData.Password);
+      res.redirect('/get-otp')
     }
-}
-})
+    else{
+        res.redirect('/')
+    }
+})      
+
+          
+
+}, 
+    getotp:(req,res,next)=>{
+        res.render('user/verifyotp')
     },
+    postOtp:(req,res,next)=>{
+          const otp=req.body.otp
+        //   const Access=true
+          console.log(req.session.otp)
+         console.log(otp);
+        //  console.log(otpgen);
+    if(otp===req.session.otp)
+    {
+        console.log('Okey');
+    let userData=req.session.details
+    console.log(userData);
+    let userSignData=new User({
+        Name:userData.Name,
+        Email:userData.Email,
+        Password:userData.Password,
+        Phone:userData.Phone,
+        // Access:Access
+
+    })
+    userSignData.save().then((data)=>{
+    console.log(data.Name)
+    req.session.userloggedin=true
+    req.session.user=data.Name
+    res.redirect('/')
+    })
+    }
+    else{
+    res.redirect('/get-otp')
+    }
+
+},
+    
     
 /*---------------user logout----------------------------*/
     getlogout:(req,res,next)=>{

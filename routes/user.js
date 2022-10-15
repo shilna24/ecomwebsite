@@ -9,19 +9,15 @@ router.get('/',userController.get)
 
 /*-------user login-------------*/
 router.get('/userLogin',userController.getlogin)
-
-/*-------user postlogin----------*/
 router.post('/login',userController.postlogin)
 
 /*--------user signup-----------*/
 router.get('/signup',userController.dosignup)
-// router.get('/userSignup',userController.getsignup)
-
-
 router.post('/signup',userController.postsignup)
 
 /*--------verify otp-------------*/
-// router.get('/verifyotp',userController.getotp)
+router.get('/get-otp',userController.getotp)
+router.post('/verifyotp',userController.postOtp)
 
 /*--------user logout-----------*/
 router.get('/logout',userController.getlogout)

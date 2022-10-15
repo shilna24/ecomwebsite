@@ -21,7 +21,7 @@ const userSchema=new Schema({
     },
     Access:{
         type:Boolean,
-        required:true
+        default:true
     }
 })
 module.exports=mongoose.model('user',userSchema)
