@@ -4,7 +4,7 @@ let ejs=require('ejs');
 const path = require('path');
 let cookieParser = require('cookie-parser')
 let session=require('express-session')
-let fileUpload = require('express-fileupload');
+// let fileUpload = require('express-fileupload');
 const mongoose = require('./config/connection')
 // const bodyParser = require ('body-parser')
 const nocache = require("nocache");
@@ -17,7 +17,7 @@ app.use(nocache());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(fileUpload());
+// app.use(fileUpload());
 app.use(session({secret:"key",cookie:{maxAge:600000}}))
 app.use('/',userRouter)
 app.use('/admin',adminRouter)

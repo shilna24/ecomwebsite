@@ -1,6 +1,7 @@
 let express=require('express')
 let router=express.Router()
 const adminController=require('../controllers/adminControlers')
+const store = require('../middleware/multer')
 
 
 
@@ -20,7 +21,7 @@ router.get('/viewCategory',adminController.getviewCategory)
 
 /*---------admin addproduct---------*/
 router.get('/addProduct',adminController.getproduct)
-router.post('/addProduct',adminController.postproduct)
+router.post('/addProduct',store.array("image",3),adminController.postproduct)
 
 /*---------admin viewproduct--------*/
 router.get('/viewProduct',adminController.getviewproductlist)

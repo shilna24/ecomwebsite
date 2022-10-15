@@ -5,6 +5,7 @@ const Category=require('../models/categorySchema')
 const bcrypt = require("bcrypt");
 const db = require('../config/connection');
 const user = require('../models/user');
+const Multer=require('../middleware/multer')
 
 // const session = require('express-session');
 module.exports = {
@@ -111,6 +112,7 @@ module.exports = {
 
   /*---------admin postproduct------------*/
   postproduct: (req, res) => {
+    console.log('ooooooooooooooooooooooooooooooooooo');
     console.log(req.body);
     const name = req.body.name
     const price = req.body.price
@@ -118,20 +120,37 @@ module.exports = {
     const category=req.body.category
     const size=req.body.size
     const quantity = req.body.quantity
-    let image = req.files.Image;
-    const product = new Product({ name: name, price: price, description: description, category:category,size:size,quantity: quantity })
-    product.save().then(result => {
-      console.log(result);
-      image.mv('./public/product-images/' + result.id + '.jpg', (err, done) => {
-        if (!err) {
-          res.render('admin/addProduct')
-        } else {
+    const image = req.body.image
+    
+    let files = req.files
+    console.log('llllllllllllllllllllllllllllllllllllllllllll');
+    console.log(req.files)
+   
+      if(files)
+      {
+        let Images=[]
+
+        console.log(req.files.length)
+        console.log(req.files)
+        for(i=0;i<req.files.length;i++)
+        {
+          Images[i]=files[i].filename
+        }
+        req.body.image=Images
+        const product = new Product({ name: name, price: price, description: description, category:category,size:size,quantity: quantity,image:Images })
+        product.save().then((result) => {
+          console.log(result);
+          res.redirect('/admin/addProduct')
+        } 
+        )}
+        else {
           console.log(err);
         }
 
-      })
-    })
-  },
+      }
+    
+    
+      ,
 /*------------view category list------------*/
 getviewCategory: (req, res, next) => {
   Category.find().then(categories => {

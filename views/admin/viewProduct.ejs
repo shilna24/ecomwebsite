@@ -30,7 +30,7 @@
                     <td><%= p.price %></td>
                     <td><%= p.size %></td>
                     <td><%= p.category %></td>
-                    <td><img style="width: 50px; height:50px;" src="../product-images/<%= p.id %>.jpg" alt=""></td>
+                    <td><img style="width: 50px; height:50px;" src="/product-images/<%=p.image[0]%>" alt=""></td>
                     <td><a href="/admin/editproduct/<%= p.id %>" class="btn btn-primary">edit</a></td>
                     <td><a href="/admin/deleteproduct/<%= p.id %>" class="btn btn-danger"
                             onclick="return confirm('Do you want to delete<%= p.Name %>?')">delete</a></td>
