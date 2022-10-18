@@ -21,7 +21,7 @@ app.use(cookieParser());
 app.use(session({secret:"key",cookie:{maxAge:600000}}))
 app.use('/',userRouter)
 app.use('/admin',adminRouter)
-// view engine setup
+/*-----view engine setup------------*/
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 // app.engine('ejs', ejs.engine({ extname: 'ejs', defaultLayout: 'layout', layoutsDir: __dirname + '/views/layout/' }));

@@ -1,28 +1,24 @@
 <%- include('./includes/headers.ejs') -%>
     <%- include('./includes/navbar.ejs') -%>
-<div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="col-sm-12 col-xl-6">
-            <div class="bg-secondary rounded h-100 p-4">
-                <h6 class="mb-4">Add a Category</h6>
-                <form action="/admin/addCategory" method="post" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        <label for="category" class="form-label">Category Name</label>
-                        <input type="text" id="name" name="categoryname"required>
-                        
-                    </div>
-                    <div class="mb-3">
-                        
-                    </div>
-                    <div class="mb-3 form-check">
-                       
-                    </div>
-                    <button id="addCategory" type="button"  class="btn btn-primary">Add Category</button>
-                </form>
-            </div>
-        </div>
     
-        <!-- Back to Top -->
-<a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
-</div>
+    <div class=" container d-flex justify-content-center">
+            
+        <div class=" ml-5 col-md-6 ">
+            <h2 class="text-center mt-5">Add Category</h2>
+            <form action="/admin/addCategory" method="post" >
+            
+                    
+                    
+
+                <label for="">Category</label>
+                <input type="text" name="categoryName" class="form-control"required>
+
+            
+
+                <button type="submit" class="btn btn-success mt-4">Add</button>
+
+            </form>
+        </div>
+    </div>
+                    
 <%- include('./includes/footers.ejs') -%>

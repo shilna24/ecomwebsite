@@ -11,9 +11,13 @@ router.get('/',userController.get)
 router.get('/userLogin',userController.getlogin)
 router.post('/login',userController.postlogin)
 
-/*--------user signup-----------*/
+/*--------user signup----------------*/
 router.get('/signup',userController.dosignup)
 router.post('/signup',userController.postsignup)
+
+/*--------user update profile--------*/
+router.get('/updateProfile',userController.getProfile)
+router.post('/updateProfile/:id',userController.postProfile)
 
 /*--------verify otp-------------*/
 router.get('/get-otp',userController.getotp)

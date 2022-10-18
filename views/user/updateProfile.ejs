@@ -1,3 +1,4 @@
+
 <%- include('./includes/header.ejs') %> 
 <%- include('./includes/nav.ejs') %> 
 <!DOCTYPE html>
@@ -8,7 +9,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 <!-- Custom Theme files -->
-<link href="extradesigns/css/style.css" rel="stylesheet" type="text/css" media="all" />
+<link href="/extradesigns/css/style.css" rel="stylesheet" type="text/css" media="all" />
 <!-- //Custom Theme files -->
 <!-- web font -->
 <link href="//fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i" rel="stylesheet">
@@ -17,34 +18,34 @@
 <body>
 	<!-- main -->
 	<div class="main-w3layouts wrapper">
-		<h1> SignUp </h1>
+		<h1> My Profile</h1>
 		<div class="main-agileinfo">
 			<div class="agileits-top">
-				<form action="/signup" method="post">
-					<input class="text" type="text" name="Name" placeholder="Username" required="">
-					<input class="text email" type="email" name="Email" placeholder="Email" required="">
-					<input class="text " type="phone" name="Phone" placeholder="phone" required=""><br>
-					<input class="text" type="password" name="Password" placeholder="Password" required="">
-					<input class="text w3lpass" type="password" name="Password2" placeholder="Confirm Password" required="">
-					<div class="wthree-text">
+				<form action="/updateProfile/<%= users._id %>" method="post">
+					<input class="text" type="text" name="Name" placeholder="Username" value="<%=users.Name %>"required="">
+					<input class="text email" type="email" name="Email" placeholder="Email" value="<%=users.Email %>" required="">
+					<input class="text " type="phone" name="Phone" placeholder="phone" value="<%=users.Phone %>" required=""><br>
+					<!-- <input class="text" type="password" name="Password" placeholder="Password" required=""> -->
+					<!-- <input class="text w3lpass" type="password" name="Password2" placeholder="Confirm Password" required=""> -->
+					<!-- <div class="wthree-text">
 						<label class="anim">
 							<input type="checkbox" class="checkbox" required="">
 							<span>I Agree To The Terms & Conditions</span>
 						</label>
 						<div class="clear"> </div>
-					</div>
+					</div> -->
 					<div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-						<button type="submit" class="btn btn-primary btn-lg">signup</button>
+						<button type="submit" class="btn btn-primary btn-lg">Update</button>
 					</div>
 					
 				</form>
-				<p>Already have an Account? <a href="/userLogin"> Login Now!</a></p>
+				<!-- <p>Already have an Account? <a href="/userLogin"> Login Now!</a></p> -->
 			</div>
 		</div>
 		<!-- copyright -->
-		<div class="colorlibcopy-agile">
+		<!-- <div class="colorlibcopy-agile">
 			<p>© 2018 Colorlib Signup Form. All rights reserved | Design by <a href="https://colorlib.com/" target="_blank">Colorlib</a></p>
-		</div>
+		</div> -->
 		<!-- //copyright -->
 		<ul class="colorlib-bubbles">
 			<li></li>
