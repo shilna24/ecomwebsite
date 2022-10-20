@@ -11,7 +11,9 @@
 <div style="margin-top: 10rem;" class="col-md-4 ml-auto mr-auto  offset-xl-1  ">
         <form action="/admin/adminLogin" method="post" >
           <h4 class="my-4 text-center mt-5 ">admin login</h4>
-
+          <% if(adminLoggErr){%>
+            <small class="text-danger pt-5 pb-5"><%=adminLoggErr %></small>
+            <%}%>
           <!-- Email input -->
           <div class="form-outline mb-4">
              <label class="form-label" for="form1Example13">Email address</label>
@@ -33,7 +35,7 @@
           </div>
           
            
-
+          
 
           <!-- Submit button -->
           <button type="submit" class="btn btn-primary btn-lg btn-block">Log in</button>

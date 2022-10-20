@@ -1,4 +1,5 @@
 const User = require('../models/user')
+const Product = require('../models/productSchema')
 const bcrypt = require('bcrypt')
 const db = require('../config/connection')
 const twilo = require('../twilo/twilio')
@@ -7,27 +8,29 @@ const otpGenerator = require('otp-generator');
 const session = require('express-session');
 const user = require('../models/user');
 login = false
-
-// let otpgen=otpGenerator.generate(6,{upperCaseAlphabets:false,specialChars:false})
-
+let loginerr = null
 module.exports = {
     /*---------------------user homepage---------------------*/
 
     get: (req, res) => {
         let users = req.session.user
-        res.render('user/home', { login: req.session.userloggedin, users })
+        Product.find().then((products) => {
+            console.log(products);
+            res.render('user/home', { login: req.session.userloggedin, users, products })
+
+        })
+
+
     },
 
     /*------------------user loginPage-----------------------*/
 
     getlogin: (req, res, next) => {
-
         if (req.session.userloggedin)
-
             res.redirect('/')
         else
-            res.render('user/userLogin')
-
+            res.render('user/userLogin', { loginerr })
+        loginerr = null
     },
     postlogin: (req, res, next) => {
 
@@ -35,32 +38,32 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
 
             await User.findOne({ Email: userData.Email }).then((user) => {
-
-                // console.log(user);
                 if (user) {
-
-                    bcrypt.compare(userData.Password, user.Password, function (error, isMatch) {
-                        if (isMatch) {
-                            req.session.userloggedin = true
-                            req.session.user = user
-                            if (req.session.user.Access) {
+                    if (!user.Access) {
+                        loginerr = "you were blocked by admin"
+                        res.redirect('/userLogin')
+                    }
+                    else {
+                        bcrypt.compare(userData.Password, user.Password, function (error, isMatch) {
+                            if (isMatch) {
+                                req.session.userloggedin = true
+                                req.session.user = user
                                 res.redirect('/')
-                            } else {
-                                res.render('user/blockPage')
+                                
                             }
+                            else {
+                                loginerr = 'incorrect password'
+                                res.redirect('/userLogin')
 
+                            }
+                        })
+                    }
 
-                        }
-                        else {
-                            res.redirect('/userLogin')
-                            console.log('incorrect password')
-                        }
-                    })
                 }
                 else {
-
+                    loginerr = 'not exist'
                     res.redirect('/userLogin')
-                    console.log('not exist')
+
                 }
             })
 
@@ -72,17 +75,13 @@ module.exports = {
     dosignup: (req, res) => {
         res.render('user/signup');
     },
-    // getsignup: (req, res) => {
-    //     res.render('user/userSignup')
-    // },
     postsignup: (req, res, next) => {
         console.log(req.body);
         let details = req.body
         req.session.details = details
 
         User.find({ Email: req.body.Email }, async (err, data) => {
-
-            // console.log(data);
+            console.log(data);
             if (data.length == 0) {
                 req.session.otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false })
 
@@ -111,10 +110,8 @@ module.exports = {
     },
     postOtp: (req, res, next) => {
         const otp = req.body.otp
-        //   const Access=true
         console.log(req.session.otp)
         console.log(otp);
-        //  console.log(otpgen);
         if (otp === req.session.otp) {
             console.log('Okey');
             let userData = req.session.details
@@ -124,8 +121,6 @@ module.exports = {
                 Email: userData.Email,
                 Password: userData.Password,
                 Phone: userData.Phone,
-                // Access:Access
-
             })
             userSignData.save().then((data) => {
                 console.log(data.Name)
@@ -140,47 +135,44 @@ module.exports = {
 
     },
     /*--------------user Profile----------------------------*/
-    getProfile: (req, res,next) => {
-    if (req.session.user) {
-        let users=req.session.user
-        console.log(users);
-        res.render('user/updateProfile',{users}) 
-    }else{
-        res.redirect('/userLogin')
-    }
-       
-        
-},
+    getProfile: (req, res, next) => {
+        if (req.session.userloggedin) {
+            let users = req.session.user
+            console.log(users);
+            res.render('user/updateProfile', { users, login: req.session.userloggedin })
+        }
+        else {
+            res.redirect('/userLogin')
+        }
+
+
+    },
     postProfile: (req, res) => {
         const pId = req.params.id
         console.log(pId);
-   User.updateOne({ _id: pId }, {
-      $set: {
-        Name: req.body.Name,
-        Email: req.body.Email,
-        Phone: req.body.Phone
+        User.updateOne({ _id: pId }, {
+            $set: {
+                Name: req.body.Name,
+                Email: req.body.Email,
+                Phone: req.body.Phone
+            }
+        }).then(async (err, data) => {
+            console.log("Hi")
+            let newUser = await User.findOne({ _id: pId })
+            console.log(newUser);
+            req.session.user = newUser
+            req.session.userloggedin = true
+            res.redirect('/updateProfile')
 
-      }
-    }).then(async(err, data) => {
-      console.log("Hi")
-      let newUser =await User.findOne({_id:pId})
-      console.log(newUser);
-      req.session.user = newUser
-      req.session.userloggedin = true
-      
-      // console.log(data)
-      res.redirect('/updateProfile')
-
-    })
+        })
     },
 
+
+
     /*---------------user logout----------------------------*/
-    getlogout: (req, res, next) => {
-    
-            
-        
+    getlogout: (req, res) => {
+        req.session.user = null
         req.session.userloggedin = false
-        // req.session.destroy()
         res.redirect('/')
     },
 }

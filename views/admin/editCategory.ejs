@@ -6,7 +6,7 @@
         <div class=" ml-5 col-md-6">
             
             <h2 class="text-center mt-5">Edit Category</h2>
-            <form action="/admin/editCategory/:<%=categories._id%>" method="post" >
+            <form action="/admin/editCategory/<%=categories._id%>" method="post" >
                 <label for="">Name</label>
                 <input type="text" name="name" class="form-control" value="<%=categories.categoryName %>" required >
                  <button type="submit" class="btn btn-success mt-4">Submit</button>

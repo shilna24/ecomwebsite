@@ -11,8 +11,10 @@
                         <label for="inputState">Category</label>
                         <select id="inputState" class="form-control" name="category"required>
                           <option selected>Select...</option>
-                          <option>Indian Wear</option>
-                          <option>Western Wear</option>
+                          <% for(c of categories){%>
+                            <option><%=c.categoryName%></option>
+                            
+                            <%}%>
                         </select>
                         <label for="inputState">Size</label>
                         <select id="inputState" class="form-control" name="size"required>
@@ -27,11 +29,11 @@
                     <label for="">Description</label>
                     <input type="text" name="description" class="form-control"required>
 
+                    <label for="">Price</label>
+                    <input type="Number" name="price" class="form-control"required>
+
                     <label for="">Quantity</label>
                     <input type="Number" name="quantity" class="form-control"required>
-
-                    <label for="">price</label>
-                    <input type="Number" name="price" class="form-control"required>
 
                     <label for="">Image</label>
                     <input type="file" name="image" class="form-control" multiple required>

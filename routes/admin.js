@@ -16,8 +16,9 @@ router.post('/adminLogin',adminController.postlogin)
 router.get('/adminDashboard',adminController.getDashboard)
 
 /*----------admin addcategory---------*/
-router.get('/addCategory',adminController.getCategory)
-router.post('/addCategory',adminController.postCategory)
+router.route('/addCategory')
+.get(adminController.getCategory)
+.post(adminController.postCategory)
 
 /*---------admin view category---------*/
 router.get('/viewCategory',adminController.getviewCategory)
@@ -26,15 +27,17 @@ router.get('/viewCategory',adminController.getviewCategory)
 router.get('/categoryProduct/:category',adminController.viewCategoryWise)
 
 /*---------admin addproduct---------*/
-router.get('/addProduct',adminController.getproduct)
-router.post('/addProduct',store.array("image",3),adminController.postproduct)
+router.route('/addProduct')
+.get(adminController.getproduct)
+.post(store.array("image",3),adminController.postproduct)
 
 /*---------admin viewproduct--------*/
 router.get('/viewProduct',adminController.getviewproductlist)
 
 /*---------admin editproduct----------*/
-router.get('/editProduct/:id',adminController.editproduct)
-router.post('/editProduct/:id',store.array("image",3),adminController.posteditproduct)
+router.route('/editProduct/:id')
+.get(adminController.editproduct)
+.post(store.array("image",3),adminController.posteditproduct)
 
 
 /*---------admin deleteproduct-------*/

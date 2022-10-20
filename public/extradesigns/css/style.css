@@ -141,7 +141,7 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   
   input[type="text"], input[type="email"], input[type="password"],input[type="phone"] {
     font-size: 0.9em;
-    color: rgb(252, 242, 242);
+    color: rgb(21, 20, 20);
     font-weight: 100;
     width: 94.5%;
     display: block;
@@ -155,7 +155,7 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
     background-position: -800px 0;
     background-size: 100%;
     background-repeat: no-repeat;
-    color: #fff;
+    color: rgb(8, 8, 8);
     font-family: 'Roboto', sans-serif;
   }
   
@@ -181,22 +181,22 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   }
   
   ::-webkit-input-placeholder {
-    color: #fff;
+    color: rgb(15, 12, 12);
     font-weight: 100;
   }
   
   :-moz-placeholder {
     /* Firefox 18- */
-    color: #fff;
+    color: rgb(15, 14, 14);
   }
   
   ::-moz-placeholder {
     /* Firefox 19+ */
-    color: #fff;
+    color: rgb(12, 12, 12);
   }
   
   :-ms-input-placeholder {
-    color: #fff;
+    color: rgb(7, 7, 7);
   }
   
   input[type="submit"] {
@@ -224,14 +224,14 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   
   .agileits-top p {
     font-size: 1em;
-    color: #fff;
+    color: rgb(14, 13, 13);
     text-align: center;
     letter-spacing: 1px;
     font-weight: 300;
   }
   
   .agileits-top p a {
-    color: #fff;
+    color: rgb(18, 16, 16);
     -webkit-transition: .5s all;
     -moz-transition: .5s all;
     transition: .5s all;
@@ -246,14 +246,14 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   /*-- checkbox --*/
   .wthree-text label {
     font-size: 0.9em;
-    color: #fff;
+    color: rgb(15, 13, 13);
     font-weight: 200;
     cursor: pointer;
     position: relative;
   }
   
   input.checkbox {
-    background: #eff5eb;
+    background: #0f0f0e;
     cursor: pointer;
     width: 1.2em;
     height: 1.2em;
@@ -328,14 +328,14 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   
   .colorlibcopy-agile p {
     font-size: .9em;
-    color: #fff;
+    color: rgb(14, 12, 12);
     line-height: 1.8em;
     letter-spacing: 1px;
     font-weight: 100;
   }
   
   .colorlibcopy-agile p a {
-    color: #fff;
+    color: rgb(20, 18, 18);
     transition: 0.5s all;
     -webkit-transition: 0.5s all;
     -moz-transition: 0.5s all;

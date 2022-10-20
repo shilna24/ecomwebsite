@@ -12,12 +12,16 @@ router.get('/userLogin',userController.getlogin)
 router.post('/login',userController.postlogin)
 
 /*--------user signup----------------*/
-router.get('/signup',userController.dosignup)
-router.post('/signup',userController.postsignup)
+router.route('/signup')
+.get(userController.dosignup)
+.post(userController.postsignup)
 
 /*--------user update profile--------*/
 router.get('/updateProfile',userController.getProfile)
 router.post('/updateProfile/:id',userController.postProfile)
+
+/*--------user get product details----------*/
+// router.get('/productDetails/:id',userController.getProductView)
 
 /*--------verify otp-------------*/
 router.get('/get-otp',userController.getotp)

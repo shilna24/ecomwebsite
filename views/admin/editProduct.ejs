@@ -4,37 +4,39 @@
 
             <div class=" ml-5 col-md-6">
                 <h2 class="text-center mt-5">Edit Products</h2>
-                <form action="/admin/editProduct/:<%=products._id%>" method="post" enctype="multipart/form-data">
+                <form action="/admin/editProduct/<%=products._id%>" method="post" enctype="multipart/form-data">
                     <label for="">Name</label>
                     <input type="text" name="name" class="form-control" value="<%=products.name %>" required >
-
-                    
-                    <label for="">Description</label>
-                    <input type="text" name="description" class="form-control"value="<%= products.description %>" required>
-                    
                     <label for="inputState">Category</label>
-                        <select id="inputState" class="form-control" name="category" value="<%= products.category %>"required>
-                          <option selected>Select...</option>
-                          <option>Indian Wear</option>
-                          <option>Western Wear</option>
-                        </select>
-                        <label for="inputState">Size</label>
-                        <select id="inputState" class="form-control" name="size" value="<%= products.size %>"required>
-                          <option selected>Select...</option>
+                    <select id="inputState" class="form-control" name="category" value="<%= products.category %>"required>
+                      <% for(c of categories){%>
+                      <option><%=c.categoryName%></option>
+                      
+                      <%}%>
+                    </select>
+                    <label for="inputState">Size</label>
+                        <select id="inputState" class="form-control" name="size" aria-placeholder="select.." value="<%= products.size %>"required>
+                          
                           <option>XS</option>
                           <option>S</option>
                           <option>L</option>
                           <option>XL</option>
                         </select>  
+                    
+                    <label for="">Description</label>
+                    <input type="text" name="description" class="form-control"value="<%= products.description %>" required>
+                    
+                    <label for="">price</label>
+                    <input type="Number" name="price" class="form-control" value="<%=products.price %>"required>
+                        
 
                     <label for="">Quantity</label>
-                    <input type="Number" name="price" class="form-control" value="<%=products.price %>"required>
-
-                    <label for="">price</label>
                     <input type="Number" name="quantity" class="form-control" value="<%=products.quantity %>"required>
 
+                    
+
                     <label for="">Image</label>
-                    <img src="../product-images/<%products.image%>.jpg"alt=""style="width:100px;height:auto">
+                    <img src="/product-images/<%=products.image[0]%>"alt=""style="width:100px;height:auto">
                     <input type="file" name="image" class="form-control" multiple required>
 
                     <button type="submit" class="btn btn-success mt-4">Submit</button>

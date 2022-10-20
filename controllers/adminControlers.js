@@ -3,29 +3,23 @@ const Product = require('../models/productSchema')
 const User = require('../models/user')
 const Category = require('../models/categorySchema')
 const bcrypt = require("bcrypt");
+const session = require('express-session');
 const db = require('../config/connection');
 const Multer = require('../middleware/multer')
-
+let adminLoggErr = null
 // const session = require('express-session');
 module.exports = {
 
   /*--------admin login-----------*/
   getlogin: (req, res) => {
-    try {
-      // console.log(req.session.adminLoggedIn);
-      // console.log(req.session.adminLoggedIn);
-      if (req.session.adminData) {
-        res.render('admin/index');
-      }
-      else {
-        res.render('admin/adminLogin')
-        // req.session.adminLoggErr = false;
-      }
-    }
-    catch (error) {
-      console.log(err)
-    }
 
+    if (req.session.adminloggedin) {
+      res.render('admin/index');
+    }
+    else {
+      res.render('admin/adminLogin', { adminLoggErr })
+      adminLoggErr = null
+    }
   },
 
   /*----------admin postlogin---------*/
@@ -46,39 +40,50 @@ module.exports = {
           req.session.adminData = data
           res.redirect('/admin')
         } else {
-          console.log("password error");
-          res.redirect('/admin/adminLogin')
+          adminLoggErr = 'Incorrect password'
+          res.redirect('/admin/')
 
         }
 
       } else {
-        console.log("email error");
-        res.redirect('/admin/adminLogin')
+        adminLoggErr = 'Not exist'
+        res.redirect('/admin/')
 
       }
     })
 
   },
-/*-----------admin dashboard-------------*/
-getDashboard:(req,res)=>{
-res.render('admin/adminDashboard')
-},
+  /*-----------admin dashboard-------------*/
+  getDashboard: (req, res) => {
+    if (req.session.adminloggedin) {
+      res.render('admin/adminDashboard')
+    } else {
+      res.redirect('/admin/')
+    }
+
+  },
 
 
   /*---------admin view category---------*/
   getCategory: (req, res) => {
-    res.render('admin/addCategory')
+    if (req.session.adminloggedin) {
+
+      res.render('admin/addCategory')
+    }
+
+
+    else {
+      res.redirect('/admin/')
+    }
   },
 
   /*---------admin post category----------*/
-  postCategory:async (req, res, next) => {
+  postCategory: async (req, res, next) => {
 
     const categoryName = req.body.categoryName
-    let catData= await Category.findOne({categoryName:categoryName})
+    let catData = await Category.findOne({ categoryName: categoryName })
     console.log(catData);
-    if(!catData)
-    {
-      // console.log(categoryName)
+    if (!catData) {
       const category = new Category({ categoryName: categoryName })
       category.save().then(result => {
         console.log(result);
@@ -86,56 +91,63 @@ res.render('admin/adminDashboard')
       })
         .catch(err => {
           console.log('error')
-          // console.log(err)
         })
     }
-    else{
+    else {
       console.log('Already exist');
       res.redirect('/admin/viewCategory')
 
     }
-    
+
   },
 
   /*----------admin edit category---------*/
-  editCategory:(req, res, next) => {
+  editCategory: (req, res, next) => {
 
-   Category.findById(req.params.id).then(categories => {
+    Category.findById(req.params.id).then(categories => {
       res.render('admin/editCategory', { categories })
     })
   },
 
   /*----------admin post editCategory-------*/
-  posteditCategory: (req, res) => {
-    
-    const catId=req.params.id
-   Category.updateOne({id: catId}, {
-      $set: {
-     categoryName: req.body.categoryName
+  posteditCategory: async (req, res) => {
+    if (req.session.adminloggedin) {
+      const catId = req.params.id
+      await Category.updateOne({ _id: catId }, {
+        categoryName: req.body.categoryName
 
-      }
-    }).then((err, data) => {
-      console.log("Hi")
-
-      // console.log(data)
+      })
       res.redirect('/admin/viewCategory')
+    }
+    else {
+      res.redirect('/admin/')
+    }
 
-    })
 
   },
- /*------------admin categoryWiseView--------*/
- viewCategoryWise:(req,res)=>{
-let catName=req.params.category
-Product.find({category:catName}).then((products)=>{
-  res.render('admin/viewProduct',{products})
-})
+  /*------------admin categoryWiseView--------*/
+  viewCategoryWise: (req, res) => {
+    if (req.session.adminloggedin) {
+      let catName = req.params.category
+      Product.find({ category: catName }).then((products) => {
+        res.render('admin/viewProduct', { products })
+      })
+    } else {
+      res.redirect('/admin/')
+    }
 
- 
-},
+  },
 
   /*----------admin viewproduct----------*/
   getproduct: (req, res, next) => {
-    res.render('admin/addProduct')
+    if (req.session.adminloggedin) {
+      Category.find().then((categories) => {
+        res.render('admin/addProduct', { categories })
+      })
+    }
+    else {
+      res.redirect('/admin/')
+    }
   },
 
   /*---------admin postproduct------------*/
@@ -149,7 +161,6 @@ Product.find({category:catName}).then((products)=>{
     const size = req.body.size
     const quantity = req.body.quantity
     const image = req.body.image
-
     let files = req.files
 
     console.log(req.files)
@@ -162,7 +173,7 @@ Product.find({category:catName}).then((products)=>{
       for (i = 0; i < req.files.length; i++) {
         Images[i] = files[i].filename
       }
-      // req.body.image = Images
+
       const product = new Product({ name: name, price: price, description: description, category: category, size: size, quantity: quantity, image: Images })
       product.save().then((result) => {
         console.log(result);
@@ -176,18 +187,17 @@ Product.find({category:catName}).then((products)=>{
 
   },
 
-
-
   /*------------view category list------------*/
   getviewCategory: (req, res, next) => {
-    Category.find().then(categories => {
-      console.log(categories)
-      res.render('admin/viewCategory', { categories })
-    })
-      .catch(err => {
-        console.log(err)
+    if (req.session.adminloggedin) {
+      Category.find().then(categories => {
+        console.log(categories)
+        res.render('admin/viewCategory', { categories })
       })
-
+    }
+    else {
+      res.redirect('/admin/')
+    }
 
   },
 
@@ -204,24 +214,28 @@ Product.find({category:catName}).then((products)=>{
 
   /*-----------view product list-------------*/
   getviewproductlist: (req, res, next) => {
-    Product.find().then(products => {
-      console.log(products)
-      res.render('admin/viewProduct', { products })
-    })
-      .catch(err => {
-        console.log(err)
+    if (req.session.adminloggedin) {
+      Product.find().then(products => {
+        console.log(products)
+        res.render('admin/viewProduct', { products })
       })
+    }
+    else {
+      res.redirect('/admin/')
+    }
 
 
   },
   viewusers: (req, res, next) => {
-    User.find().then(users => {
-      console.log(users)
-      res.render('admin/viewUser', { users })
-    })
-      .catch(err => {
-        console.log(err)
+    if (req.session.adminloggedin) {
+      User.find().then(users => {
+        console.log(users)
+        res.render('admin/viewUser', { users })
       })
+    }
+    else {
+      res.redirect('/admin/')
+    }
   },
   /*----------------------------------------------------------------------------------*/
   blockUsers: (req, res) => {
@@ -261,23 +275,31 @@ Product.find({category:catName}).then((products)=>{
   },
 
   /*---------admin editproduct---------*/
-  editproduct: async(req, res, next) => {
+  editproduct: async (req, res, next) => {
+    if (req.session.adminloggedin) {
+      Category.find().then(async (categories) => {
+        console.log(categories);
+        await Product.findById(req.params.id).then(products => {
+          res.render('admin/editProduct', { products, categories })
+        })
+      })
 
-   await Product.findById(req.params.id).then(products => {
-      res.render('admin/editProduct', { products })
-    })
+    } else {
+      res.redirect('/admin/')
+    }
+
   },
   /*--------------------------------------------------------------------*/
-  posteditproduct: async(req, res) => {
+  posteditproduct: async (req, res) => {
     const prodId = req.params.id
-    
+
 
     let files = req.files
 
     console.log(req.files)
     let Images = []
     if (files) {
-      
+
 
       console.log(req.files.length)
       console.log(req.files)
@@ -285,32 +307,25 @@ Product.find({category:catName}).then((products)=>{
         Images[i] = files[i].filename
       }
       req.body.image = Images
-  await  Product.updateOne({ id: prodId }, {
-      $set: {
+      await Product.updateOne({ _id: prodId }, {
         name: req.body.name,
         price: req.body.price,
         description: req.body.description,
         quantity: req.body.quantity,
         category: req.body.category,
         size: req.body.size,
-         image:Images
+        image: Images
+      })
 
-      }
-    }).then((err, data) => {
       console.log("Hi")
-
-      // console.log(data)
       res.redirect('/admin/viewProduct')
 
-    })
-
-  }
-},
+    }
+  },
   /*---------admin logout-------------*/
   adminlogout: (req, res) => {
     req.session.adminData = null
     req.session.adminloggedin = false
-    console.log(req.session.adminData);
     res.redirect('/admin')
   }
 

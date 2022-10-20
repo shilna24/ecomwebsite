@@ -6,7 +6,9 @@
     <div style="margin-top: 10rem;" class="col-md-4 ml-auto mr-auto  offset-xl-1  ">
         <form action="/login" method="post" >
           <h4 class="my-4 text-center mt-5 ">login</h4>
-
+<% if(loginerr){%>
+  <small class="text-danger pt-5 pb-5"><%=loginerr %></small>
+  <%}%>
           <!-- Email input -->
           <div class="form-outline mb-4">
              <label class="form-label" for="form1Example13">Email address</label>
