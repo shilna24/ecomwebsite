@@ -36,8 +36,11 @@
                     
                     <td><img style="width: 50px; height:50px;" src="/product-images/<%=p.image[0]%>" alt=""></td>
                     <td><a href="/admin/editproduct/<%= p.id %>" class="btn btn-primary">edit</a></td>
-                    <td><a href="/admin/deleteproduct/<%= p.id %>" class="btn btn-danger"
-                            onclick="return confirm('Do you want to delete<%= p.Name %>?')">delete</a></td>
+
+                    <td> <button onclick="hideProduct('<%= p._id %>')" class="btn btn-danger">Hide</button></td>
+                    <td> <button onclick="hideProduct('<%= p._id %>')" class="btn btn-danger">UnHide</button></td>
+                    
+    
                 </tr>
                 <% } %>
             </tbody>
@@ -46,4 +49,36 @@
 
     </div>
 </section>
+<script>
+    function hideProduct(proId){
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+}).then((result) => {
+    $.ajax({
+        url:'/admin/deleteproduct/'+proId,
+        method:'post',
+        success:(response)=>{
+            if (result.isConfirmed) {
+                Swal.fire({
+                title:'Deleted!',
+                text:'Your file has been deleted.',
+               icon: 'success',
+               showConfirmButton:false
+                 } )
+                 setTimeout(() => {
+                    location.reload()
+                 }, 1000);
+            }
+        }
+    })
+  
+})
+    }
+</script>
 <%- include('./includes/footers.ejs') -%>

@@ -1,0 +1,161 @@
+<script>
+    function addToWishlist(proId) {
+        console.log("hi");
+        $.ajax({
+            url: '/add-to-wishlist/' + proId,
+            method: 'post',
+            success: (response) => {
+                console.log(response, 'hiii');
+                Swal.fire({
+                    title: 'ok!',
+                    text: 'successfully added to the wishlist.',
+                    icon: 'success',
+                    showConfirmButton: false
+                })
+                setTimeout(() => {
+                    location.reload()
+                }, 1000);
+            }
+        })
+    }
+
+    function deleteItemFromWishlist(proId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Remove From WishList!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#013542',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Remove!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/delete-from-wishlist/' + proId,
+                    method: 'delete',
+                    success: (response) => {
+                        if (response.status) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'okeyyy!..',
+                                text: 'remove from WishList',
+                                showConfirmButton: false,
+                            })
+                            setTimeout(() => {
+                                location.reload()
+                            }, 1000)
+
+                        }
+                    }
+                })
+
+            }
+        })
+
+
+    }
+
+    function AddToCart(proId) {
+        let quantity = document.getElementById(`qty`)?.value
+        $.ajax({
+            url: '/add-to-cart/' + proId + '/' + quantity,
+            method: 'get',
+            success: (response) => {
+                console.log(response, 'hiii');
+                Swal.fire({
+                    title: 'ok!',
+                    text: 'successfully added to the cart.',
+                    icon: 'success',
+                    showConfirmButton: false
+                })
+                setTimeout(() => {
+                    location.reload()
+                }, 1000);
+            }
+        })
+    }
+    function AddToCart1(proId) {
+        let quantity = 1
+        $.ajax({
+            url: '/add-to-cart/' + proId + '/' + quantity,
+            method: 'get',
+            success: (response) => {
+                console.log(response, 'hiii');
+                Swal.fire({
+                    title: 'ok!',
+                    text: 'successfully added to the cart.',
+                    icon: 'success',
+                    showConfirmButton: false
+                })
+                setTimeout(() => {
+                    location.reload()
+                }, 1000);
+            }
+        })
+    }
+
+    function changeQuantity(proId, changeStatus) {
+
+        let qtynull = document.getElementById(`qtynull-${proId}`)?.value
+        console.log(qtynull);
+        console.log(changeStatus);
+        if (qtynull == 1 && changeStatus == -1) {
+            deleteItemFromCart(proId)
+        } else {
+
+            $.ajax({
+                url: '/change-quantity/' + proId + '/' + changeStatus,
+                method: 'post',
+                success: (response) => {
+                    console.log(response, 'lllll');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'okeyyy!..',
+                        text: 'Quantity changed',
+                        showConfirmButton: false,
+                    })
+                    setTimeout(() => {
+                        location.reload()
+                    }, 1)
+                }
+            })
+        }
+    }
+
+    function deleteItemFromCart(proId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Remove From Cart!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#013542',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Remove!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/delete-from-cart/' + proId,
+                    method: 'delete',
+                    success: (response) => {
+                        if (response.status) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'okeyyy!..',
+                                text: 'remove from cart',
+                                showConfirmButton: false,
+                            })
+                            setTimeout(() => {
+                                location.reload()
+                            }, 1000)
+
+                        }
+                    }
+                })
+
+            }
+        })
+
+
+    }
+
+</script>

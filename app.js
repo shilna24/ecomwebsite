@@ -12,6 +12,11 @@ const nocache = require("nocache");
 let logger = require('morgan');
 let userRouter = require('./routes/user');
 let adminRouter = require('./routes/admin');
+const Swal =require('sweetalert2')
+
+
+
+
 app.use(logger('dev'));
 app.use(nocache());
 app.use(express.json());

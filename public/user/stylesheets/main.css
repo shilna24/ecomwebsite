@@ -1937,6 +1937,11 @@ input.num-product::-webkit-inner-spin-button {
   visibility: hidden;
   opacity: 0;
 }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button{
+  -webkit-appearance: none;
+  margin: 0;
+}
 
 .overlay-modal1 {
   position: fixed;

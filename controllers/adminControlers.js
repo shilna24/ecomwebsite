@@ -2,11 +2,14 @@ const Admin = require('../models/admin')
 const Product = require('../models/productSchema')
 const User = require('../models/user')
 const Category = require('../models/categorySchema')
+const Cart = require('../models/cartSchema')
 const bcrypt = require("bcrypt");
 const session = require('express-session');
 const db = require('../config/connection');
-const Multer = require('../middleware/multer')
-let adminLoggErr = null
+const Multer = require('../middleware/multer');
+
+let adminLoggErr = null;
+let catLogErr = null;
 // const session = require('express-session');
 module.exports = {
 
@@ -62,32 +65,33 @@ module.exports = {
     }
 
   },
-
-
-  /*---------admin view category---------*/
-  getCategory: (req, res) => {
+  /*------------view category list------------*/
+  getviewCategory: (req, res, next) => {
     if (req.session.adminloggedin) {
-
-      res.render('admin/addCategory')
+      Category.find().then(categories => {
+        res.render('admin/adminCategory', { categories, catLogErr, })
+        catLogErr = null
+      })
     }
-
-
     else {
-      res.redirect('/admin/')
+      res.redirect('/admin')
     }
+
   },
 
   /*---------admin post category----------*/
-  postCategory: async (req, res, next) => {
+  postviewCategory: async (req, res, next) => {
 
-    const categoryName = req.body.categoryName
+    const categoryName = req.body.category.toUpperCase()
+    console.log(categoryName);
     let catData = await Category.findOne({ categoryName: categoryName })
     console.log(catData);
     if (!catData) {
-      const category = new Category({ categoryName: categoryName })
+      console.log('err');
+      const category = new Category({ categoryName })
       category.save().then(result => {
         console.log(result);
-        res.redirect('/admin/viewCategory')
+        res.redirect('/admin/adminCategory')
       })
         .catch(err => {
           console.log('error')
@@ -95,36 +99,59 @@ module.exports = {
     }
     else {
       console.log('Already exist');
-      res.redirect('/admin/viewCategory')
+      catLogErr = "This category already exists"
+      res.redirect('/admin/adminCategory');
 
     }
+
+  },
+  /*---------admin deleteCategory-------*/
+  deleteCategory: (req, res, next) => {
+    Product.find({ category: req.params.catName }).then((productList) => {
+      console.log('Category Removed')
+      if (productList.length == 0) {
+        console.log('delete ok');
+        catId = req.params.id
+        Category.deleteOne({ categoryName: req.params.catName }).then((result) => {
+          console.log(result);
+        }).catch((err) => {
+          console.log(err);
+        })
+        res.redirect('/admin/adminCategory')
+      }
+      else {
+        catLogErr = "Can't delete category contains product"
+        res.redirect('/admin/adminCategory')
+      }
+      // catLogErr = null
+    })
 
   },
 
   /*----------admin edit category---------*/
-  editCategory: (req, res, next) => {
+  // editCategory: (req, res, next) => {
 
-    Category.findById(req.params.id).then(categories => {
-      res.render('admin/editCategory', { categories })
-    })
-  },
+  //   Category.findById(req.params.id).then(categories => {
+  //     res.render('admin/editCategory', { categories })
+  //   })
+  // },
 
-  /*----------admin post editCategory-------*/
-  posteditCategory: async (req, res) => {
-    if (req.session.adminloggedin) {
-      const catId = req.params.id
-      await Category.updateOne({ _id: catId }, {
-        categoryName: req.body.categoryName
+  // /*----------admin post editCategory-------*/
+  // posteditCategory: async (req, res) => {
+  //   if (req.session.adminloggedin) {
+  //     const catId = req.params.id
+  //     await Category.updateOne({ _id: catId }, {
+  //       categoryName: req.body.categoryName
 
-      })
-      res.redirect('/admin/viewCategory')
-    }
-    else {
-      res.redirect('/admin/')
-    }
+  //     })
+  //     res.redirect('/admin/viewCategory')
+  //   }
+  //   else {
+  //     res.redirect('/admin/')
+  //   }
 
 
-  },
+  // },
   /*------------admin categoryWiseView--------*/
   viewCategoryWise: (req, res) => {
     if (req.session.adminloggedin) {
@@ -154,27 +181,20 @@ module.exports = {
   postproduct: (req, res) => {
 
     console.log(req.body);
-    const name = req.body.name
-    const price = req.body.price
-    const description = req.body.description
-    const category = req.body.category
-    const size = req.body.size
-    const quantity = req.body.quantity
-    const image = req.body.image
+    const { name, price, description, category, checkbox, quantity, image } = req.body
+    console.log(req.body.checkbox);
     let files = req.files
 
     console.log(req.files)
 
     if (files) {
       let Images = []
-
       console.log(req.files.length)
       console.log(req.files)
       for (i = 0; i < req.files.length; i++) {
         Images[i] = files[i].filename
       }
-
-      const product = new Product({ name: name, price: price, description: description, category: category, size: size, quantity: quantity, image: Images })
+      const product = new Product({ name: name, price: price, description: description, category: category, size: checkbox, quantity: quantity, image: Images })
       product.save().then((result) => {
         console.log(result);
         res.redirect('/admin/viewProduct')
@@ -184,33 +204,11 @@ module.exports = {
     else {
       console.log(err);
     }
-
   },
 
-  /*------------view category list------------*/
-  getviewCategory: (req, res, next) => {
-    if (req.session.adminloggedin) {
-      Category.find().then(categories => {
-        console.log(categories)
-        res.render('admin/viewCategory', { categories })
-      })
-    }
-    else {
-      res.redirect('/admin/')
-    }
 
-  },
 
-  /*---------admin deleteCategory-------*/
-  deleteCategory: (req, res, next) => {
 
-    console.log(req.params.id)
-    Category.findByIdAndRemove(req.params.id).then(() => {
-      console.log('Category Removed')
-      res.redirect('/admin/viewCategory')
-    })
-      .catch(err => console.log(err))
-  },
 
   /*-----------view product list-------------*/
   getviewproductlist: (req, res, next) => {
@@ -223,9 +221,8 @@ module.exports = {
     else {
       res.redirect('/admin/')
     }
-
-
   },
+  /*---------------------------------------------*/
   viewusers: (req, res, next) => {
     if (req.session.adminloggedin) {
       User.find().then(users => {
@@ -238,30 +235,33 @@ module.exports = {
     }
   },
   /*----------------------------------------------------------------------------------*/
-  blockUsers: (req, res) => {
-    console.log(req.query.id);
-    User.updateOne({ _id: req.query.id }, { $set: { Access: false } }).then(result => {
+  getStatus: (req, res, next) => {
+    let userId = req.params.id
+    console.log(userId);
+    User.findOne({ _id: userId }, (err, data) => {
+      console.log(data);
+      if (!err) {
+        if (data.Access) {
+          User.updateOne({ _id: userId }, { $set: { Access: false } }).then(() => {
+            res.json({ status: true })
+            // res.redirect('/admin/viewUser')
+          })
+        }
+        else {
+          User.updateOne({ _id: userId }, { $set: { Access: true } }).then(() => {
+            res.json({ status: true })
+            // res.redirect('/admin/viewUser')
+          })
+        }
+      }
+      else {
+        console.log(err);
+      }
 
-      res.redirect('/admin/viewUser')
     })
-
   },
-  unblockUsers: (req, res) => {
-    console.log(req.query.id);
-    User.updateOne({ _id: req.query.id }, { $set: { Access: true } }).then(result => {
 
-      res.redirect('/admin/viewUser')
-    })
 
-  },
-  /*---------------------------------------------------------------------------------------*/
-  /*---------admin getproductdetails---*/
-  // getproductdetails:(req,res,next)=>{
-  // const prodId=req.params.id
-  // Product.findById(prodId).then(product=>{
-  //   res.render()
-  // })
-  // },
 
   /*---------admin deleteproduct-------*/
   deleteproduct: (req, res, next) => {
@@ -269,7 +269,7 @@ module.exports = {
     console.log(prodId)
     Product.findByIdAndRemove(prodId).then(() => {
       console.log('Destroyed Product')
-      res.redirect('/admin/viewProduct')
+      res.json({ status: true })
     })
       .catch(err => console.log(err))
   },
@@ -292,15 +292,9 @@ module.exports = {
   /*--------------------------------------------------------------------*/
   posteditproduct: async (req, res) => {
     const prodId = req.params.id
-
-
-    let files = req.files
-
-    console.log(req.files)
+    const files = req.files
     let Images = []
     if (files) {
-
-
       console.log(req.files.length)
       console.log(req.files)
       for (i = 0; i < req.files.length; i++) {
@@ -316,8 +310,6 @@ module.exports = {
         size: req.body.size,
         image: Images
       })
-
-      console.log("Hi")
       res.redirect('/admin/viewProduct')
 
     }

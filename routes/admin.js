@@ -15,13 +15,12 @@ router.post('/adminLogin',adminController.postlogin)
 /*-----------admin dashboard--------*/
 router.get('/adminDashboard',adminController.getDashboard)
 
-/*----------admin addcategory---------*/
-router.route('/addCategory')
-.get(adminController.getCategory)
-.post(adminController.postCategory)
+
 
 /*---------admin view category---------*/
-router.get('/viewCategory',adminController.getviewCategory)
+router.route('/adminCategory')
+.get(adminController.getviewCategory)
+.post(adminController.postviewCategory)
 
 /*---------admin categoryWiseView-------*/
 router.get('/categoryProduct/:category',adminController.viewCategoryWise)
@@ -41,7 +40,7 @@ router.route('/editProduct/:id')
 
 
 /*---------admin deleteproduct-------*/
-router.get('/deleteProduct/:id',store.array("image",3),adminController.deleteproduct)
+router.post('/deleteProduct/:id',store.array("image",3),adminController.deleteproduct)
 
 /*---------admin editproduct----------*/
 // router.get('/editCategory/:id',adminController.editCategory)
@@ -49,16 +48,12 @@ router.get('/deleteProduct/:id',store.array("image",3),adminController.deletepro
 
 
 /*---------admin deleteproduct-------*/
-router.get('/deleteCategoryProduct/:id',adminController.deleteCategory)
+router.get('/deleteCategoryProduct/:catName',adminController.deleteCategory)
 
 /*---------view users----------------*/
 router.get('/viewUser',adminController.viewusers)
- /*--------block user----------------*/
- router.get('/blockUser/',adminController.blockUsers)
-
-
- router.get('/unblockUser/',adminController.unblockUsers)
-
+ /*--------block or unblock user----------------*/
+ router.get('/userStage/:id',adminController.getStatus)
 /*---------admin logout------------*/
 router.get('/logout',adminController.adminlogout)
 

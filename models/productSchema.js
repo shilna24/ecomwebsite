@@ -22,12 +22,18 @@ const productSchema=new Schema({
     required:true
    },
    size:{
-    type:String,
+    type:Array,
     required:true
    },
    image:{
     type:Array,
     required:true
+   },
+   active:{
+    type:Boolean,
+    default:true
    }
+
+
 })
 module.exports=mongoose.model('products',productSchema)
