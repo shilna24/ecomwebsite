@@ -35,7 +35,7 @@
 }
 .table-wishlist tr td .name-product {
     font-size: 15px;
-    color: #484848;
+    color: #ffffff;
     padding-top: 8px;
     line-height: 24px;
     width: 50%;
@@ -72,7 +72,7 @@
 .round-black-btn:hover,
 .round-black-btn:focus {
 	background: transparent;
-	color: #212529;
+	color: #0370dd;
 	text-decoration: none;
 }
 .mb-10 {
@@ -93,10 +93,10 @@
 }
 .pretty input:checked~.state.p-primary-o label:before, 
 .pretty.p-toggle .state.p-primary-o label:before {
-    border-color: #8660e9;
+    border-color: #3003a1;
 }
 .pretty.p-default:not(.p-fill) input:checked~.state.p-primary-o label:after {
-    background-color: #8660e9 !important;
+    background-color: #2d0399 !important;
 }
 .main-heading.border-b {
     border-bottom: solid 1px #ededed;
@@ -136,5 +136,5 @@
 }
 .trash-icon {
     font-size: 20px;
-    color: #212529;
+    color: #2a01e3;
 }

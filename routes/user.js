@@ -24,7 +24,7 @@ router.post('/updateProfile/:id', userController.postProfile)
 router.get('/productDetails/:id', userController.getProductView)
 
 /*------- get all product details--------------*/
-router.get('/viewAllProduct/',userController.viewAllProducts)
+router.get('/viewAllProduct',userController.viewAllProducts)
 
 /*--------user cartPage-------------------*/
 router.get('/add-to-cart/:proId/:qty', userController.getCart)
@@ -48,8 +48,28 @@ router.delete('/delete-from-wishlist/:proId',userController.deleteWishlistItem)
 router.get('/get-otp', userController.getotp)
 router.post('/verifyotp', userController.postOtp)
 
-/*--------getting about page-------*/
+/*--------getting aAbout page-------*/
 router.get('/aboutUs',userController.getAbout)
+
+router.get('/get-category/:catName',userController.getCategories)
+
+router.route('/order-success').get(userController.orderSuccessPage)
+
+router.route('/payment/orderId').post(userController.generateOrder)
+
+router.route('/orders').get(userController.getOrder)
+
+router.route('/checkout').get(userController.checkOut)
+
+router.route('/redeem/:coupCode/:total').post(userController.redeemCoupnAmount)
+
+router.route('/placeOrder').post(userController.placeOrder)
+
+router.route('/payment/orderId').post(userController.generateOrder)
+
+router.route('/payment/verify/:orderId').post(userController.verifyPayment)
+
+router.route('/addAddress').post(userController.addAddress)
 
 /*--------getting about page-------*/
 router.get('/contactUs',userController.getContact)

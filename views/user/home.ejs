@@ -101,40 +101,24 @@
 					</h3>
 				</div>
 
+				<!-- <div class="menu-desktop"> -->
+					
+				<!-- </div>	 -->
+
 				<div class="flex-w flex-sb-m p-b-52">
 					<div class="flex-w flex-l-m filter-tope-group m-tb-10">
-						<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
-							All Products
-						</button>
-						<a href="">Women</a>
-						<ul class="sub-menu-m">
-							<%for( c of categories){%>
-
-							<li><a href="<%=c.categoryName%>"><%= c.categoryName %></a></li>
-
-							<%}%>
-
-						</ul>
-						<!-- <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".women">
-							Women
-						</button> -->
-
-						<!-- <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".men">
-							Men
-						</button>
-
-						<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".bag">
-							Bag
-						</button>
-
-						<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".shoes">
-							Shoes
-						</button>
-
-						<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".watches">
-							Watches
-						</button> -->
-					</div>
+						<ul class="main-menu">
+							<li><a href="/viewAllProduct">All Products</a></li>
+							<li class="active-menu">
+								<a>Women</a>
+								<ul style="z-index: 3;" class="sub-menu">
+									<%for( c of categories){%>
+									<li><a onclick="getCategory('<%=c.categoryName%>')" ><%= c.categoryName %></a></li>
+									<%}%>
+								</ul>
+							</li>
+					   </ul>
+				</div>
 
 					<div class="flex-w flex-c-m m-tb-10">
 						<div
@@ -255,111 +239,12 @@
 								</ul>
 							</div>
 
-							<!-- <div class="filter-col3 p-r-15 p-b-27">
-								<div class="mtext-102 cl2 p-b-15">
-									Color
-								</div>
-
-								<ul>
-									<li class="p-b-6">
-										<span class="fs-15 lh-12 m-r-6" style="color: #222;">
-											<i class="zmdi zmdi-circle"></i>
-										</span>
-
-										<a href="#" class="filter-link stext-106 trans-04">
-											Black
-										</a>
-									</li>
-
-									<li class="p-b-6">
-										<span class="fs-15 lh-12 m-r-6" style="color: #4272d7;">
-											<i class="zmdi zmdi-circle"></i>
-										</span>
-
-										<a href="#" class="filter-link stext-106 trans-04 filter-link-active">
-											Blue
-										</a>
-									</li>
-
-									<li class="p-b-6">
-										<span class="fs-15 lh-12 m-r-6" style="color: #b3b3b3;">
-											<i class="zmdi zmdi-circle"></i>
-										</span>
-
-										<a href="#" class="filter-link stext-106 trans-04">
-											Grey
-										</a>
-									</li>
-
-									<li class="p-b-6">
-										<span class="fs-15 lh-12 m-r-6" style="color: #00ad5f;">
-											<i class="zmdi zmdi-circle"></i>
-										</span>
-
-										<a href="#" class="filter-link stext-106 trans-04">
-											Green
-										</a>
-									</li>
-
-									<li class="p-b-6">
-										<span class="fs-15 lh-12 m-r-6" style="color: #fa4251;">
-											<i class="zmdi zmdi-circle"></i>
-										</span>
-
-										<a href="#" class="filter-link stext-106 trans-04">
-											Red
-										</a>
-									</li>
-
-									<li class="p-b-6">
-										<span class="fs-15 lh-12 m-r-6" style="color: #aaa;">
-											<i class="zmdi zmdi-circle-o"></i>
-										</span>
-
-										<a href="#" class="filter-link stext-106 trans-04">
-											White
-										</a>
-									</li>
-								</ul>
-							</div> -->
-
-							<!-- <div class="filter-col4 p-b-27">
-								<div class="mtext-102 cl2 p-b-15">
-									Tags
-								</div>
-
-								<div class="flex-w p-t-4 m-r--5">
-									<a href="#"
-										class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
-										Fashion
-									</a>
-
-									<a href="#"
-										class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
-										Lifestyle
-									</a>
-
-									<a href="#"
-										class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
-										Denim
-									</a>
-
-									<a href="#"
-										class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
-										Streetstyle
-									</a>
-
-									<a href="#"
-										class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
-										Crafts
-									</a>
-								</div>
-							</div>-->
+							
 						</div> 
 					</div>
 				</div>
 
-				<div class="row isotope-grid">
+				<div id="getCategory" class="row isotope-grid">
 					<% for(p of products) {%>
 						<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
 							<!-- Block2 -->
@@ -400,14 +285,112 @@
 						<% } %>
 
 				</div>
-				<!-- Load more -->
-				<!-- <div class="flex-c-m flex-w w-full p-t-45">
-					<a href="#" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
-						Load More
-					</a>
-				</div> -->
+				
 
 		</section>
+		<script>
+			function getCategory(catId) {
+        let Category = document.getElementById('getCategory')
+		let html=null
+		console.log(Category);
+        $.ajax({
+            url: '/get-category/' + catId ,
+            method: 'get',
+            success: (response) => {
+             if(response){
+				console.log(response);
+				response.forEach(element => {
+					if(html==null){
+                     html=`
+					 <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
+							<!-- Block2 -->
+							<div class="block2">
+								<div class="block2-pic hov-img0">
+									<img href="/productDetails/${element._id}" src="/product-images/${element.image[0]}%>"
+										alt="IMG-PRODUCT" style="height: 25rem;width: 20rem;">
+
+										<a href="/productDetails/${element._id}" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
+											Quick View
+										</a>
+
+								</div>
+
+								<div class="block2-txt flex-w flex-t p-t-14">
+									<div class="block2-txt-child1 flex-col-l ">
+										<a href="/productDetails/${element._id}"
+											class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+											${element.name}
+										</a>
+
+										<span class="stext-105 cl3">
+											Rs.${element.price}
+										</span>
+									</div>
+
+									<div class="block2-txt-child2 flex-r p-t-3">
+										<button onclick="addToWishlist('${element._id}')" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+											<img class="icon-heart1 dis-block trans-04"
+												src="user/images/icons/icon-heart-01.png" alt="ICON">
+											<!-- <img class="icon-heart2 dis-block trans-04 ab-t-l" -->
+												<!-- src="user/images/icons/icon-heart-02.png" alt="ICON"> -->
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					 
+					 `
+					}else{
+                      html+=`
+					 <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
+							<!-- Block2 -->
+							<div class="block2">
+								<div class="block2-pic hov-img0">
+									<img href="/productDetails/${element._id}" src="/product-images/${element.image[0]}%>"
+										alt="IMG-PRODUCT" style="height: 25rem;width: 20rem;">
+
+										<a href="/productDetails/${element._id}" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
+											Quick View
+										</a>
+
+								</div>
+
+								<div class="block2-txt flex-w flex-t p-t-14">
+									<div class="block2-txt-child1 flex-col-l ">
+										<a href="/productDetails/${element._id}"
+											class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+											${element.name}
+										</a>
+
+										<span class="stext-105 cl3">
+											Rs.${element.price}
+										</span>
+									</div>
+
+									<div class="block2-txt-child2 flex-r p-t-3">
+										<button onclick="addToWishlist('${element._id}')" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+											<img class="icon-heart1 dis-block trans-04"
+												src="user/images/icons/icon-heart-01.png" alt="ICON">
+											<!-- <img class="icon-heart2 dis-block trans-04 ab-t-l" -->
+												<!-- src="user/images/icons/icon-heart-02.png" alt="ICON"> -->
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					 `
+					 Category.innerHTML=html
+                     
+					}
+				});
+                  
+			 }else{
+
+			 }
+            }
+        })
+    }
+		</script>
 		
 		<%-include('./includes/final.ejs') -%>
 		<%- include('./includes/footer.ejs') -%>

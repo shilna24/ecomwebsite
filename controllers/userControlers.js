@@ -3,13 +3,21 @@ const Product = require('../models/productSchema')
 const bcrypt = require('bcrypt')
 const Category = require('../models/categorySchema')
 const Wishlist = require('../models/wishlistSchema')
+const Order = require('../models/orderShema')
+const Banner = require('../models/bannerSchema')
 const db = require('../config/connection')
 const twilo = require('../twilo/twilio')
 const client = require('twilio')(twilo.accountSid, twilo.authToken);
+const couponModel=require('../models/couponSchema')
 const otpGenerator = require('otp-generator');
 const session = require('express-session');
 const Cart = require('../models/cartSchema')
 const user = require('../models/user')
+const Razorpay = require('razorpay');
+const instance = new Razorpay({
+    key_id: process.env.key_id,
+    key_secret: process.env.key_secret,
+});
 login = false
 let loginerr = null
 module.exports = {
@@ -27,9 +35,8 @@ module.exports = {
                 req.session.wishlistNumber = wishlist.myWish.length
             }
         }
-        const products = await Product.find({})
+        const products = await Product.find({ active: true })
         const categories = await Category.find({})
-        console.log(categories);
         res.render('user/home', { login: req.session.userloggedin, users: req.session.user, products, categories, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber })
 
     },
@@ -63,11 +70,6 @@ module.exports = {
                             if (isMatch) {
                                 req.session.userloggedin = true
                                 req.session.user = user
-                                const userId = req.session.user._id
-                                const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
-                                req.session.cartNumber = viewcart.Products.length
-                                const wishlist = await Wishlist.findOne({ userId: userId }).populate("myWish.productId").exec()
-                                req.session.wishlistNumber = wishlist.myWish.length
                                 res.redirect('/')
                             }
                             else {
@@ -99,7 +101,7 @@ module.exports = {
         User.find({ Email: req.body.Email }, async (err, data) => {
             console.log(data);
             if (data.length == 0) {
-                req.session.otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false })
+                req.session.otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, digits: true, lowerCaseAlphabets: false })
                 details.Password = await bcrypt.hash(details.Password, 10)
                 client.messages
                     .create({
@@ -119,11 +121,11 @@ module.exports = {
     },
     /*-------------view all product-----------------------*/
     viewAllProducts: async (req, res) => {
-        // const proId = req.params.id
-        let products = await Product.find()
+        let categories = await Category.find()
+        let products = await Product.find({ active: true })
         console.log(products);
+        const userId = req.session.user._id
         if (req.session.userloggedin) {
-            const userId = req.session.user._id
             const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
             if (viewcart) {
                 req.session.cartNumber = viewcart.Products.length
@@ -132,9 +134,9 @@ module.exports = {
             if (wishlist) {
                 req.session.wishlistNumber = wishlist.myWish.length
             }
-
         }
-        res.render('user/viewAllProduct', { login: req.session.userloggedin, users: req.session.user, products, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber })
+
+        res.render('user/viewAllProduct', { login: req.session.userloggedin, users: req.session.user, products, categories, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber })
     },
 
 
@@ -155,6 +157,8 @@ module.exports = {
         }
         res.render('user/productDetails', { login: req.session.userloggedin, users: req.session.user, products, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber })
     },
+
+    /*----------------otp setup-------------------------------*/
     getotp: (req, res, next) => {
         res.render('user/verifyotp')
     },
@@ -259,7 +263,6 @@ module.exports = {
                     await cart.save()
                 }
                 res.json({ status: true })
-
             }
             else {
                 res.json({ status: true })
@@ -275,6 +278,7 @@ module.exports = {
         if (req.session.userloggedin) {
             const userId = req.session.user._id
             const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
+
             if (viewcart) {
                 req.session.cartNumber = viewcart.Products.length
             }
@@ -282,7 +286,6 @@ module.exports = {
             if (wishlist) {
                 req.session.wishlistNumber = wishlist.myWish.length
             }
-            console.log(req.session.wishlistNumber);
             res.render('user/viewCart', { login: req.session.userloggedin, users: req.session.user, cartProducts: viewcart, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber })
         } else {
             res.redirect('/userLogin')
@@ -325,7 +328,6 @@ module.exports = {
     },
     /*-----------------add wishlist---------------------------*/
     addToWishlist: async (req, res) => {
-        console.log("hi");
         const productId = req.params.proId
         try {
             const userId = req.session.user._id
@@ -370,11 +372,10 @@ module.exports = {
             if (wishlist) {
                 req.session.wishlistNumber = wishlist.myWish.length
             }
-            res.render('user/wishList', { login: req.session.userloggedin, users: req.session.user, wishProducts: wishlist, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber })
+            res.render('user/sample', { login: req.session.userloggedin, users: req.session.user, wishProducts: wishlist, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber })
         } else {
             res.redirect('/userLogin')
         }
-
     },
     /*---------------remove wishlist---------------------*/
     deleteWishlistItem: async (req, res) => {
@@ -382,14 +383,13 @@ module.exports = {
         let userId = req.session.user._id
         let wishlist = await Wishlist.findOne({ userId })
         let itemIndex = wishlist.myWish.findIndex(p => p._id == productId)
-        // const wishlist = await Wishlist.findOne({ userId: userId }).populate("myWish.productId").exec()
         wishlist.myWish.splice(itemIndex, 1)
         await wishlist.save()
         res.json({ status: true })
 
     },
     /*-----------about page-----------------------------*/
-    getAbout:async(req,res)=>{
+    getAbout: async (req, res) => {
         if (req.session.userloggedin) {
             let users = req.session.user
             const userId = req.session.user._id
@@ -407,9 +407,24 @@ module.exports = {
             res.redirect('/userLogin')
         }
     },
+    /*--------------categories ---------------------------*/
+    getCategories: (req, res) => {
+        if (req.session.userloggedin) {
+            let catName = req.params.catName
+
+            Product.find({ category: catName }).then((products) => {
+
+                res.json(products)
+            })
+        } else {
+            res.redirect('/')
+        }
+
+
+    },
 
     /*---------------contact page--------------------------*/
-    getContact:async(req,res)=>{
+    getContact: async (req, res) => {
         if (req.session.userloggedin) {
             let users = req.session.user
             const userId = req.session.user._id
@@ -423,10 +438,224 @@ module.exports = {
             }
             res.render('user/contactUs', { users, login: req.session.userloggedin, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber })
         }
+
+    },
+
+    /*---------------order placing--------------------------*/
+    checkOut: async (req, res) => {
+        if (req.session.userloggedin) {
+            let users = req.session.user
+
+            const userId = req.session.user._id
+            const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
+            if (viewcart) {
+                req.session.cartNumber = viewcart.Products.length
+            }
+            const wishlist = await Wishlist.findOne({ userId: userId }).populate("myWish.productId").exec()
+            if (wishlist) {
+                req.session.wishlistNumber = wishlist.myWish.length
+            }
+            if (viewcart)
+                res.render('user/checkout', { users, login: req.session.userloggedin, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber, cartProducts: viewcart })
+            else
+                res.redirect('/viewCart')
+
+        }
+
+
+    },
+    placeOrder: async (req, res) => {
+        let userId = req.session.user._id
+        let deliveryAddress = {
+            firstName: req.body.firstname,
+        lastName: req.body.lastname,
+        phone: req.body.number,
+        address: req.body.address,
+        pincode: req.body.pin,
+        state: req.body.state,
+        district: req.body.district
+        }
+        console.log(deliveryAddress);
+        const cart = await Cart.findOne({ userId: userId })
+        const paymentType = req.body.paymentType
+        const newOrder = new Order({
+            userId: userId,
+            deliveryAddress: deliveryAddress,
+            products: cart.Products,
+            quantity: cart.quantity,
+            total: cart.total,
+            paymentType: paymentType
+        })
+        req.session.cartNumber = null
+        await cart.remove()
+        await newOrder.save()
+        if(req.session.coupon>0){
+            req.session.coupon=null
+        }
+        res.json({ status: true })
+
+    },
+    /*-----------order successPage--------------------*/
+    orderSuccessPage: async (req, res) => {
+        console.log(req.session.userloggedin);
+        if (req.session.userloggedin) {
+            let users = req.session.user
+            const userId = req.session.user._id
+            const wishlist = await Wishlist.findOne({ userId: userId }).populate("myWish.productId").exec()
+            if (wishlist) {
+                req.session.wishlistNumber = wishlist.myWish.length
+            }
+            const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
+
+            if (viewcart) {
+                req.session.cartNumber = viewcart.Products.length
+            } else {
+                req.session.cartNumber = null
+            }
+
+            res.render('user/order-success', { cartProducts: viewcart, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber, users, login: req.session.userloggedin })
+        }
         else {
+
             res.redirect('/userLogin')
+
+        }
+
+    },
+    /*----------------getorder------------------------------*/
+    getOrder: async (req, res) => {
+        
+        if (req.session.userloggedin) {
+            const userId = req.session.user._id
+            let users=req.session.user
+            try {
+                const wishlist = await Wishlist.findOne({ userId: userId }).populate("myWish.productId").exec()
+            if (wishlist) {
+                req.session.wishlistNumber = wishlist.myWish.length
+            }
+            const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
+
+            if (viewcart) {
+                req.session.cartNumber = viewcart.Products.length
+            } else {
+                req.session.cartNumber = null
+            }
+                
+                const myOrders = await Order.find({ userId }).populate([
+                    {
+                        path: "userId",
+                        model: "user"
+                    },
+                    {
+                        path: "products.productId",
+                        model: "products"
+                    }
+                ]).exec()
+                res.render('user/orders', { myOrders: myOrders, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber, users,login: req.session.userloggedin })
+            } catch (error) {
+                console.log(error);
+
+            }
         }
     },
+
+    generateOrder: (req, res) => {
+        // console.log(req.body.amount);
+        const amount = parseInt(req.body.amount) * 100
+        console.log(amount, 'jjjj');
+        const options = {
+            amount: amount,  // amount in the smallest currency unit
+            currency: "INR",
+            receipt: "order1001"
+        };
+        instance.orders.create(options, function (err, order) {
+            if (err) {
+                console.log(err)
+            } else {
+                res.send({ orderId: order.id })
+            }
+        });
+    },
+    /*--------------------payment verify-------------------*/
+    verifyPayment: (req, res) => {
+
+        const orderId = req.params.orderId
+        let body = orderId + "|" + req.body.response.razorpay_payment_id;
+
+        const crypto = require("crypto");
+        const expectedSignature = crypto.createHmac('sha256', process.env.key_secret)
+            .update(body.toString())
+            .digest('hex');
+        console.log("sig received ", req.body.response.razorpay_signature);
+        console.log("sig generated ", expectedSignature);
+        let response = { "signatureIsValid": false }
+        if (expectedSignature === req.body.response.razorpay_signature) {
+            response = { "signatureIsValid": true }
+        }
+        res.send(response);
+
+    },
+    /*----------coupon------------------------------------*/
+    redeemCoupnAmount :async (req, res) => {
+        const coupCode = req.params.coupCode
+        const totalAmount = req.params.total
+        try {
+            const coupon = await couponModel.findOne({ couponCode: coupCode }).lean().exec()
+            if (coupon) {
+                let nw = new Date()
+                let str = nw.toJSON().slice(0, 10)
+                let coustr = coupon.expDate.toJSON().slice(0, 10)
+                if (coupon.isActive && str <= coustr) {
+    
+                    if (!req.session.coupon) {
+                        if (totalAmount >= coupon.minPurchase) {
+                            res.json(coupon)
+                            req.session.coupon = 1
+                            //    let userId = req.session.user._id
+                            //    _id=coupon._id
+                            //    console.log(_id);
+                            //    let cc= await couponModel.findById({ _id });
+                            //    console.log(cc,'jjjj');
+                            //    cc.usedUsers.push({userId})
+                            //    await cc.save()
+    
+                        } else {
+                            res.json({ minimunPurchase: true })
+                        }
+                    } else {
+                        res.json({ alreadyApplied: true })
+                    }
+                } else {
+                    res.json({ expired: true })
+                }
+    
+            } else {
+                res.json({ invalidCoupon: true })
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    },
+    /*--------------add address------------------------------*/
+    addAddress:async(req,res)=>{
+   
+        let address={
+            firstName:req.body.firstname ,
+              lastName:req.body.lastname,
+              phone:req.body.phone ,
+              address:req.body.address ,
+              pincode:req.body.pincode,
+              state:req.body.state ,
+              district: req.body.district
+        }
+       
+        let _id=req.session.user._id
+        let userOne=await User.findById(_id)
+        console.log(userOne);
+        userOne.Address.push(address);
+        await userOne.save()
+    },
+
 
     /*---------------user logout----------------------------*/
     getlogout: (req, res) => {

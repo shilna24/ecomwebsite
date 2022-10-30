@@ -1,84 +1,95 @@
 <%- include('./includes/headers.ejs') -%>
     <%- include('./includes/navbar.ejs') -%>
-<section>
-    <div class="container mt-5">
-        <div class="">
-            <a href="/admin/addProduct" class="btn btn-success  ml-auto">Add Product</a>
-        </div>
+        <section>
+            <div class="container mt-5">
+                <div class="">
+                    <a href="/admin/addProduct" class="btn btn-success  ml-auto">Add Product</a>
+                </div>
 
-        <table class="table mt-5">
+                <table class="table mt-5">
 
-            <thead>
-                <tr>
-                
-                    <th scope="col">Productname</th>
-                    <th scope="col">Category</th>
-                    <th scope="col">Size</th>
+                    <thead>
+                        <tr>
 
-                    <th scope="col">Description</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Quantity</th>
-                    
-                    <th>Image</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% for(p of products){ %>
-                <tr>
-                    
-                    <td><%= p.name %></td>
-                    <td><%= p.category %></td>
-                    <td><%= p.size %></td>
-                    <td><%= p.description %></td>
-                    <td><%= p.price %></td>
-                    <td><%= p.quantity %></td>
-                    
-                    
-                    <td><img style="width: 50px; height:50px;" src="/product-images/<%=p.image[0]%>" alt=""></td>
-                    <td><a href="/admin/editproduct/<%= p.id %>" class="btn btn-primary">edit</a></td>
+                            <th scope="col">Productname</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Size</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Quantity</th>
+                            <th>Image</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(p of products){ %>
+                            <tr>
 
-                    <td> <button onclick="hideProduct('<%= p._id %>')" class="btn btn-danger">Hide</button></td>
-                    <td> <button onclick="hideProduct('<%= p._id %>')" class="btn btn-danger">UnHide</button></td>
-                    
-    
-                </tr>
-                <% } %>
-            </tbody>
-        </table>
-        
+                                <td>
+                                    <%= p.name %>
+                                </td>
+                                <td>
+                                    <%= p.category %>
+                                </td>
+                                <td>
+                                    <%= p.size %>
+                                </td>
+                                <td>
+                                    <%= p.description %>
+                                </td>
+                                <td>
+                                    <%= p.price %>
+                                </td>
+                                <td>
+                                    <%= p.quantity %>
+                                </td>
+                                <td><img style="width: 50px; height:50px;" src="/product-images/<%=p.image[0]%>" alt="">
+                                </td>
+                                <td><a href="/admin/editproduct/<%= p.id %>" class="btn btn-primary">Edit</a></td>
+                                <% if(p.active===true){%>
+                                    <td> <button onclick="hideProduct('<%= p._id %>')"
+                                            class="btn btn-danger">Hide</button></td>
+                                    <%}else{%>
+                                        <td> <button onclick="hideProduct('<%= p._id %>')"
+                                                class="btn btn-success">Unhide</button></td>
+                                        <% } %>
+                            </tr>
+                            <% } %>
+                    </tbody>
+                </table>
 
-    </div>
-</section>
-<script>
-    function hideProduct(proId){
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-}).then((result) => {
-    $.ajax({
-        url:'/admin/deleteproduct/'+proId,
-        method:'post',
-        success:(response)=>{
-            if (result.isConfirmed) {
+
+            </div>
+        </section>
+        <script>
+            function hideProduct(proId) {
                 Swal.fire({
-                title:'Deleted!',
-                text:'Your file has been deleted.',
-               icon: 'success',
-               showConfirmButton:false
-                 } )
-                 setTimeout(() => {
-                    location.reload()
-                 }, 1000);
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, hide it!'
+                }).then((result) => {
+                    $.ajax({
+                        url: '/admin/delete-product/' + proId,
+                        method: 'post',
+                        success: (response) => {
+                            if (result.isConfirmed) {
+                                Swal.fire({
+                                    title: 'hided!',
+                                    text: 'Your file has been hided.',
+                                    icon: 'success',
+                                    showConfirmButton: false
+                                })
+                                setTimeout(() => {
+                                    location.reload()
+                                }, 1000);
+                            }
+                        }
+                    })
+
+                })
             }
-        }
-    })
-  
-})
-    }
-</script>
-<%- include('./includes/footers.ejs') -%>
+        </script>
+        <%- include('./includes/footers.ejs') -%>

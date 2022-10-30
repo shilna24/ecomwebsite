@@ -40,16 +40,21 @@ router.route('/editProduct/:id')
 
 
 /*---------admin deleteproduct-------*/
-router.post('/deleteProduct/:id',store.array("image",3),adminController.deleteproduct)
-
-/*---------admin editproduct----------*/
-// router.get('/editCategory/:id',adminController.editCategory)
-// router.post('/editCategory/:id',adminController.posteditCategory)
-
+router.post('/delete-product/:id',store.array("image",3),adminController.deleteProduct)
 
 /*---------admin deleteproduct-------*/
 router.get('/deleteCategoryProduct/:catName',adminController.deleteCategory)
 
+/*---------admin bannermanage---------------*/
+router.route('/addBanner')
+.get(adminController.getBanner)
+.post(store.array("image",3),adminController.postBanner)
+
+/*---------admin removebanner-------*/
+router.post('/blockBanner/:id',store.array("image",3),adminController.removeBanner)
+/*---------admin coupon-------------*/
+router.route('/view-coupen').get(adminController.viewAllCoupens).post(adminController.addCoupen)
+router.route('/coupon-status/:couponId').post(adminController.couponStatusChange)
 /*---------view users----------------*/
 router.get('/viewUser',adminController.viewusers)
  /*--------block or unblock user----------------*/

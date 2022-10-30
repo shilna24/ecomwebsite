@@ -52,7 +52,7 @@
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td class="column-5">Rs<%=p.price*p.quantity%>
+                                                    <td class="column-5">Rs.<%=p.price*p.quantity%>
                                                     </td>
                                                     <td><a onclick="deleteItemFromCart('<%=p._id%>')"
                                                             class="btn btn-danger">X</a></td>
@@ -97,7 +97,7 @@
 
                                         <div class="size-209">
                                             <span class="mtext-110 cl2">
-                                                <%=cartProducts.total%>
+                                              Rs.<%=cartProducts.total%>
                                             </span>
                                         </div>
                                     </div>
@@ -161,28 +161,53 @@
 
                                         <div class="size-209 p-t-1">
                                             <span class="mtext-110 cl2">
-                                                <%=cartProducts.total%>
+                                              Rs.<%=cartProducts.total%>
                                             </span>
 
                                         </div>
                                     </div>
-
-                                    <button
+                                    <div class="d-flex justify-content-center "><a href="/checkOut"
+                                        class="btn btn-primary">Proceed to Checkout</a></div>
+                                    
+                                    <!-- <button
                                         class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
                                         Proceed to Checkout
-                                    </button>
+                                    </button> -->
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <%}else{%>
-                    <div class="col-12 item-slick1"
-                        style="background-image: url(/user/images/emptyCart.jpg);background-size: 30%;"></div>
+                    <div class="container">
+                        <div class="row text-center">
+                            <div class="col-md-12 mt-5">
+                                <div>
+                                    <img src="/user/images/emptyCart.jpg" alt="">
+                                </div>
+                                <div>
+                                    <a class="btn btn-success my-3" href="/viewAllProduct">Start Shopping</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        
                     <%}%>
                         <%}else{%>
-                            <div class="col-12 item-slick1"
-                                style="background-image: url(/user/images/emptyCart.jpg);background-size: 30%;"></div>
+                            
+                            <div class="container">
+                                <div class="row text-center">
+                                    <div class="col-md-12 mt-5">
+                                        <div>
+                                            <img src="/user/images/emptyCart.jpg" alt="">
+                                        </div>
+                                        <div>
+                                            <a class="btn btn-success my-3" href="/viewAllProduct">Start Shopping</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                
                             <%}%>
                                 <%-include('./includes/final.ejs') -%>
                                     <%- include('./includes/footer.ejs') -%>

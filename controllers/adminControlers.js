@@ -2,7 +2,9 @@ const Admin = require('../models/admin')
 const Product = require('../models/productSchema')
 const User = require('../models/user')
 const Category = require('../models/categorySchema')
+const Banner = require('../models/bannerSchema')
 const Cart = require('../models/cartSchema')
+const couponModel=require('../models/couponSchema')
 const bcrypt = require("bcrypt");
 const session = require('express-session');
 const db = require('../config/connection');
@@ -128,30 +130,7 @@ module.exports = {
 
   },
 
-  /*----------admin edit category---------*/
-  // editCategory: (req, res, next) => {
 
-  //   Category.findById(req.params.id).then(categories => {
-  //     res.render('admin/editCategory', { categories })
-  //   })
-  // },
-
-  // /*----------admin post editCategory-------*/
-  // posteditCategory: async (req, res) => {
-  //   if (req.session.adminloggedin) {
-  //     const catId = req.params.id
-  //     await Category.updateOne({ _id: catId }, {
-  //       categoryName: req.body.categoryName
-
-  //     })
-  //     res.redirect('/admin/viewCategory')
-  //   }
-  //   else {
-  //     res.redirect('/admin/')
-  //   }
-
-
-  // },
   /*------------admin categoryWiseView--------*/
   viewCategoryWise: (req, res) => {
     if (req.session.adminloggedin) {
@@ -183,10 +162,7 @@ module.exports = {
     console.log(req.body);
     const { name, price, description, category, checkbox, quantity, image } = req.body
     console.log(req.body.checkbox);
-    let files = req.files
-
-    console.log(req.files)
-
+    const files = req.files
     if (files) {
       let Images = []
       console.log(req.files.length)
@@ -205,11 +181,6 @@ module.exports = {
       console.log(err);
     }
   },
-
-
-
-
-
   /*-----------view product list-------------*/
   getviewproductlist: (req, res, next) => {
     if (req.session.adminloggedin) {
@@ -244,13 +215,13 @@ module.exports = {
         if (data.Access) {
           User.updateOne({ _id: userId }, { $set: { Access: false } }).then(() => {
             res.json({ status: true })
-            // res.redirect('/admin/viewUser')
+
           })
         }
         else {
           User.updateOne({ _id: userId }, { $set: { Access: true } }).then(() => {
             res.json({ status: true })
-            // res.redirect('/admin/viewUser')
+
           })
         }
       }
@@ -260,18 +231,28 @@ module.exports = {
 
     })
   },
+  deleteProduct: (req, res, next) => {
+    let prodId = req.params.id
+    console.log(prodId);
+    Product.findOne({ _id: prodId }, (err, data) => {
+      console.log(data);
+      if (!err) {
+        if (data.active) {
+          Product.updateOne({ _id: prodId }, { $set: { active: false } }).then(() => {
+            res.json({ status: true })
+          })
+        }
+        else {
+          Product.updateOne({ _id: prodId }, { $set: { active: true } }).then(() => {
+            res.json({ status: true })
+          })
+        }
+      }
+      else {
+        console.log(err);
+      }
 
-
-
-  /*---------admin deleteproduct-------*/
-  deleteproduct: (req, res, next) => {
-    const prodId = req.params.id
-    console.log(prodId)
-    Product.findByIdAndRemove(prodId).then(() => {
-      console.log('Destroyed Product')
-      res.json({ status: true })
     })
-      .catch(err => console.log(err))
   },
 
   /*---------admin editproduct---------*/
@@ -307,13 +288,126 @@ module.exports = {
         description: req.body.description,
         quantity: req.body.quantity,
         category: req.body.category,
-        size: req.body.size,
+        size: req.body.checkbox,
         image: Images
       })
       res.redirect('/admin/viewProduct')
 
     }
   },
+
+  /*---------------banner management---------------------*/
+  getBanner: (req, res) => {
+    if (req.session.adminloggedin) {
+      Banner.find().then((banners) => {
+        res.render('admin/addBanner', { banners })
+      })
+    }
+    else {
+      res.redirect('/admin/addBanner')
+    }
+
+  },
+  postBanner: (req, res) => {
+    console.log(req.body);
+    const { name, image } = req.body
+    const files = req.files
+    if (files) {
+      let Images = []
+      console.log(req.files.length)
+      console.log(req.files)
+      for (i = 0; i < req.files.length; i++) {
+        Images[i] = files[i].filename
+      }
+      const banner = new Banner({ name: name, image: Images, access: true })
+      banner.save().then((result) => {
+        console.log(result);
+        res.redirect('/admin/addBanner')
+      }
+      )
+    }
+    else {
+      console.log(err);
+    }
+  },
+
+  /*---------remove banner------------*/
+  removeBanner: (req, res, next) => {
+    let bannerId = req.params.id
+    console.log(bannerId);
+    Banner.findOne({ _id: bannerId }, async (err, data) => {
+      console.log(data);
+      if (!err) {
+        if (data.access) {
+          await Banner.updateOne({ _id: bannerId }, { $set: { access: false } }).then(() => {
+            res.json({ status: true })
+          })
+        }
+        else {
+          await Banner.updateOne({ _id: bannerId }, { $set: { access: true } }).then(() => {
+            res.json({ status: true })
+          })
+        }
+      }
+      else {
+        console.log(err);
+      }
+
+    })
+  },
+  /*-------------coupon management---------------*/
+  viewAllCoupens:async(req,res)=>{
+    try {
+        const coupon = await couponModel.find()
+        res.render('admin/view-coupens',{coupon})
+        } catch (error) {
+        console.log(error);
+  
+      }
+ 
+},
+addCoupen:async (req,res)=>{
+  console.log(req.body);
+  const { name, couponCode, discount, maxLimit, minPurchase, expDate } = req.body
+  try {
+    await couponModel.create({
+      name: name.toUpperCase(),
+      couponCode: couponCode.toUpperCase(),
+      discount,
+      maxLimit,
+      minPurchase,
+      expDate
+    })
+    res.redirect('back')
+
+  } catch (error) {
+    console.log(error);
+
+  }
+},
+couponStatusChange:async(req,res)=>{
+  console.log(req.params.couponId);
+  let couponId = req.params.couponId
+  try {
+      let coupon=await couponModel.findOne({_id:couponId})
+      // console.log(coupon);
+      if(coupon.isActive){
+          couponModel.updateOne({_id:couponId},{$set:{isActive:false}}).then(async()=>{
+              res.json({status:true})
+          })
+      }else{
+          couponModel.updateOne({_id:couponId},{$set:{isActive:true}}).then(async()=>{
+              res.json({status:true})
+          })
+      }
+    } catch (err) {
+      console.log(err);
+      // res.redirect('back')
+    }
+},
+
+
+
   /*---------admin logout-------------*/
   adminlogout: (req, res) => {
     req.session.adminData = null

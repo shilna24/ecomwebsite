@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express=require('express')
 const app=express();
 let ejs=require('ejs');
@@ -17,13 +18,13 @@ const Swal =require('sweetalert2')
 
 
 
-app.use(logger('dev'));
+// app.use(logger('dev'));
 app.use(nocache());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 // app.use(fileUpload());
-app.use(session({secret:"key",cookie:{maxAge:600000}}))
+app.use(session({secret:"key",cookie:{maxAge:60*60*60*1000}}))
 app.use('/',userRouter)
 app.use('/admin',adminRouter)
 /*-----view engine setup------------*/
