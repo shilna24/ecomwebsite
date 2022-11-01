@@ -50,6 +50,10 @@ router.route('/addBanner')
 .get(adminController.getBanner)
 .post(store.array("image",3),adminController.postBanner)
 
+router.route('/editBanner/:id')
+.get(adminController.editbanner)
+.post(store.array("image",3),adminController.posteditbanner)
+
 /*---------admin removebanner-------*/
 router.post('/blockBanner/:id',store.array("image",3),adminController.removeBanner)
 /*---------admin coupon-------------*/

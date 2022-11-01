@@ -135,9 +135,12 @@ module.exports = {
   viewCategoryWise: (req, res) => {
     if (req.session.adminloggedin) {
       let catName = req.params.category
+      
+      Category.find().then((categories) => {
       Product.find({ category: catName }).then((products) => {
-        res.render('admin/viewProduct', { products })
+        res.render('admin/addProduct', { products,categories })
       })
+    })
     } else {
       res.redirect('/admin/')
     }
@@ -147,8 +150,12 @@ module.exports = {
   /*----------admin viewproduct----------*/
   getproduct: (req, res, next) => {
     if (req.session.adminloggedin) {
+      Product.find().then(products => {
+        console.log(products)
+        
       Category.find().then((categories) => {
-        res.render('admin/addProduct', { categories })
+        res.render('admin/addProduct', { categories ,products})
+      })
       })
     }
     else {
@@ -173,7 +180,7 @@ module.exports = {
       const product = new Product({ name: name, price: price, description: description, category: category, size: checkbox, quantity: quantity, image: Images })
       product.save().then((result) => {
         console.log(result);
-        res.redirect('/admin/viewProduct')
+        res.redirect('/admin/addProduct')
       }
       )
     }
@@ -291,26 +298,26 @@ module.exports = {
         size: req.body.checkbox,
         image: Images
       })
-      res.redirect('/admin/viewProduct')
+      res.redirect('/admin/addProduct')
 
     }
   },
 
   /*---------------banner management---------------------*/
-  getBanner: (req, res) => {
+  getBanner:(req, res) => {
     if (req.session.adminloggedin) {
-      Banner.find().then((banners) => {
+    Banner.find().then((banners) => {
         res.render('admin/addBanner', { banners })
       })
     }
     else {
-      res.redirect('/admin/addBanner')
+      res.redirect('/admin/')
     }
 
   },
-  postBanner: (req, res) => {
+  postBanner: async(req, res) => {
     console.log(req.body);
-    const { name, image } = req.body
+    const { name, name1,image } = req.body
     const files = req.files
     if (files) {
       let Images = []
@@ -319,12 +326,11 @@ module.exports = {
       for (i = 0; i < req.files.length; i++) {
         Images[i] = files[i].filename
       }
-      const banner = new Banner({ name: name, image: Images, access: true })
-      banner.save().then((result) => {
+      const banner = new Banner({ title1: name,title2:name1, image: Images, access: true })
+       await banner.save().then((result) => {
         console.log(result);
         res.redirect('/admin/addBanner')
-      }
-      )
+      })
     }
     else {
       console.log(err);
@@ -332,28 +338,56 @@ module.exports = {
   },
 
   /*---------remove banner------------*/
-  removeBanner: (req, res, next) => {
+  removeBanner: async(req, res, next) => {
     let bannerId = req.params.id
-    console.log(bannerId);
-    Banner.findOne({ _id: bannerId }, async (err, data) => {
-      console.log(data);
-      if (!err) {
-        if (data.access) {
-          await Banner.updateOne({ _id: bannerId }, { $set: { access: false } }).then(() => {
-            res.json({ status: true })
+  try {
+      let banner=await Banner.findOne({_id:bannerId})
+      // console.log(coupon);
+      if(banner.access){
+          Banner.updateOne({_id:bannerId},{$set:{access:false}}).then(async()=>{
+              res.json({status:true})
           })
-        }
-        else {
-          await Banner.updateOne({ _id: bannerId }, { $set: { access: true } }).then(() => {
-            res.json({ status: true })
+      }else{
+          Banner.updateOne({_id:bannerId},{$set:{access:true}}).then(async()=>{
+              res.json({status:true})
           })
-        }
       }
-      else {
-        console.log(err);
-      }
+    } catch (err) {
+      console.log(err);
+      // res.redirect('back')
+    }
+  },
 
-    })
+  editbanner:(req, res, next) => {
+    if (req.session.adminloggedin) {
+      Banner.findById(req.params.id).then(banners => {
+          res.render('admin/editBanner', { banners })
+        })
+    } else {
+      res.redirect('/admin/')
+    }
+
+  },
+  /*--------------------------------------------------------------------*/
+  posteditbanner: async (req, res) => {
+    const bannerId = req.params.id
+    const files = req.files
+    let Images = []
+    if (files) {
+      console.log(req.files.length)
+      console.log(req.files)
+      for (i = 0; i < req.files.length; i++) {
+        Images[i] = files[i].filename
+      }
+      req.body.image = Images
+      await Banner.updateOne({ _id: bannerId }, {
+        title1: req.body.name,
+        title2: req.body.name1,
+        image: Images
+      })
+      res.redirect('/admin/addBanner')
+
+    }
   },
   /*-------------coupon management---------------*/
   viewAllCoupens:async(req,res)=>{

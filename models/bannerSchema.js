@@ -2,10 +2,15 @@ const mongoose=require('mongoose')
 const Schema=mongoose.Schema
 const bannerSchema=new Schema({
    
-    name:{
+    title1:{
         type:String,
         required:true
     },
+    title2:{
+        type:String,
+        required:true
+    },
+
     image:{
         type:Array,
         required:true

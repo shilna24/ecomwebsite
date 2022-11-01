@@ -9,10 +9,8 @@ const db = require('../config/connection')
 const twilo = require('../twilo/twilio')
 const client = require('twilio')(twilo.accountSid, twilo.authToken);
 const couponModel=require('../models/couponSchema')
-const otpGenerator = require('otp-generator');
 const session = require('express-session');
 const Cart = require('../models/cartSchema')
-const user = require('../models/user')
 const Razorpay = require('razorpay');
 const instance = new Razorpay({
     key_id: process.env.key_id,
@@ -25,6 +23,7 @@ module.exports = {
 
     get: async (req, res) => {
         if (req.session.userloggedin) {
+
             const userId = req.session.user._id
             const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
             if (viewcart) {
@@ -36,8 +35,10 @@ module.exports = {
             }
         }
         const products = await Product.find({ active: true })
+        const banners=await Banner.find({access:true})
+        console.log(banners);
         const categories = await Category.find({})
-        res.render('user/home', { login: req.session.userloggedin, users: req.session.user, products, categories, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber })
+        res.render('user/home', { login: req.session.userloggedin, users: req.session.user, products, categories, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber,banners })
 
     },
 
@@ -50,43 +51,52 @@ module.exports = {
 
         else {
 
-            res.render('user/userLogin', { loginerr })
-            loginerr = null
+            res.render('user/userLogin')
+        
         }
 
     },
-    postlogin: (req, res, next) => {
+    postlogin: async(req, res, next) => {
 
         userData = req.body
-        return new Promise(async (resolve, reject) => {
-            await User.findOne({ Email: userData.Email }).then((user) => {
+            await User.findOne({ Email: userData.email }).then((user) => {
                 if (user) {
                     if (!user.Access) {
                         loginerr = "you were blocked by admin"
                         res.redirect('/userLogin')
                     }
                     else {
-                        bcrypt.compare(userData.Password, user.Password, async function (error, isMatch) {
+                        // console.log(user);
+                        console.log(user.Password);
+                        console.log(userData.password);
+                        bcrypt.compare(userData.password, user.Password, async function (error, isMatch) {
+                            console.log(isMatch);
                             if (isMatch) {
+                                
                                 req.session.userloggedin = true
                                 req.session.user = user
-                                res.redirect('/')
+                                console.log(req.session.user);
+                                res.json({loginStatus:true})
+
                             }
                             else {
-                                loginerr = 'incorrect password'
-                                res.redirect('/userLogin')
+                                res.json({passwordErr:true})
+                                
+                                // res.redirect('/userLogin')
                             }
                         })
                     }
 
                 }
                 else {
-                    loginerr = 'not exist'
-                    res.redirect('/userLogin')
+                    res.json({emailErr:true})
+                    
+                    
+                    // res.redirect('/userLogin')
                 }
             })
 
-        })
+
     },
 
     /*-----------------user signup---------------------------*/
@@ -95,27 +105,25 @@ module.exports = {
         res.render('user/signup');
     },
     postsignup: (req, res, next) => {
+
         console.log(req.body);
         let details = req.body
         req.session.details = details
         User.find({ Email: req.body.Email }, async (err, data) => {
+
             console.log(data);
             if (data.length == 0) {
-                req.session.otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, digits: true, lowerCaseAlphabets: false })
+                // req.session.otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, digits: true, lowerCaseAlphabets: false })
                 details.Password = await bcrypt.hash(details.Password, 10)
-                client.messages
-                    .create({
-
-                        body: req.session.otp,
-                        messagingServiceSid: 'MG9e71b0d653b8bb096a865985d7fde294',
-                        to: '+918129066716'
-                    })
-                    .then(message => console.log(message.sid))
-                    .done();
-                res.redirect('/get-otp')
+                client.verify.v2.services(process.env.service_id)
+                .verifications
+                .create({to: '+91'+req.body.Phone, channel: 'sms'})
+                .then(verification => console.log(verification.status));
+                res.json({status:true})
             }
             else {
-                res.redirect('/')
+                res.json({emailExist:true})
+                // res.redirect('/')
             }
         })
     },
@@ -164,25 +172,33 @@ module.exports = {
     },
     postOtp: (req, res, next) => {
         const otp = req.body.otp
-        if (otp === req.session.otp) {
-
-            let userData = req.session.details
-            console.log(userData);
-            let userSignData = new User({
-                Name: userData.Name,
-                Email: userData.Email,
-                Password: userData.Password,
-                Phone: userData.Phone,
-            })
-            userSignData.save().then((data) => {
-                req.session.userloggedin = true
-                req.session.user = data.Name
-                res.redirect('/')
-            })
-        }
-        else {
-            res.redirect('/get-otp')
-        }
+        const num=req.body.Phone
+        client.verify.v2.services(process.env.service_id)
+        .verificationChecks
+        .create({to: '+91'+req.session.details.Phone, code: otp})
+        .then(verification_check =>{
+            if (verification_check.status === 'approved') {
+           
+                let userData = req.session.details
+                console.log(userData);
+                let userSignData = new User({
+                    Name: userData.Name,
+                    Email: userData.Email,
+                    Password: userData.Password,
+                    Phone: userData.Phone,
+                })
+                userSignData.save().then((data) => {
+                    req.session.userloggedin = true
+                    req.session.user = data.Name
+                    res.redirect('/')
+                })
+            }
+            else {
+                res.redirect('/get-otp')
+            }
+        })
+        //  console.log(verification_check.status));
+        
 
     },
     /*--------------user Profile----------------------------*/
@@ -372,7 +388,7 @@ module.exports = {
             if (wishlist) {
                 req.session.wishlistNumber = wishlist.myWish.length
             }
-            res.render('user/sample', { login: req.session.userloggedin, users: req.session.user, wishProducts: wishlist, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber })
+            res.render('user/wishList', { login: req.session.userloggedin, users: req.session.user, wishProducts: wishlist, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber })
         } else {
             res.redirect('/userLogin')
         }

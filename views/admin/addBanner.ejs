@@ -1,59 +1,78 @@
 <%- include('./includes/headers.ejs') -%>
     <%- include('./includes/navbar.ejs') -%>
-<section>
-    <div class=" container  d-flex justify-content-center">
-
-        <div class=" ml-5 col-md-6 p-3 border  rounded">
-            <h2 class="text-center mt-5">Add Banners</h2>
-            <form action="/admin/addBanner" method="post" enctype="multipart/form-data">
-                <label for="">Banner Name</label>
-                <input type="text" name="name" class="form-control" required><br>
-                
-                <label for="inputState">Image</label>
-                <input type="file" name="image" class="form-control" multiple required><br>
-                <div class="d-flex justify-content-center"><button type="submit" class="btn btn-success mt-4">Add</button></div>
-            </form>
-            </div>
-    </div>
-</section>
-<section>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 mt-4">
-                <table class="table">
-                    <thead>
-                        <tr>
+    <!-- <style>
+        table { table-layout: fixed; }
+        table th, table td { overflow: hidden; }
+       </style> -->
+    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+        <!-- <nav class="navbar navbar-expand-lg   mt-3 border rounded-3" style="background-color:#013542 ;">
+            <a class="navbar-brand text-white" href="#">All Coupens</a>
+          </nav> -->
+          <div class=" p-md-2 text-center mt-2    ">
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Add Banner</button>
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <!-- <h5 class="modal-title" id="exampleModalLabel"></h5> -->
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/admin/addBanner" method="post" enctype="multipart/form-data">
+                            <label for="">Title1</label>
+                            <input type="text" name="name" class="form-control" required><br>
+                            <label for="">Title2</label>
+                            <input type="text" name="name1" class="form-control" required><br>
+                            <label for="inputState">Image</label>
+                            <input type="file" name="image" class="form-control" multiple required><br>
+                            <!-- <div class="d-flex justify-content-center"><button type="submit" class="btn btn-success mt-4">Add</button></div> -->
+                        
                             
-                            <th scope="col">Banner Name</th>
-                            <th scope="col">Image</th>
-                            <!-- <th scope="col">select</th> -->
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="mt">
+              
+                <div class="jumbotron shadow  bg-white rounded p-4"> -->
+                 
+                  <table id="admin" class="table  table-bordered table-hover p-4 mt-5"  style="width:100;"  >     
+                    <thead>
+                      <tr>
+                        <th >Title1</th>
+                        <th >Title2</th>
+                        <th >Image</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% for(banner of banners){%>
-                        <tr>
-                            
-                            <th><%=banner.name %></th>
-                            <th><img style="width:50px;height:50px" src="/product-images/<%=banner.image[0]%>"></th>
-                            <td>
-                            <%if(banner.access){%>
-                                <td> <button onclick="blocked('<%= banner._id %>')" class="btn btn-danger">Blocked</button></td>
-                                <%}else{%> 
-                                  <td> <button onclick="blocked('<%= banner._id %>')" class="btn btn-success">UnBlocked</button></td>
-                                <% } %>
-                            
-                
-                            </td>
-                        </tr>
-                        <% } %>
+                            <tr>
+                                
+                                <td><%=banner.title1 %></td>
+                                <td><%=banner.title2 %></td>
+                              
+                                <td><img style="width:50px;height:50px" src="/product-images/<%=banner.image[0]%>"></th>
+                                  <td><a href="/admin/editbanner/<%= banner.id %>" class="btn btn-primary">Edit</a></td>
+                                <%if(banner.access){%>
+                                    <td> <button onclick="blocked('<%= banner._id %>')" class="btn btn-danger">Blocked</button></td>
+                                    <%}else{%> 
+                                      <td> <button onclick="blocked('<%= banner._id %>')" class="btn btn-success">UnBlocked</button></td>
+                                    <% } %>
+                                    </tr>
                     </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</section>
+                    <%}%>
+                  </table>
+                  
+                <!-- </div>
+              </div> -->
+    </main>
 <script>
-    function blocked(bannerId){
+    function blocked (bannerId){
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",

@@ -3,34 +3,25 @@
     <section>
     
       <div style="margin-top: 5rem;" class="col-md-4 ml-auto mr-auto  offset-xl-1 border  rounded  ">
-        <form action="/login" method="post">
+        <form action="" id="loginFormSubmission" method="post">
           <h4 class="my-4 text-center mt-5 ">Login</h4>
-          <% if(loginerr){%>
-            <small class="text-danger pt-5 pb-5">
-              <%=loginerr %>
-            </small>
-            <%}%>
+      
               <!-- Email input -->
               <div class="form-outline mb-4">
                 <label class="form-label" for="form1Example13">Email address</label>
-                <input type="email" id="form1Example13" name="Email" class="form-control form-control-lg" required />
+                <input type="email" id="email" name="email" class="form-control form-control-lg" required />
+                <p style="text-align: center;"class="text-danger"id="emailErr"></p>
               </div>
 
               <!-- Password input -->
               <div class="form-outline mb-4">
                 <label class="form-label" for="form1Example23">Password</label>
-                <input type="password" id="form1Example23" name="Password" class="form-control form-control-lg"
+                <input type="password" id="password" name="password" class="form-control form-control-lg"
                   required />
+                  <p style="text-align: center;"class="text-danger"id="passwordErr"></p>
               </div>
 
-              <div class="d-flex justify-content-around align-items-center mb-4">
-                <!-- Checkbox -->
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="form1Example3" />
-                  <label class="form-check-label" for="form1Example3"> Remember me </label>
-                </div>
-              </div>
-              <!-- Submit button -->
+              
               <button type="submit" class="btn btn-primary btn-lg btn-block">Log in</button>
 
               <p class="text-center text-muted mt-5 mb-0">Create New Account? <a href="/signup"
@@ -42,5 +33,29 @@
       </div>
     
     </section>
-
-    <%- include('./includes/footer.ejs') -%>
+    <script>
+$('#loginFormSubmission').submit((e) => {
+				e.preventDefault()
+        $.ajax({
+            url: '/login',
+            method: 'post',
+            data: $("#loginFormSubmission").serialize(),
+            success: (response) => {
+                if (response.loginStatus) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Login success',
+                        showConfirmButton: false,
+                        timer: 500
+                    })
+                    location.href = "/"
+                } else if (response.emailErr) {
+                    document.getElementById('emailErr').innerHTML = "This Email Don't Have Any Account"
+                } else if (response.passwordErr) {
+                    document.getElementById('passwordErr').innerHTML = "Wrong Password Try Another Password"
+                }
+            }
+        })
+    })
+    </script>
+		<%- include('./includes/footer.ejs') -%>

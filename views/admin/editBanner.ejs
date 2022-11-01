@@ -1,0 +1,21 @@
+<%- include('./includes/headers.ejs') -%>
+    <%- include('./includes/navbar.ejs') -%>
+    <div class=" container d-flex justify-content-center ">
+
+        <div class=" ml-5 col-md-6">
+            <h2 class="text-center mt-5">Edit Banner</h2>
+            <form action="/admin/editBanner/<%=banners._id%>" method="post" enctype="multipart/form-data">
+                <label for="">Title1</label>
+                <input type="text" name="name" class="form-control" value="<%=banners.title1 %>" required >
+                <label for="">Title2</label>
+                <input type="text" name="name1" class="form-control" value="<%=banners.title2 %>" required >
+                <label for="">Image</label>
+                <img src="/product-images/<%=banners.image[0]%>"alt=""style="width:100px;height:auto">
+                <input type="file" name="image" class="form-control" multiple required>
+
+                <button type="submit" class="btn btn-success mt-4">Submit</button>
+
+            </form>
+        </div>
+    </div>
+        <%- include('./includes/footers.ejs') -%>
