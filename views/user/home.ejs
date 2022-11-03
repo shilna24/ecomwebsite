@@ -121,7 +121,7 @@
 				</div>
 
 					<div class="flex-w flex-c-m m-tb-10">
-						<div
+						<!-- <div
 							class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
 							<i class="icon-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-filter-list"></i>
 							<i class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
@@ -133,7 +133,7 @@
 							<i class="icon-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-search"></i>
 							<i class="icon-close-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
 							Search
-						</div>
+						</div> -->
 					</div>
 
 					<!-- Search product -->
@@ -243,15 +243,15 @@
 						</div> 
 					</div>
 				</div>
-
+       
 				<div id="getCategory" class="row isotope-grid">
 					<% for(p of products) {%>
 						<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
 							<!-- Block2 -->
 							<div class="block2">
 								<div class="block2-pic hov-img0">
-									<img href="/productDetails/<%=p._id%>" src="/product-images/<%=p.image[0]%>"
-										alt="IMG-PRODUCT" style="height: 25rem;width: 20rem;">
+									<a href="/productDetails/<%=p._id%>"><img src="/product-images/<%=p.image[0]%>"
+										alt="IMG-PRODUCT" style="height: 25rem;width: 20rem;"></a>
 
 										<a href="/productDetails/<%=p._id%>" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
 											Quick View
@@ -285,8 +285,24 @@
 						<% } %>
 
 				</div>
-				
+				<div class="col-lg-12 d-flex justify-content-center">
+					<nav aria-label="Page navigation example">
+						<ul class="pagination">
+							<li class="page-item"><a class="page-link active" href="#"> < </a></li>
+							<% for(i = 1;i <= pages;i++){ %>
+								<% if(i == currentPage) { %>
+						  <li class="page-item"><a class="page-link active" href="/?page=<%= i %>"><%= i %></a></li>
+						  <% } else {%>
+							<li class="page-item"><a class="page-link" href="/?page=<%= i %>"><%= i %></a></li>
+						  <% } %>
+						  <% } %>
+						<li class="page-item"><a class="page-link " href="#"> > </a></li>
 
+						</ul>
+					  </nav>
+	
+				</div>
+				
 		</section>
 		<script>
 			function getCategory(catId) {
@@ -306,8 +322,8 @@
 							<!-- Block2 -->
 							<div class="block2">
 								<div class="block2-pic hov-img0">
-									<img href="/productDetails/${element._id}" src="/product-images/${element.image[0]}%>"
-										alt="IMG-PRODUCT" style="height: 25rem;width: 20rem;">
+									<a href="/productDetails/${element._id}"><img src="/product-images/${element.image[0]}"
+                                alt="IMG-PRODUCT" style="height: 25rem;width: 20rem;"></a>
 
 										<a href="/productDetails/${element._id}" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
 											Quick View
@@ -346,8 +362,8 @@
 							<!-- Block2 -->
 							<div class="block2">
 								<div class="block2-pic hov-img0">
-									<img href="/productDetails/${element._id}" src="/product-images/${element.image[0]}%>"
-										alt="IMG-PRODUCT" style="height: 25rem;width: 20rem;">
+									<a href="/productDetails/${element._id}"><img src="/product-images/${element.image[0]}"
+                                alt="IMG-PRODUCT" style="height: 25rem;width: 20rem;"></a>
 
 										<a href="/productDetails/${element._id}" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
 											Quick View

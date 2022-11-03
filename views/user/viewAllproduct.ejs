@@ -157,9 +157,20 @@
                     <!-- Block2 -->
                     <div class="block2">
                         <div class="block2-pic hov-img0">
-                            <img href="/productDetails/<%=p._id%>" src="/product-images/<%=p.image[0]%>"
-                                alt="IMG-PRODUCT" style="height: 25rem;width: 20rem;">
+                            <a href="/productDetails/<%=p._id%>"><img src="/product-images/<%=p.image[0]%>"
+                                alt="IMG-PRODUCT" style="height: 25rem;width: 20rem;"></a>
 
+                                
+                                    <%if(p.quantity>0){%>
+                                        <div
+                                            class=" rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3 specclr">
+                                            </div>
+                                        <%}else{%>
+                                            <div
+                                                class=" rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3 bg-danger">
+                                                Out of stock</div>
+                                            <%}%>
+                            
                                 <a href="/productDetails/<%=p._id%>" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
                                     Quick View
                                 </a>
@@ -196,8 +207,7 @@
         </div>
 </section>
 <script>
-    function getCategory1(catId) {
-        console.log("hi");
+    function getCategory1(catId) {    
 let Category1 = document.getElementById('getCategory1')
 let html=null
 console.log(Category1);
@@ -213,9 +223,9 @@ $.ajax({
                     <!-- Block2 -->
                     <div class="block2">
                         <div class="block2-pic hov-img0">
-                            <img href="/productDetails/${element1._id}" src="/product-images/${element1.image[0]}%>"
-                                alt="IMG-PRODUCT" style="height: 25rem;width: 20rem;">
-
+                            
+                                <a href="/productDetails/${element1._id}"><img src="/product-images/${element1.image[0]}"
+                                alt="IMG-PRODUCT" style="height: 25rem;width: 20rem;"></a>
                                 <a href="/productDetails/${element1._id}" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
                                     Quick View
                                 </a>
@@ -253,9 +263,8 @@ $.ajax({
                     <!-- Block2 -->
                     <div class="block2">
                         <div class="block2-pic hov-img0">
-                            <img href="/productDetails/${element1._id}" src="/product-images/${element1.image[0]}%>"
-                                alt="IMG-PRODUCT" style="height: 25rem;width: 20rem;">
-
+                            <a href="/productDetails/${element1._id}"><img src="/product-images/${element1.image[0]}"
+                                alt="IMG-PRODUCT" style="height: 25rem;width: 20rem;"></a>
                                 <a href="/productDetails/${element1._id}" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
                                     Quick View
                                 </a>

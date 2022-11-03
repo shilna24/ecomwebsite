@@ -14,8 +14,8 @@
     <div style="margin-top: 5rem;" class="  col-md-4  offset-xl-1 p-4 border  rounded  align-items-center">
       <form action="/admin/adminLogin" method="post" >
         <h4 class="my-4 text-center mt-5 ">Admin Login</h4>
-        <% if(adminLoggErr){%>
-          <small class="text-danger pt-5 pb-5"><%=adminLoggErr %></small>
+        <% if(adminErr.length>0){%>
+          <small class="text-danger pt-5 pb-5"><%=adminErr %></small>
           <%}%>
         <!-- Email input -->
         <div class="form-outline mb-4">
@@ -31,16 +31,10 @@
 
         <div class="d-flex justify-content-around align-items-center mb-4">
           <!-- Checkbox -->
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="form1Example3" />
-            <label class="form-check-label" for="form1Example3"> Remember me </label>
-          </div>
+          
         </div>
         
-         
-        
-
-        <!-- Submit button -->
+         <!-- Submit button -->
         <div class="d-flex justify-content-center"><button type="submit" class="btn btn-primary btn-lg btn-block">Login</button></div>
         
 

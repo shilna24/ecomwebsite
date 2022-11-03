@@ -2,40 +2,40 @@ let express=require('express')
 let router=express.Router()
 const adminController=require('../controllers/adminControlers')
 const store = require('../middleware/multer')
-
+const sessionAdmin=require('../middleware/adminSessionChecking')
 
 
 
 /*-----------admin login-----------*/
-router.get('/',adminController.getlogin)
+router.get('/',sessionAdmin,adminController.getlogin)
 
 /*-----------admin postlogin-------*/
 router.post('/adminLogin',adminController.postlogin)
 
 /*-----------admin dashboard--------*/
-router.get('/adminDashboard',adminController.getDashboard)
+router.get('/adminDashboard',sessionAdmin,adminController.getDashboard)
 
 
 
 /*---------admin view category---------*/
 router.route('/adminCategory')
-.get(adminController.getviewCategory)
+.get(sessionAdmin,adminController.getviewCategory)
 .post(adminController.postviewCategory)
 
 /*---------admin categoryWiseView-------*/
-router.get('/categoryProduct/:category',adminController.viewCategoryWise)
+router.get('/categoryProduct/:category',sessionAdmin,adminController.viewCategoryWise)
 
 /*---------admin addproduct---------*/
 router.route('/addProduct')
-.get(adminController.getproduct)
+.get(sessionAdmin,adminController.getproduct)
 .post(store.array("image",3),adminController.postproduct)
 
 /*---------admin viewproduct--------*/
-router.get('/viewProduct',adminController.getviewproductlist)
+router.get('/viewProduct',sessionAdmin,adminController.getviewproductlist)
 
 /*---------admin editproduct----------*/
 router.route('/editProduct/:id')
-.get(adminController.editproduct)
+.get(sessionAdmin,adminController.editproduct)
 .post(store.array("image",3),adminController.posteditproduct)
 
 
@@ -51,19 +51,32 @@ router.route('/addBanner')
 .post(store.array("image",3),adminController.postBanner)
 
 router.route('/editBanner/:id')
-.get(adminController.editbanner)
+.get(sessionAdmin,adminController.editbanner)
 .post(store.array("image",3),adminController.posteditbanner)
 
 /*---------admin removebanner-------*/
 router.post('/blockBanner/:id',store.array("image",3),adminController.removeBanner)
+
+
 /*---------admin coupon-------------*/
-router.route('/view-coupen').get(adminController.viewAllCoupens).post(adminController.addCoupen)
+router.route('/view-coupen').get(sessionAdmin,adminController.viewAllCoupens).post(adminController.addCoupen)
 router.route('/coupon-status/:couponId').post(adminController.couponStatusChange)
+
+
 /*---------view users----------------*/
-router.get('/viewUser',adminController.viewusers)
- /*--------block or unblock user----------------*/
- router.get('/userStage/:id',adminController.getStatus)
-/*---------admin logout------------*/
+router.get('/viewUser',sessionAdmin,adminController.viewusers)
+
+/*---------view orders-------------------------*/
+router.route('/view-orders').get(sessionAdmin,adminController.getAllOrders)
+
+router.route('/cancel-order/:orderId').post(adminController.cancelOrder)
+
+router.route('/status-order/:orderId/:status').post(adminController.orderStatusChange)
+
+/*--------block or unblock user----------------*/
+ router.get('/userStage/:id',sessionAdmin,adminController.getStatus)
+
+ /*---------admin logout------------*/
 router.get('/logout',adminController.adminlogout)
 
 module.exports=router

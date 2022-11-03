@@ -1,0 +1,136 @@
+<%- include('./includes/headers.ejs') -%>
+    <%- include('./includes/navbar.ejs') -%>
+    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+      <nav class="navbar navbar-expand-lg   mt-3 border rounded-3" style="background-color:#B7B1B1 ;">
+          <a class="navbar-brand text-dark" href="#">All Orders</a>
+        </nav>
+     
+      <!-- <div class="px-lg-5 "> -->
+      <div class=" "  id="cartfill">
+     
+          <div class="jumbotron shadow m-1 bg-white rounded p-4">
+           
+            <table id="admin" class="table  table-bordered table-hover p-4 .table-responsive" style="width:100%"  >     
+              <thead>
+                <tr>
+                  <th>orderId</th>
+                  <!-- <th>User</th>
+                  <th>Address</th> -->
+                  <th>no of products</th>
+                  <th>Total Price</th>
+                  <th>Order Date</th>
+                  <th>Payment</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                 
+                  <%allOrders.forEach(order => { %> 
+                <tr id="order " class="text-center">         
+                    <td><a href="/admin/view-orders" class="link-dark">#<%=order._id%></a></td>
+                  <td><%=order.products.length%> </td>
+                  
+      
+                  <td><%=order.total%>  </td>
+                  <td><%=order.createdAt.toDateString() %> </td>
+                  <% if(order.paymentType == "cod" ){%>
+                      <td><span class="badge" style="background-color:rgb(177, 39, 85) ;">COD</span></td>
+                      <%}else{%>
+                          <td><span class="badge bg-success">Online</span></td>
+                          <% } %>
+                          <% if(order.orderActive){ %>
+                          <td><span class="badge order-status" style="background-color:rgb(4, 4, 4) ;" id="status-"> <%=order.status %></span></td>
+                        
+                          <td id="action" class="text-center" >
+                              <% if(order.status==="pending"){%>
+                              <div class="btn-group" role="group" aria-label="Basic example">
+                                <button class="btn btn-sm btn-outline-dark" onclick="changeOrderStatus('<%= order._id %>','<%=order.status %>')"><i class="fa-solid fa-boxes-packing"></i> Pack</button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="cancelOrder('<%= order._id %>')"><i class="fa-solid fa-ban"></i> Cancel</button>
+                              </div>
+                              <% }else if(order.status==="Packed"){ %>
+                              <button class="btn-outline-danger" onclick="changeOrderStatus('<%= order._id %>','<%=order.status %>')"><i class="fa-solid fa-truck-fast"></i> Ship Order</button>
+                              <% }else if(order.status==="Shipped"){ %>
+                              <button class="btn btn-sm btn-outline-dark" onclick="changeOrderStatus('<%= order._id %>','<%=order.status %>')"><i class="fa-solid fa-house-chimney"></i> Out For Delivery</button>
+                              <% }else if(order.status==="Out For Delivery"){ %>
+                              <button class="btn btn-sm btn-outline-dark" onclick="changeOrderStatus('<%= order._id %>','<%=order.status %>')"><i class="fa-solid fa-thumbs-up"></i> Deliver Product</button>
+                              <% }else if(order.status==="Delivered"){%>
+                                  <button class="btn btn-outline-dark" disabled><i class="fa-solid fa-thumbs-up"></i>Delivered</button>
+                              <% } %>
+                         
+                            </td>
+                            <%}else{%>
+                              <td><span class="badge order-status" style="background-color:rgb(204, 6, 6) ;" id="status-">Canceled</span></td>
+                              <% } %>
+                </tr>
+               
+                <% }) %> 
+              </tbody>
+            </table>
+          </div>
+        </div>
+     
+  </main>
+  
+  <script>
+      function cancelOrder(orderId) {
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#013542',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, ok it!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            $.ajax({
+              url: '/admin/cancel-order/' + orderId,
+              method: 'post',
+              success: (response) => {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Your order cancelled',
+                  showConfirmButton: false,
+                  timer: 1500
+                })
+                // location.reload()
+                $('#cartfill').load(location.href + " #cartfill")
+              }
+            })
+          }
+        })
+      }
+    </script>
+  
+  <script>
+      function changeOrderStatus(orderId,status) {
+        Swal.fire({
+          title: 'Are you sure?',
+          text: `Change status from ${status}`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#013542',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, Change it!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            $.ajax({
+              url: '/admin/status-order/' + orderId+'/'+status,
+              method: 'post',
+              success: (response) => {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Order Status Changed',
+                  showConfirmButton: false,
+                  timer: 1500
+                })
+                // location.reload()
+                $('#cartfill').load(location.href + " #cartfill")
+              }
+            })
+          }
+        })
+      }
+    </script>
+    <%- include('./includes/footers.ejs') -%>

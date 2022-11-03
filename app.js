@@ -3,6 +3,7 @@ const express=require('express')
 const app=express();
 let ejs=require('ejs');
 const path = require('path');
+const flash = require('connect-flash');
 let cookieParser = require('cookie-parser')
 let session=require('express-session')
 // let fileUpload = require('express-fileupload');
@@ -14,12 +15,9 @@ let logger = require('morgan');
 let userRouter = require('./routes/user');
 let adminRouter = require('./routes/admin');
 const Swal =require('sweetalert2')
-
-
-
-
 // app.use(logger('dev'));
 app.use(nocache());
+app.use(flash());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

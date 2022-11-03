@@ -1,0 +1,30 @@
+<%- include('./includes/header.ejs') -%>
+    <%- include('./includes/nav.ejs') -%>
+        <div class=" container d-flex justify-content-center mt-5 ">
+
+            <div class=" ml-5 col-md-6 mt-5">
+                <h2 class="text-center ">Edit Profile</h2>
+                <form action="/editProfile/<%=users._id%>" method="post">
+                    <label for="">Name</label>
+                    <input type="text" name="Name" class="form-control" value="<%=users.Name %>" required >
+                    
+                    
+                    <label for="">Email</label>
+                    <input type="email" name="Email" class="form-control"value="<%= users.Email %>" required>
+                    
+                    <label for="">Phone</label>
+                    <input type="Number" name="Phone" class="form-control" value="<%=users.Phone %>"required>
+                        
+
+                    
+<div class="d-flex justify-content-center">
+    <button type="submit" class="btn btn-success mt-4">Submit</button>
+</div>
+                    
+
+                </form>
+            </div>
+        </div>
+    
+
+        <%- include('./includes/footer.ejs') -%>

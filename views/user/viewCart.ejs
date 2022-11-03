@@ -1,5 +1,5 @@
 <%- include('./includes/header.ejs') %>
-    <%- include('./includes/nav.ejs') %>
+<%- include('./includes/nav.ejs') %>
 <% if(cartProducts){ %>
     <% if(cartProducts.Products.length>0){ %>
         <!-- Shoping Cart -->
@@ -48,7 +48,7 @@
                                             <td class="column-5">
                                                 ₹ <%=p.price*p.quantity %>
                                             </td>
-                                            <td width="10%" class="text-center text-danger"><a 
+                                            <td  class="text-center text-danger"><a 
                                                 onclick="deleteItemFromCart('<%=p._id %>')"
                                                 class="trash-icon"><i class="far fa-trash-alt"></i></a></td>
                                             
@@ -192,4 +192,4 @@
             </span>
         </div>
         <%-include('./includes/final.ejs') -%>
-                                        <%- include('./includes/footer.ejs') -%>
+        <%- include('./includes/footer.ejs') -%>

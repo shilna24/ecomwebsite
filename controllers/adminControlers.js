@@ -3,28 +3,27 @@ const Product = require('../models/productSchema')
 const User = require('../models/user')
 const Category = require('../models/categorySchema')
 const Banner = require('../models/bannerSchema')
+const Order = require('../models/orderShema')
 const Cart = require('../models/cartSchema')
-const couponModel=require('../models/couponSchema')
+const couponModel = require('../models/couponSchema')
 const bcrypt = require("bcrypt");
 const session = require('express-session');
 const db = require('../config/connection');
-const Multer = require('../middleware/multer');
+const Multer = require('../middleware/multer')
+// const session = require('express-session')
 
-let adminLoggErr = null;
 let catLogErr = null;
-// const session = require('express-session');
 module.exports = {
 
   /*--------admin login-----------*/
   getlogin: (req, res) => {
-
-    if (req.session.adminloggedin) {
-      res.render('admin/index');
-    }
-    else {
-      res.render('admin/adminLogin', { adminLoggErr })
-      adminLoggErr = null
-    }
+try{
+  res.render('admin/index');
+}
+ catch(error){
+  console.log(error);
+ }     
+  
   },
 
   /*----------admin postlogin---------*/
@@ -45,13 +44,13 @@ module.exports = {
           req.session.adminData = data
           res.redirect('/admin')
         } else {
-          adminLoggErr = 'Incorrect password'
+          req.flash('adminErr', 'Please Enter correct Password !');
           res.redirect('/admin/')
 
         }
 
       } else {
-        adminLoggErr = 'Not exist'
+        req.flash('adminErr', 'Please Enter valid email address !');
         res.redirect('/admin/')
 
       }
@@ -60,23 +59,24 @@ module.exports = {
   },
   /*-----------admin dashboard-------------*/
   getDashboard: (req, res) => {
-    if (req.session.adminloggedin) {
-      res.render('admin/adminDashboard')
-    } else {
-      res.redirect('/admin/')
-    }
-
+  try{
+    res.render('admin/adminDashboard')
+  }
+   catch(error)
+   {
+    console.log(error);
+   }   
   },
   /*------------view category list------------*/
-  getviewCategory: (req, res, next) => {
-    if (req.session.adminloggedin) {
+  getviewCategory: (req, res) => {
+    try {
       Category.find().then(categories => {
-        res.render('admin/adminCategory', { categories, catLogErr, })
-        catLogErr = null
+        res.render('admin/adminCategory', { categories })
+      
       })
     }
-    else {
-      res.redirect('/admin')
+    catch (error) {
+      console.log(error);
     }
 
   },
@@ -96,12 +96,12 @@ module.exports = {
         res.redirect('/admin/adminCategory')
       })
         .catch(err => {
-          console.log('error')
+          console.log(error)
         })
     }
     else {
       console.log('Already exist');
-      catLogErr = "This category already exists"
+      // req.flash('catLogErr', 'This Category already exist')
       res.redirect('/admin/adminCategory');
 
     }
@@ -122,8 +122,8 @@ module.exports = {
         res.redirect('/admin/adminCategory')
       }
       else {
-        catLogErr = "Can't delete category contains product"
-        res.redirect('/admin/adminCategory')
+        // req.flash('catLogErr', 'This category contains Products')
+      res.redirect('/admin/adminCategory');
       }
       // catLogErr = null
     })
@@ -133,39 +133,37 @@ module.exports = {
 
   /*------------admin categoryWiseView--------*/
   viewCategoryWise: (req, res) => {
-    if (req.session.adminloggedin) {
+    try {
       let catName = req.params.category
-      
       Category.find().then((categories) => {
-      Product.find({ category: catName }).then((products) => {
-        res.render('admin/addProduct', { products,categories })
+        Product.find({ category: catName }).then((products) => {
+          res.render('admin/addProduct', { products, categories })
+        })
       })
-    })
-    } else {
-      res.redirect('/admin/')
     }
-
+    catch (error) {
+      console.log('error');
+    }
   },
 
   /*----------admin viewproduct----------*/
   getproduct: (req, res, next) => {
-    if (req.session.adminloggedin) {
+    try {
       Product.find().then(products => {
         console.log(products)
-        
-      Category.find().then((categories) => {
-        res.render('admin/addProduct', { categories ,products})
-      })
+
+        Category.find().then((categories) => {
+          res.render('admin/addProduct', { categories, products })
+        })
       })
     }
-    else {
-      res.redirect('/admin/')
+    catch (error) {
+      console.log('error');
     }
   },
 
   /*---------admin postproduct------------*/
   postproduct: (req, res) => {
-
     console.log(req.body);
     const { name, price, description, category, checkbox, quantity, image } = req.body
     console.log(req.body.checkbox);
@@ -190,26 +188,26 @@ module.exports = {
   },
   /*-----------view product list-------------*/
   getviewproductlist: (req, res, next) => {
-    if (req.session.adminloggedin) {
+    try {
       Product.find().then(products => {
         console.log(products)
         res.render('admin/viewProduct', { products })
       })
     }
-    else {
-      res.redirect('/admin/')
+    catch (error) {
+      console.log(error);
     }
   },
   /*---------------------------------------------*/
   viewusers: (req, res, next) => {
-    if (req.session.adminloggedin) {
+    try {
       User.find().then(users => {
         console.log(users)
         res.render('admin/viewUser', { users })
       })
     }
-    else {
-      res.redirect('/admin/')
+    catch (error) {
+      console.log(error);
     }
   },
   /*----------------------------------------------------------------------------------*/
@@ -264,7 +262,7 @@ module.exports = {
 
   /*---------admin editproduct---------*/
   editproduct: async (req, res, next) => {
-    if (req.session.adminloggedin) {
+    try {
       Category.find().then(async (categories) => {
         console.log(categories);
         await Product.findById(req.params.id).then(products => {
@@ -272,52 +270,52 @@ module.exports = {
         })
       })
 
-    } else {
-      res.redirect('/admin/')
+    } catch (error) {
+      console.log(error);
     }
-
   },
   /*--------------------------------------------------------------------*/
   posteditproduct: async (req, res) => {
     const prodId = req.params.id
-    const files = req.files
     let Images = []
-    if (files) {
-      console.log(req.files.length)
-      console.log(req.files)
+    if (req.files.length !== 0) {
+
       for (i = 0; i < req.files.length; i++) {
-        Images[i] = files[i].filename
+        Images[i] = req.files[i].filename
       }
-      req.body.image = Images
       await Product.updateOne({ _id: prodId }, {
-        name: req.body.name,
-        price: req.body.price,
-        description: req.body.description,
-        quantity: req.body.quantity,
-        category: req.body.category,
-        size: req.body.checkbox,
         image: Images
       })
-      res.redirect('/admin/addProduct')
 
     }
+    await Product.updateOne({ _id: prodId }, {
+      name: req.body.name,
+      price: req.body.price,
+      description: req.body.description,
+      quantity: req.body.quantity,
+      category: req.body.category,
+      size: req.body.checkbox,
+
+    })
+    res.redirect('/admin/addProduct')
+
   },
 
   /*---------------banner management---------------------*/
-  getBanner:(req, res) => {
-    if (req.session.adminloggedin) {
-    Banner.find().then((banners) => {
+  getBanner: (req, res) => {
+    try {
+      Banner.find().then((banners) => {
         res.render('admin/addBanner', { banners })
       })
     }
-    else {
-      res.redirect('/admin/')
+    catch(error){
+      console.log(error);
     }
 
   },
-  postBanner: async(req, res) => {
+  postBanner: async (req, res) => {
     console.log(req.body);
-    const { name, name1,image } = req.body
+    const { name, name1, image } = req.body
     const files = req.files
     if (files) {
       let Images = []
@@ -326,8 +324,8 @@ module.exports = {
       for (i = 0; i < req.files.length; i++) {
         Images[i] = files[i].filename
       }
-      const banner = new Banner({ title1: name,title2:name1, image: Images, access: true })
-       await banner.save().then((result) => {
+      const banner = new Banner({ title1: name, title2: name1, image: Images, access: true })
+      await banner.save().then((result) => {
         console.log(result);
         res.redirect('/admin/addBanner')
       })
@@ -338,19 +336,19 @@ module.exports = {
   },
 
   /*---------remove banner------------*/
-  removeBanner: async(req, res, next) => {
+  removeBanner: async (req, res, next) => {
     let bannerId = req.params.id
-  try {
-      let banner=await Banner.findOne({_id:bannerId})
+    try {
+      let banner = await Banner.findOne({ _id: bannerId })
       // console.log(coupon);
-      if(banner.access){
-          Banner.updateOne({_id:bannerId},{$set:{access:false}}).then(async()=>{
-              res.json({status:true})
-          })
-      }else{
-          Banner.updateOne({_id:bannerId},{$set:{access:true}}).then(async()=>{
-              res.json({status:true})
-          })
+      if (banner.access) {
+        Banner.updateOne({ _id: bannerId }, { $set: { access: false } }).then(async () => {
+          res.json({ status: true })
+        })
+      } else {
+        Banner.updateOne({ _id: bannerId }, { $set: { access: true } }).then(async () => {
+          res.json({ status: true })
+        })
       }
     } catch (err) {
       console.log(err);
@@ -358,13 +356,14 @@ module.exports = {
     }
   },
 
-  editbanner:(req, res, next) => {
-    if (req.session.adminloggedin) {
+  editbanner: (req, res, next) => {
+    try{
       Banner.findById(req.params.id).then(banners => {
-          res.render('admin/editBanner', { banners })
-        })
-    } else {
-      res.redirect('/admin/')
+        res.render('admin/editBanner', { banners })
+      })
+    }
+    catch(error) {
+      console.log(error);
     }
 
   },
@@ -390,57 +389,114 @@ module.exports = {
     }
   },
   /*-------------coupon management---------------*/
-  viewAllCoupens:async(req,res)=>{
+  viewAllCoupens: async (req, res) => {
     try {
-        const coupon = await couponModel.find()
-        res.render('admin/view-coupens',{coupon})
-        } catch (error) {
-        console.log(error);
-  
-      }
- 
-},
-addCoupen:async (req,res)=>{
-  console.log(req.body);
-  const { name, couponCode, discount, maxLimit, minPurchase, expDate } = req.body
-  try {
-    await couponModel.create({
-      name: name.toUpperCase(),
-      couponCode: couponCode.toUpperCase(),
-      discount,
-      maxLimit,
-      minPurchase,
-      expDate
-    })
-    res.redirect('back')
+      const coupon = await couponModel.find()
+      res.render('admin/view-coupens', { coupon })
+    }
+    catch (error) {
+      console.log(error);
 
-  } catch (error) {
-    console.log(error);
+    }
 
-  }
-},
-couponStatusChange:async(req,res)=>{
-  console.log(req.params.couponId);
-  let couponId = req.params.couponId
-  try {
-      let coupon=await couponModel.findOne({_id:couponId})
-      // console.log(coupon);
-      if(coupon.isActive){
-          couponModel.updateOne({_id:couponId},{$set:{isActive:false}}).then(async()=>{
-              res.json({status:true})
-          })
-      }else{
-          couponModel.updateOne({_id:couponId},{$set:{isActive:true}}).then(async()=>{
-              res.json({status:true})
-          })
+  },
+  addCoupen: async (req, res) => {
+    console.log(req.body);
+    const { name, couponCode, discount, maxLimit, minPurchase, expDate } = req.body
+    try {
+      await couponModel.create({
+        name: name.toUpperCase(),
+        couponCode: couponCode.toUpperCase(),
+        discount,
+        maxLimit,
+        minPurchase,
+        expDate
+      })
+      res.redirect('back')
+
+    } catch (error) {
+      console.log(error);
+
+    }
+  },
+  couponStatusChange: async (req, res) => {
+    console.log(req.params.couponId);
+    let couponId = req.params.couponId
+    try {
+      let coupon = await couponModel.findOne({ _id: couponId })
+      if (coupon.isActive) {
+        couponModel.updateOne({ _id: couponId }, { $set: { isActive: false } }).then(async () => {
+          res.json({ status: true })
+        })
+      } else {
+        couponModel.updateOne({ _id: couponId }, { $set: { isActive: true } }).then(async () => {
+          res.json({ status: true })
+        })
       }
     } catch (err) {
       console.log(err);
-      // res.redirect('back')
+      
     }
-},
+  },
 
+  /*----------admin orders--------------*/
+  getAllOrders: async (req, res) => {
+    try
+    {
+      const allOrders = await Order.find({}).populate([
+        {
+          path: "userId",
+          model: "user"
+        },
+        {
+          path: "products.productId",
+          model: "products"
+        }
+      ]).exec()
+      console.log(allOrders);
+      res.render('admin/view-orders', { allOrders })
+    }
+    catch(error)
+    {
+      console.log(error);
+    }
+    
+  },
 
+  cancelOrder: async (req, res) => {
+    let orderId = req.params.orderId
+    await Order.findByIdAndUpdate(orderId, {
+      orderActive: false
+    })
+    res.json({ status: true })
+  },
+
+  orderStatusChange: async (req, res) => {
+    console.log(req.params.orderId);
+    console.log(req.params.status);
+    let orderId = req.params.orderId
+    let status = req.params.status
+    if (status === "pending") {
+
+      await Order.findByIdAndUpdate(orderId, {
+        status: "Packed"
+      })
+    } else if (status === "Packed") {
+      await Order.findByIdAndUpdate(orderId, {
+        status: "Shipped"
+      })
+    } else if (status === "Shipped") {
+      await Order.findByIdAndUpdate(orderId, {
+        status: "Out For Delivery"
+      })
+    } else if (status === "Out For Delivery") {
+      await Order.findByIdAndUpdate(orderId, {
+        status: "Delivered"
+      })
+    }
+    res.json({ status: true })
+
+  },
 
   /*---------admin logout-------------*/
   adminlogout: (req, res) => {

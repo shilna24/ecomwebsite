@@ -1963,7 +1963,7 @@ input::-webkit-inner-spin-button{
 [ Table Shopping Cart ]*/
 
 .wrap-table-shopping-cart {
-  overflow: auto;
+  overflow: hidden;
   border-left: 1px solid #e6e6e6;
   border-right: 1px solid #e6e6e6;
 }
@@ -2198,11 +2198,11 @@ input::-webkit-inner-spin-button{
 }
 
 .cl3 {
-  color: #666;
+  color: rgb(12, 10, 10);
 }
 
 .cl4 {
-  color: #999;
+  color: rgb(8, 8, 8);
 }
 
 .cl5 {

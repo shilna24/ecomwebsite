@@ -17,8 +17,11 @@ router.route('/signup')
     .post(userController.postsignup)
 
 /*--------user update profile--------*/
-router.get('/updateProfile', userController.getProfile)
-router.post('/updateProfile/:id', userController.postProfile)
+router.route('/my-profile').get(userController.getMyProfile)
+// router.post('/updateProfile/:id', userController.postProfile)
+
+router.get('/editProfile', userController.getProfile)
+router.post('/editProfile/:id', userController.postProfile)
 
 /*--------user get one product details----------*/
 router.get('/productDetails/:id', userController.getProductView)
@@ -69,7 +72,14 @@ router.route('/payment/orderId').post(userController.generateOrder)
 
 router.route('/payment/verify/:orderId').post(userController.verifyPayment)
 
-router.route('/addAddress').post(userController.addAddress)
+router.route('/addAddress').post(userController.addAndEditAddress)
+router.route('/delete-address/:addresIndex').delete(userController.deleteAddress)
+
+router.route('/cancel-order/:orderId').post(userController.cancelOrder)
+
+
+// router.route('/notify-product').post(userController.addNotifyProduct)
+
 
 /*--------getting about page-------*/
 router.get('/contactUs',userController.getContact)
@@ -77,6 +87,9 @@ router.get('/contactUs',userController.getContact)
 /*--------user logout-----------*/
 router.get('/logout', userController.getlogout)
 
+// router.get('*',(req,res)=>{
+//     res.render('user/error')
+// })
 
 
 
