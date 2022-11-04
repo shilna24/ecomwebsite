@@ -16,9 +16,68 @@ let catLogErr = null;
 module.exports = {
 
   /*--------admin login-----------*/
-  getlogin: (req, res) => {
+  getlogin: async(req, res) => {
 try{
-  res.render('admin/index');
+  let totalSales=await Order.aggregate([
+  {
+      $match:{
+          orderActive:true
+      }
+  },
+  {
+      $group:{
+          _id:null,
+          totalSale:{$sum:"$total"}
+      }
+  }
+])
+let totalSale=totalSales[0].totalSale
+let totalUsers=await User.find({}).count()
+//cashtotal cod&delivered , online&not canceled
+let totalCash=await Order.aggregate([
+  {
+      $match:{
+          $or:[{
+              $and:[{status:"Delivered"},{paymentType:"cod"}]},{
+                  $and:[{paymentType:"Online Payment"},{orderActive:true}]
+              }]
+          }
+      },
+      {
+          $group:{
+              _id:null,
+              totalCash:{$sum:"$total"}
+          }
+      }
+  ])
+//total orders not canceled and not delivered
+let totalOrderCount=await Order.aggregate([
+{
+  $match:{
+      $and:[{orderActive:true},{status:{$ne:"Delivered"}}]
+  }
+},
+{
+  $count:"total"
+}
+])
+let orderCount=totalOrderCount[0].total
+let totalMoney=totalCash[0].totalCash
+
+const allOrders = await Order.find().populate([
+{
+  path: "userId",
+  model: "user"
+},
+{
+  path: "products.productId",
+  model: "products"
+}
+]).exec()
+
+
+
+  res.render('admin/adminDashboard',{totalSale,totalUsers,totalMoney,orderCount,allOrders});
 }
  catch(error){
   console.log(error);
@@ -60,7 +119,7 @@ try{
   /*-----------admin dashboard-------------*/
   getDashboard: (req, res) => {
   try{
-    res.render('admin/adminDashboard')
+    res.render('admin/adminDashboard',{totalSale,totalUsers,totalMoney,orderCount,allOrders})
   }
    catch(error)
    {
@@ -71,7 +130,7 @@ try{
   getviewCategory: (req, res) => {
     try {
       Category.find().then(categories => {
-        res.render('admin/adminCategory', { categories })
+        res.render('admin/adminCategory', { categories ,catLogErr:req.flash('catLogErr')})
       
       })
     }
@@ -95,13 +154,13 @@ try{
         console.log(result);
         res.redirect('/admin/adminCategory')
       })
-        .catch(err => {
+        .catch(error => {
           console.log(error)
         })
     }
     else {
       console.log('Already exist');
-      // req.flash('catLogErr', 'This Category already exist')
+      req.flash('catLogErr', 'This Category already exist')
       res.redirect('/admin/adminCategory');
 
     }
@@ -122,10 +181,10 @@ try{
         res.redirect('/admin/adminCategory')
       }
       else {
-        // req.flash('catLogErr', 'This category contains Products')
+        req.flash('catLogErr', 'This category contains Products')
       res.redirect('/admin/adminCategory');
       }
-      // catLogErr = null
+      
     })
 
   },

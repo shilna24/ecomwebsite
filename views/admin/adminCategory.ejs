@@ -13,7 +13,12 @@
             <div class=" p-md-2 text-center mt-2    ">
                 <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
                     data-bs-target="#exampleModal" data-bs-whatever="@mdo">Add Category</button>
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    <div class="mt-1">
+                        <% if(catLogErr.length>0){%>
+                            <small class="text-danger pt-5 pb-5"><%=catLogErr %></small>
+                            <%}%>
+                    </div>
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -33,11 +38,7 @@
                                     data-bs-dismiss="modal">Close</button>
                                 <button type="submit" class="btn btn-primary">Submit</button>
                                 <p class="text-danger">
-                                    <% if(catLogErr){%>
-            
-                                        <%=catLogErr%>
-            
-                                            <%}%>
+                                
                                 </p>
                                 </form>
                             </div>

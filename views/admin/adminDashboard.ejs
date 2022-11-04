@@ -1,7 +1,7 @@
 <%- include('./includes/headers.ejs') -%>
 <%- include('./includes/navbar.ejs') -%>
 
-            
+<!--             
 
               <div class="container-xxl flex-grow-1 container-p-y">
                 <div class="row">
@@ -83,8 +83,8 @@
                       </div>
                     </div>
                   </div>
-                  <!-- Total Revenue -->
-                  <div class="col-12 col-lg-8 order-2 order-md-3 order-lg-2 mb-4">
+                  <!- Total Revenue -->
+                  <!-- <div class="col-12 col-lg-8 order-2 order-md-3 order-lg-2 mb-4">
                     <div class="card">
                       <div class="row row-bordered g-0">
                         <div class="col-md-8">
@@ -135,9 +135,9 @@
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> -->
                   <!--/ Total Revenue -->
-                  <div class="col-12 col-md-8 col-lg-4 order-3 order-md-2">
+                  <!-- <div class="col-12 col-md-8 col-lg-4 order-3 order-md-2">
                     <div class="row">
                       <div class="col-6 mb-4">
                         <div class="card">
@@ -188,10 +188,10 @@
                             <small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> +28.14%</small>
                           </div>
                         </div>
-                      </div>
+                      </div> -->
                       <!-- </div>
     <div class="row"> -->
-                      <div class="col-12 mb-4">
+                      <!-- <div class="col-12 mb-4">
                         <div class="card">
                           <div class="card-body">
                             <div class="d-flex justify-content-between flex-sm-row flex-column gap-3">
@@ -214,9 +214,9 @@
                     </div>
                   </div>
                 </div>
-                <div class="row">
+                <div class="row"> -->
                   <!-- Order Statistics -->
-                  <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-4">
+                  <!-- <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-4">
                     <div class="card h-100">
                       <div class="card-header d-flex align-items-center justify-content-between pb-0">
                         <div class="card-title mb-0">
@@ -306,10 +306,10 @@
                       </div>
                     </div>
                   </div>
-                  <!--/ Order Statistics -->
+                  <!-/ Order Statistics -->
 
                   <!-- Expense Overview -->
-                  <div class="col-md-6 col-lg-4 order-1 mb-4">
+                  <!-- <div class="col-md-6 col-lg-4 order-1 mb-4">
                     <div class="card h-100">
                       <div class="card-header">
                         <ul class="nav nav-pills" role="tablist">
@@ -360,11 +360,11 @@
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div>  -->
                   <!--/ Expense Overview -->
 
                   <!-- Transactions -->
-                  <div class="col-md-6 col-lg-4 order-2 mb-4">
+                  <!-- <div class="col-md-6 col-lg-4 order-2 mb-4">
                     <div class="card h-100">
                       <div class="card-header d-flex align-items-center justify-content-between">
                         <h5 class="card-title m-0 me-2">Transactions</h5>
@@ -475,13 +475,148 @@
                         </ul>
                       </div>
                     </div>
-                  </div>
+                  </div> -->
                   <!--/ Transactions -->
-                </div>
+                <!-- </div>
+              </div> -->
+              <!-- / Content --> 
+              <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+                <nav class="navbar navbar-expand-lg   mt-3 border rounded-3" style="background-color:#B7B1B1 ;">
+                  <a class="navbar-brand text-dark" href="#">Dashboard</a>
+                </nav>
+              <div class="jumbotron shadow  bg-white rounded p-2 mt-4">
+                <h5 class="specclrText text-center">Sales Report</h5>
               </div>
-              <!-- / Content -->
+              <!-- datatable -->
+              <table class="table-responsive table " border="0" cellspacing="5" cellpadding="5">
+                <tbody><tr>
+                    <td>Minimum date:</td>
+                    <td><input type="text" id="min" name="min"></td>
+                </tr>
+                <tr>
+                    <td>Maximum date:</td>
+                    <td><input type="text" id="max" name="max"></td>
+                </tr>
+              </tbody></table>
+              <table id="salesData" class="display nowrap table-responsive table table-bordered" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>OrderId</th>
+                        <th>Delivery Address</th>
+                        <th>Payment</th>
+                        <th>Cost</th>
+                      
+                        <th>Bill Amout</th>
+                        <th>Profit</th>
+                        <th>Start date</th>
+                        <th>Order Status</th>
+                    </tr>
+                </thead>
+                <tbody class="table-border-bottom-0">
+                 <% allOrders.forEach((order)=>{%>
+                  <%if(order.orderActive){%>
+                    <tr >
+                        <td># <%=order._id%></td>
+                        <td>
+                          <div class="dropdown">
+                            <button class=" dropdown-toggle border-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <%=order.deliveryAddress.firstName%> <%=order.deliveryAddress.lastName%>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                              <p><%=order.deliveryAddress.address%><br>
+                                <%=order.deliveryAddress.district%> <%=order.deliveryAddress.state%><br>
+                                <%=order.deliveryAddress.pincode%>f<br>
+                                <%=order.deliveryAddress.phone%></p>
+                            </div>
+                          </div>
+                        
+                        </td>
+                        <td><%=order.paymentType.slice(0,6)%></td>
+                        <td>₹ <%=(order.total*110)/100%></td>
+                       
+                        <td>₹ <%=order.total%></td>
+                        <td>₹ <%=parseInt(((order.total*110)/100)-order.total)%></td>
+                        <td><%=order.createdAt.toJSON().slice(0, 10)%></td>
+                       
+                        <td><%=order.status%></td>
+                    </tr>
+                 <% }else{%>
+                    <tr class="text-danger">
+                      <td># <%=order._id%></td>
+                      <td>
+                        <div class="dropdown">
+                          <button class=" dropdown-toggle border-0 text-danger" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <%=order.deliveryAddress.firstName%> <%=order.deliveryAddress.lastName%>
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <p><%=order.deliveryAddress.address%><br>
+                              <%=order.deliveryAddress.district%> <%=order.deliveryAddress.state%><br>
+                              <%=order.deliveryAddress.pincode%>f<br>
+                              <%=order.deliveryAddress.phone%></p>
+                          </div>
+                        </div>
+                      
+                      </td>
+                      <td><%=order.paymentType.slice(0,6)%></td>
+                      <td>₹ <%=(order.total*110)/100%></td>
+                      <td>₹ <%=order.total%></td>
+                      <td>₹ <%=parseInt(((order.total*110)/100)-order.total)%></td>
+                      <td><%=order.createdAt.toJSON().slice(0, 10)%></td>       
+                      <td>Canceled</td>
+                  </tr>
+                 <% }%>
+                  <%})%>
+                    
+                </tbody>
+                
+              </table>
+            </main>
+          <!-- axios -->
 
+    <script>
+      var minDate, maxDate;
+ 
+ // Custom filtering function which will search data in column four between two values
+ $.fn.dataTable.ext.search.push(
+     function( settings, data, dataIndex ) {
+         var min = minDate.val();
+         var max = maxDate.val();
+         var date = new Date( data[6] );
+  
+         if (
+             ( min === null && max === null ) ||
+             ( min === null && date <= max ) ||
+             ( min <= date   && max === null ) ||
+             ( min <= date   && date <= max )
+         ) {
+             return true;
+         }
+         return false;
+     }
+ );
+  
+ $(document).ready(function() {
+     // Create date inputs
+     minDate = new DateTime($('#min'), {
+         format: 'MMMM Do YYYY'
+     });
+     maxDate = new DateTime($('#max'), {
+         format: 'MMMM Do YYYY'
+     });
+  
+     // DataTables initialisation
+     var table = $('#salesData').DataTable( {
+        dom: 'lBfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    } );;
+  
+     // Refilter the table
+     $('#min, #max').on('change', function () {
+         table.draw();
+     });
+ });
+    </script>
 
-              
-              
-              <%- include('./includes/footers.ejs') -%>
+<%- include('./includes/footers.ejs') -%>
