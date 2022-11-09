@@ -1,7 +1,6 @@
 function fillForm(oneAddress, index) {
     if (oneAddress === 0) {
-        console.log(index);
-        console.log('kkk');
+        
         document.getElementById('firstName').value = null
         document.getElementById('lastName').value = null
         document.getElementById('mobileNumber').value = null
@@ -36,29 +35,15 @@ document.forms["addressForm"].addEventListener("submit", async (event) => {
         method: 'post',
         data: data,
         success: (response) => {
-            console.log(response, 'll6666lll');
-            // Swal.fire({
-            //     icon: 'success',
-            //     title: 'okeyyy!..',
-            //     text: 'Successfully Order Placed',
-            //     showConfirmButton: false,
-            // })
-            // setTimeout(() => {
-            // $('#add-ress-reload').load(location.href + " #add-ress-reload")
+            
             if(response.status){
                 location.reload()
 
             }
-            // window.location = "/order-success"
-            // }, 1000)
+            
         }
     })
 })
-
-
-
-                l
-
 
 function deleteAdddress(addressIndex) {
     Swal.fire({

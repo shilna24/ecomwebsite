@@ -1,441 +1,371 @@
 <%- include('./includes/header.ejs') %>
-	<%- include('./includes/nav.ejs') %>
-		<style>
-			body {
-				/* background: -webkit-linear-gradient(left, #3931af, #00c6ff); */
-				/* background: -webkit-linear-gradient(left, #fff, #fff); */
-			}
+    <%- include('./includes/nav.ejs') %>
+        <style>
+            .emp-profile {
+                padding: 3%;
+                margin-top: 3%;
+                margin-bottom: 3%;
+                border-radius: 0.5rem;
+                background: #fff;
+            }
 
-			.emp-profile {
-				padding: 3%;
-				margin-top: 3%;
-				margin-bottom: 3%;
-				border-radius: 0.5rem;
-				background: #fff;
-			}
+            .profile-img {
+                text-align: center;
+            }
 
-			.profile-img {
-				text-align: center;
-			}
+            .profile-img img {
+                width: 70%;
+                height: 100%;
+            }
 
-			.profile-img img {
-				width: 70%;
-				height: 100%;
-			}
+            .profile-img .file {
+                position: relative;
+                overflow: hidden;
+                margin-top: -20%;
+                width: 70%;
+                border: none;
+                border-radius: 0;
+                font-size: 15px;
+                background: #212529b8;
+            }
 
-			.profile-img .file {
-				position: relative;
-				overflow: hidden;
-				margin-top: -20%;
-				width: 70%;
-				border: none;
-				border-radius: 0;
-				font-size: 15px;
-				background: #212529b8;
-			}
+            .profile-img .file input {
+                position: absolute;
+                opacity: 0;
+                right: 0;
+                top: 0;
+            }
 
-			.profile-img .file input {
-				position: absolute;
-				opacity: 0;
-				right: 0;
-				top: 0;
-			}
+            .profile-head h5 {
+                color: #333;
+            }
 
-			.profile-head h5 {
-				color: #333;
-			}
+            .profile-head h6 {
+                color: #0062cc;
+            }
 
-			.profile-head h6 {
-				color: #0062cc;
-			}
+            .profile-edit-btn {
+                border: none;
+                border-radius: 1.5rem;
+                width: 70%;
+                padding: 2%;
+                font-weight: 600;
+                color: #6c757d;
+                cursor: pointer;
+            }
 
-			.profile-edit-btn {
-				border: none;
-				border-radius: 1.5rem;
-				width: 70%;
-				padding: 2%;
-				font-weight: 600;
-				color: #6c757d;
-				cursor: pointer;
-			}
+            .proile-rating {
+                font-size: 12px;
+                color: #818182;
+                margin-top: 5%;
+            }
 
-			.proile-rating {
-				font-size: 12px;
-				color: #818182;
-				margin-top: 5%;
-			}
+            .proile-rating span {
+                color: #495057;
+                font-size: 15px;
+                font-weight: 600;
+            }
 
-			.proile-rating span {
-				color: #495057;
-				font-size: 15px;
-				font-weight: 600;
-			}
+            .profile-head .nav-tabs {
+                margin-bottom: 5%;
+            }
 
-			.profile-head .nav-tabs {
-				margin-bottom: 5%;
-			}
+            .profile-head .nav-tabs .nav-link {
+                font-weight: 600;
+                border: none;
+            }
 
-			.profile-head .nav-tabs .nav-link {
-				font-weight: 600;
-				border: none;
-			}
+            .profile-head .nav-tabs .nav-link.active {
+                border: none;
+                border-bottom: 2px solid #0062cc;
+            }
 
-			.profile-head .nav-tabs .nav-link.active {
-				border: none;
-				border-bottom: 2px solid #0062cc;
-			}
+            .profile-work {
+                padding: 14%;
+                margin-top: -15%;
+            }
 
-			.profile-work {
-				padding: 14%;
-				margin-top: -15%;
-			}
+            .profile-work p {
+                font-size: 12px;
+                color: #818182;
+                font-weight: 600;
+                margin-top: 10%;
+            }
 
-			.profile-work p {
-				font-size: 12px;
-				color: #818182;
-				font-weight: 600;
-				margin-top: 10%;
-			}
+            .profile-work a {
+                text-decoration: none;
+                color: #495057;
+                font-weight: 600;
+                font-size: 14px;
+            }
 
-			.profile-work a {
-				text-decoration: none;
-				color: #495057;
-				font-weight: 600;
-				font-size: 14px;
-			}
+            .profile-work ul {
+                list-style: none;
+            }
 
-			.profile-work ul {
-				list-style: none;
-			}
+            .profile-tab label {
+                font-weight: 600;
+            }
 
-			.profile-tab label {
-				font-weight: 600;
-			}
+            .profile-tab p {
+                font-weight: 600;
+                color: #0062cc;
+            }
+        </style>
 
-			.profile-tab p {
-				font-weight: 600;
-				color: #0062cc;
-			}
-		</style>
+        <!------ Include the above in your HEAD tag ---------->
 
-		<!------ Include the above in your HEAD tag ---------->
+        <div class="container emp-profile" id="add-ress-reload">
+            <form method="post">
+                <div class="row">
+                    <div class="col-md-4">
+                        <!-- <div class="profile-img">
+                            <img src="/images/dummy-profile.png" alt="" /> -->
+                        <!-- <div class="file btn btn-lg btn-primary">
+                                Change Photo
+                                <input type="file" name="file" />
+                            </div> -->
+                        <!-- </div> -->
+                    </div>
+                    <div class="col-md-6">
+                        <div class="profile-head">
+                            <h5>
+                                <%= users.Name %>
+                            </h5>
+                            <h6>
+                                Welcome <%= users.Name %> 😊
+                            </h6>
+                            <p class="proile-rating"> <span></span></p>
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                                        aria-controls="home" aria-selected="true">About</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+                                        aria-controls="profile" aria-selected="false"> Addresses</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="/editProfile/<%= users.id %>" class="btn btn-primary">Edit Profile</a>
+                    </div>
+                </div>
 
-		<div class="container emp-profile" id="add-ress-reload">
-			<form method="post">
-				<div class="row">
-					<div class="col-md-4">
-						<!-- <div class="profile-img">
-					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS52y5aInsxSm31CvHOFHWujqUx_wWTS9iM6s7BAm21oEN_RiGoog"
-						alt="" />
-					<div class="file btn btn-lg btn-primary">
-						Change Photo
-						<input type="file" name="file" />
-					</div>
-				</div> -->
-					</div>
-					<div class="col-md-6">
-						<div class="profile-head">
-							<h5>
-								<%= users.Name %>
-							</h5>
-							<h6>
-								Welcome <%= users.Name %>
-							</h6>
-							<p class="proile-rating"> <span></span></p>
-							<ul class="nav nav-tabs" id="myTab" role="tablist">
-								<li class="nav-item">
-									<a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
-										aria-controls="home" aria-selected="true">About</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
-										aria-controls="profile" aria-selected="false"> Addresses</a>
-								</li>
-							</ul>
-						</div>
-					</div>
-					<div class="col-md-2">
-						<a href="/editProfile/<%= users.id %>" class="btn btn-primary">Edit Profile</a>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-4">
-						<div class="profile-work">
-							<!-- <p>WORK LINK</p> -->
-							<div>
-								<a href="/orders">My Orders</a><br />
+                <div class="row">
 
-							</div>
-							<div class="mt-2">
-								<a href="/wishList">My wishlist</a><br />
+                    <div class="col-md-4 ">
 
-							</div>
-							<div class="mt-2">
-								<a href="" data-toggle="modal" onclick="fillForm(0,-1)" data-target="#exampleModal2">Add
-									address</a><br />
+                        <div class="profile-work  ">
+                            <div class="jumbotron shadow  bg-white rounded p-4">
 
-							</div>
+                                <!-- <p>WORK LINK</p> -->
+                                <a href="/orders"><i
+                                        class="fas fa-shopping-bag specclrText mb-3"></i>&nbsp&nbsp&nbsp&nbspMy
+                                    Orders</a><br />
+                                <a href="/wishList"><i class="fas fa-heart specclrText mb-3"></i>&nbsp&nbsp&nbsp&nbspMy
+                                    wishlist</a><br />
+                                <a href="" data-toggle="modal" onclick="fillForm(0,-1)" data-target="#exampleModal2"><i
+                                        class="fas fa-location-arrow specclrText mb-3"></i>&nbsp&nbsp&nbsp&nbspAdd
+                                    address</a><br />
+                                <a href="/logout" class=" "><i
+                                        class="fas fa-sign-out-alt specclrText"></i>&nbsp&nbsp&nbsp&nbspLogout</a>
 
-							<!-- <a href="">Bootply Profile</a>
-					<p>SKILLS</p>
-					<a href="">Web Designer</a><br/>
-					<a href="">Web Developer</a><br/>
-					<a href="">WordPress</a><br/>
-					<a href="">WooCommerce</a><br/>
-					<a href="">PHP, .Net</a><br/> -->
-						</div>
-					</div>
-					<div class="col-md-8">
-						<div class="tab-content profile-tab" id="myTabContent">
-							<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-								<div class="row">
-									<!-- <div class="col-md-6"> -->
-									<!-- <label>User Id</label> -->
-									<!-- </div> -->
-									<!-- <div class="col-md-6 "> -->
-									<!-- <p>
-											<%=users._id%>
-										</p> -->
-									<!-- </div> -->
-								</div>
-								<div class="row">
-									<div class="col-md-6">
-										<label>Name</label>
-									</div>
-									<div class="col-md-6">
-										<p>
-											<%= users.Name %>
-										</p>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-6">
-										<label>Email</label>
-									</div>
-									<div class="col-md-6">
-										<p>
-											<%= users.Email %>
-										</p>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-6">
-										<label>Phone</label>
-									</div>
-									<div class="col-md-6">
-										<p>
-											<%= users.Phone %>
-										</p>
-									</div>
-								</div>
-								<!-- <div class="row">
-							<div class="col-md-6">
-								<label>Profession</label>
-							</div>
-							<div class="col-md-6">
-								<p>Web Developer and Designer</p>
-							</div>
-						</div> -->
-							</div>
-							<div class="tab-pane fade " id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="tab-content profile-tab" id="myTabContent">
+                            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
 
-								<div class="row">
-									<% if(users.Address.length>0){ %>
-										<% users.Address.forEach((adrs,index)=>{ %>
-											<div class="col-md-12 col-md-12 mb-2" id="">
-												<div class="jumbotron shadow  bg-white rounded p-4">
-													<div class="card">
-														<div class="card-body">
-															<h5 class="card-title"><i
-																	class="fa-solid fa-location-dot"></i>
-															</h5>
-															<address class="card-text">
-																<%=adrs.firstName%>
-																	<%=adrs.lastName%><br>
-																		<%=adrs.address%> , <%=adrs.district%>,
-																				<%=adrs.state%>, pincode :
-																					<%=adrs.pincode%>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Name</label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p>
+                                            <%= users.Name %>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Email</label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p>
+                                            <%= users.Email %>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Phone</label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p>
+                                            <%= users.Phone %>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row text-center">
+                                    <!-- <div class="text-center">
+                                           <a href="/change-password" onclick="changePassword()"
+                                            class="btn btn-default btn-rounded mb-4 specclrText" data-toggle="modal"
+                                            data-target="#modalChangePasswordForm"><i class="fas fa-lock prefix grey-text specclrText"></i>  Change Password</a>
+                                    </div> -->
+                                    <!-- <div class="col-md-6">
+                                        <label>Profession</label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p>Web Developer and Designer</p>
+                                    </div> -->
+                                </div>
+                            </div>
 
-																						<br>
-																						Phone : <%=adrs.phone%><br>
 
-															</address>
-															<a href="" class="btn btn-outline-dark mr-5"
-																onclick="fillForm(' <%=JSON.stringify(adrs)%>','<%=index%>')"
-																data-toggle="modal" data-target="#exampleModal2">Edit
-																Address</a>
-															<!-- <button data-bs-toggle="modal" data-placement="top" data-bs-target="#exampleModa"><i class="bi bi-pen"></i></button> -->
-															<a onclick="deleteAdddress('<%=index%>')" type="submit"
-																data-toggle="tooltip" data-placement="top"
-																title="Delete"><i class="bi bi-trash ml-5"
-																	style="font-size: 1.2rem; color: rgb(255, 0, 0);"></i></a>
-														</div>
-													</div>
-												</div>
-											</div>
-											<% }) %>
-												<% } %>
-
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</form>
-		</div>
-
-		<!-- modal -->
-		<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-			<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel"
-				aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content mt-5">
-						<div class="modal-header">
-							<h5 class="modal-title" id="exampleModalLabel">Add Address</h5>
-							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-						</div>
-						<div class="modal-body">
-							<form action="" method="post" id="addressForm">
-
-								<!-- <div class="d-flex"> -->
-									<!-- <div class="mb-3 mr-5"> -->
-										<label for="recipient-name" class="col-form-label">Fist Name</label>
-										<input type="String" class="form-control" name="firstname" id="firstName"
-											required>
-									<!-- </div> -->
-									<!-- <div class="mb-3 ml-5"> -->
-										<label for="recipient-name" class="col-form-label">Last Name</label>
-										<input type="String" class="form-control" name="lastname" id="lastName"
-											required>
-									<!-- </div> -->
-								<!-- </div> -->
-								<!-- <div class="mb-3"> -->
-									<label for="recipient-name" class="col-form-label">Phone</label>
-									<input type="number" class="form-control" name="phone" id="mobileNumber" required>
-								<!-- </div> -->
-								<div class="mb-3">
-									<label for="recipient-name" class="col-form-label">Address</label>
-									<!-- <textarea name="address" id="address" class="form-control" cols="30" rows="4"></textarea> -->
-									<input class="form-control" type="text" name="address" id="address">
-								</div>
+                            <div class="tab-pane fade " id="profile" role="tabpanel" aria-labelledby="profile-tab">
 
 
 
-								<div class="mb-3">
-									<label for="message-text" class="col-form-label">Pincode</label>
-									<input class="form-control" type="number" name="pincode" id="pin" required>
-								</div>
-								<div class="mb-3">
-									<label for="recipient-name" class="col-form-label">State</label>
-									<select name="state" class="custom-select d-block w-100" id="state" required="">
-										<option value="">Choose...</option>
-										<option>Kerala</option>
-										<option>Tamil Nadu</option>
-										<option>Karnadaka</option>
-									</select>
-								</div>
-								<div class="mb-3">
-									<label for="recipient-name" class="col-form-label">District</label>
-									<input name="district" type="text" class="form-control" id="district" placeholder=""
-										required="">
-								</div>
-								<div class="mb-3">
-									<input name="index" type="number" class="form-control" id="index" placeholder=""
-										required="" hidden>
-								</div>
 
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary"
-										data-bs-dismiss="modal">Close</button>
-									<button type="submit" class="btn btn-primary">Submit</button>
-							</form>
-						</div>
-					</div>
-				</div>
 
-			</div>
-			</div>
-		</main>
-		<script>
-			function fillForm(oneAddress, index) {
-				console.log(oneAddress);
-				if (oneAddress === 0) {
-					console.log(index);
-					console.log('kkk');
-					document.getElementById('firstName').value = null
-					document.getElementById('lastName').value = null
-					document.getElementById('mobileNumber').value = null
-					document.getElementById('address').value = null
-					document.getElementById('state').value = null
-					document.getElementById('district').value = null
-					document.getElementById('pin').value = null
-					document.getElementById('index').value = index
+                                <div class="row">
+                                    <% if(users.Address.length>0){ %>
+                                        <% users.Address.forEach((adrs,index)=>{ %>
+                                            <div class="col-md-12 col-md-12 mb-2" id="">
+                                                <div class="jumbotron shadow  bg-white rounded p-4">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <h5 class="card-title"><i
+                                                                    class="fa-solid fa-location-dot"></i>
+                                                            </h5>
+                                                            <address class="card-text">
+                                                                <%=adrs.firstName%>
+                                                                    <%=adrs.lastName%><br>
+                                                                        <%=adrs.address%> , <%=adrs.district%>,
+                                                                                <%=adrs.state%>, pincode :
+                                                                                    <%=adrs.pincode%>
+                                                                                        <br>
+                                                                                        Phone : <%=adrs.phone%><br>
+                                                            </address>
+                                                            <a href="" class="btn btn-outline-dark mr-5"
+                                                                onclick="fillForm(' <%=JSON.stringify(adrs)%>','<%=index%>')"
+                                                                data-toggle="modal" data-target="#exampleModal2">Edit
+                                                                Address</a>
+                                                            <!-- <button data-bs-toggle="modal" data-placement="top" data-bs-target="#exampleModa"><i class="bi bi-pen"></i></button> -->
+                                                            <a onclick="deleteAdddress('<%=index%>')" type="submit"
+                                                                data-toggle="tooltip" data-placement="top"
+                                                                title="Delete"><i class="bi bi-trash ml-5"
+                                                                    style="font-size: 1.2rem; color: rgb(255, 0, 0);"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <% }) %>
+                                                <% }else{ %>
+                                                    <div class="col-md-12 col-md-12 mb-2" id="">
+                                                        <h5>Please Add Address...</h5>
+                                                    </div>
+                                                    <%}%>
 
-				} else {
-					console.log(index);
-					console.log('llll');
-					let address = JSON.parse(oneAddress)
-					console.log(address);
-					document.getElementById('firstName').value = address.firstName
-					document.getElementById('lastName').value = address.lastName
-					document.getElementById('mobileNumber').value = address.phone
-					document.getElementById('address').value = address.address
-					document.getElementById('state').value = address.state
-					document.getElementById('district').value = address.district
-					document.getElementById('pin').value = address.pincode
-					document.getElementById('index').value = index
-				}
+                                </div>
 
-			}
-		</script>
-		<script>
-			document.forms["addressForm"].addEventListener("submit", async (event) => {
-				event.preventDefault();
-				var data = $("form").serialize();
-				console.log(data);
-				$.ajax({
-					url: '/addAddress',
-					method: 'post',
-					data: data,
-					success: (response) => {
-						console.log(response, 'lllll');
-						// Swal.fire({
-						//     icon: 'success',
-						//     title: 'okeyyy!..',
-						//     text: 'Successfully Order Placed',
-						//     showConfirmButton: false,
-						// })
-						// setTimeout(() => {
-						// $('#add-ress-reload').load(location.href + " #add-ress-reload")
-						location.reload()
-						// window.location = "/order-success"
-						// }, 1000)
-					}
-				})
-			})
-		</script>
 
-		<script>
-			function deleteAdddress(addressIndex) {
-				Swal.fire({
-					title: 'Are you sure?',
-					text: "You won't be able to revert this!",
-					icon: 'warning',
-					showCancelButton: true,
-					confirmButtonColor: '#013542',
-					cancelButtonColor: '#d33',
-					confirmButtonText: 'Yes, Delete it!'
-				}).then((result) => {
-					if (result.isConfirmed) {
-						$.ajax({
-							url: '/delete-address/' + addressIndex,
-							method: 'delete',
-							success: (response) => {
-								$('#add-ress-reload').load(location.href + " #add-ress-reload")
-							}
-						})
-					}
-				})
-			}
-		</script>
-		<%- include('./includes/footer.ejs') -%>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- modal -->
+        <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Add Address</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/adddd" method="post" id="addressForm">
+
+                                <div class="d-flex">
+                                    <div class="mb-3 mr-5">
+                                        <label for="recipient-name" class="col-form-label">Fist Name</label>
+                                        <input type="String" class="form-control" name="firstname" id="firstName"
+                                            onkeyup="validateName()">
+                                        <span id="AddrName-error" class="text-danger font-weight-bold"></span>
+                                    </div>
+                                    <div class="mb-3 ml-5">
+                                        <label for="recipient-name" class="col-form-label">Last Name</label>
+                                        <input type="String" class="form-control" name="lastname" id="lastName"
+                                            onkeyup="validateName2()">
+                                        <span id="AddrName-error2" class="text-danger font-weight-bold"></span>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="recipient-name" class="col-form-label">Phone</label>
+                                    <input type="number" class="form-control" name="phone" id="mobileNumber"
+                                        onkeyup="validatePhone()">
+                                    <span id="AddrPhone-error" class="text-danger font-weight-bold"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="recipient-name" class="col-form-label">Address</label>
+                                    <!-- <textarea name="address" id="address" class="form-control" cols="30" rows="4"></textarea> -->
+                                    <input class="form-control" type="text" name="address" id="address"
+                                        onkeyup="validateAddress()">
+                                    <span id="AddrAddress-error" class="text-danger font-weight-bold"></span>
+                                </div>
+
+
+
+                                <div class="mb-3">
+                                    <label for="message-text" class="col-form-label">Pincode</label>
+                                    <input class="form-control" type="number" name="pincode" id="pin"
+                                        onkeyup="validatePincode()">
+                                    <span id="AddrPincode-error" class="text-danger font-weight-bold"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="recipient-name" class="col-form-label">State</label>
+                                    <select name="state" class="custom-select d-block w-100" id="state" required="">
+                                        <option value="">Choose...</option>
+                                        <option>Kerala</option>
+                                        <option>Tamil Nadu</option>
+                                        <option>Karnadaka</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="recipient-name" class="col-form-label">District</label>
+                                    <input name="district" type="text" class="form-control" id="district" placeholder=""
+                                        onkeyup="validateDistrict()">
+                                    <span id="AddrDistrict-error" class="text-danger font-weight-bold"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <input name="index" type="number" class="form-control" id="index" placeholder=""
+                                        required="" hidden>
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button onclick="return validateForm()" type="submit"
+                                class="btn btn-primary">Submit</button>
+
+                            <span id="submit-error" class="text-danger font-weight-bold"></span>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <script src="/user/javascript/checkFormValidation.js"></script>
+        <script src="/user/javascript/profile.js"></script>
+        <%- include('./includes/footer.ejs') -%>

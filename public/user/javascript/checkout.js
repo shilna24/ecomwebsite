@@ -44,22 +44,22 @@ function redeem(total) {
                 showConfirmButton: true,
             })
             } else {
-                // console.log('lllll');
+                
                 let finalAmount
                 let couponDscnPerc = response.discount
                 let couponDiscountAmount = (total * couponDscnPerc) / 100
-                let x = Math.floor(couponDiscountAmount)
+                let x = Math.round(couponDiscountAmount)
                 if (x > response.maxLimit) {
-                    x = response.maxLimit
+                    
                     finalAmount = total - x
                 }
                 finalAmount = total - x
-                console.log(finalAmount);
+            
                 document.getElementById('lsttotal').innerHTML = finalAmount
                 document.getElementById('passlsttotal').value = finalAmount
                 document.getElementById('discnt').innerHTML = x
 
-                console.log(x);
+        
             }
 
 
@@ -71,9 +71,6 @@ document.forms["checkoutForm"].addEventListener("submit", async (event) => {
     event.preventDefault();
     const paymentType = $('input[name=paymentType]:checked', '#checkoutForm').val()
     var data = $("form").serialize();
-    console.log(paymentType, 'jjjj');
-    console.log(data);
-
     if (paymentType == "cod") {
         checkout(data)
 
@@ -92,9 +89,8 @@ document.forms["checkoutForm"].addEventListener("submit", async (event) => {
             console.log(orderId)
             await razorpay(orderId, amount, data)
 
-            console.log("2222222222");
         } catch (error) {
-            console.error(err)
+            console.error(error)
         }
         // razorpay(orderId, amount)
     }
@@ -182,7 +178,7 @@ function razorpay(orderId, amount, data) {
             width: "25em",
             timer: 2000,
         })
-        console.log("im going to checkout")
+        
         window.location = "/checkout"
     });
 

@@ -594,7 +594,7 @@ try{
                 req.session.wishlistNumber = wishlist.myWish.length
             }
             if (viewcart)
-                res.render('user/checkoutdup', { users, login: req.session.userloggedin, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber, cartProducts: viewcart })
+                res.render('user/checkout', { users, login: req.session.userloggedin, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber, cartProducts: viewcart })
             else
                 res.redirect('/viewCart')
         }
@@ -820,7 +820,6 @@ try{
                 district: req.body.district
             }
             if (addrexIndex > -1) {
-                console.log('hoooooooo');
                 userOne.Address[addrexIndex] = address
             } else {
                 userOne.Address.push(address);
@@ -867,7 +866,7 @@ try{
             } else {
                 req.session.cartNumber = null
             }
-            res.render('user/myprofiledup', { users, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber, login: req.session.userloggedin })
+            res.render('user/my-profile', { users, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber, login: req.session.userloggedin })
 
         } catch (error) {
             res.redirect('/500-error')
