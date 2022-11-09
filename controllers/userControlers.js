@@ -287,6 +287,7 @@ try{
     if (wishlist) {
         req.session.wishlistNumber = wishlist.myWish.length
     }
+    res.render('user/editProfile',{ login: req.session.userloggedin, users: req.session.user, cartProducts: viewcart, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber })
     }
     catch(error)
     {
@@ -593,7 +594,7 @@ try{
                 req.session.wishlistNumber = wishlist.myWish.length
             }
             if (viewcart)
-                res.render('user/checkout', { users, login: req.session.userloggedin, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber, cartProducts: viewcart })
+                res.render('user/checkoutdup', { users, login: req.session.userloggedin, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber, cartProducts: viewcart })
             else
                 res.redirect('/viewCart')
         }
@@ -866,14 +867,13 @@ try{
             } else {
                 req.session.cartNumber = null
             }
-            res.render('user/my-profile', { users, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber, login: req.session.userloggedin })
+            res.render('user/myprofiledup', { users, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber, login: req.session.userloggedin })
 
         } catch (error) {
             res.redirect('/500-error')
         }
     },
-
-
+    
 
     /*---------------user logout----------------------------*/
     getlogout: (req, res) => {

@@ -1,0 +1,178 @@
+<%- include('./includes/header.ejs') %>
+	<%- include('./includes/nav.ejs') %>
+
+        <% if(cartProducts){ %>
+            <div class="container mt-5">
+                <div class="row" id="add-ress-reload">
+                    <div class="col-md-4 order-md-2 mb-4">
+                        <h4 class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="text-muted">Your cart</span>
+                            <span class="badge badge-secondary badge-pill">
+                                <%= cartNumber %>
+                            </span>
+                        </h4>
+                        <ul class="list-group mb-3 sticky-top">
+                            <% if(cartProducts.Products.length>0){ %>
+                                <% cartProducts.Products.forEach((p)=>{ %>
+                                    <li class="list-group-item d-flex justify-content-between lh-condensed">
+                                        <div>
+                                            <h6 class="my-0">
+                                                <%= p.name %>
+                                            </h6>
+                                            <small class="text-muted">qty: <%= p.quantity %></small>
+                                        </div>
+                                        <span class="text-muted">
+                                            ₹ <%=p.quantity*p.price %>
+                                        </span>
+                                    </li>
+                                    <% }) %>
+                                        <% } %>
+                                            <li class="list-group-item d-flex justify-content-between bg-light">
+                                                <div class="text-success">
+                                                    <h6 class="my-0">Discount</h6>
+                                                    <!-- <small>EXAMPLECODE</small> -->
+                                                </div>
+                                                <span id="discnt" class="text-success">00</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>Total (Rupees)</span>
+                                                <strong id="lsttotal">₹ <%= cartProducts.total %></strong>
+                                            </li>
+                        </ul>
+                        <!-- <form class="card p-2"> -->
+                        <div class="input-group">
+                            <input id="ccod" type="text" class="form-control" placeholder="Coupon code">
+                            <div class="input-group-append">
+                                <button onclick="redeem('<%= cartProducts.total %>')" type="submit"
+                                    class="btn btn-secondary">Redeem</button>
+                                <!-- </form> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8 order-md-1">
+                        <div class="row">
+                            <% if(users.Address.length>0){ %>
+                                <% users.Address.forEach((adrs,index)=>{ %>
+                                    <div class="col-md-12 mb-2" id="">
+                                        <div class="jumbotron shadow  bg-white rounded p-4">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title"><i class="fa-solid fa-location-dot"></i></h5>
+                                                    <address class="card-text">
+                                                        <%=adrs.firstName%>
+                                                            <%=adrs.lastName%>
+                                                                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                                                                <%=adrs.phone%><br>
+                                                                    <%=adrs.address%><br>
+                                                                        <%=adrs.district%>, <%=adrs.state%> ,pincode :
+                                                                                <%=adrs.pincode%><br>
+                                                    </address>
+                                                    <button class="btn btn-outline-dark"
+                                                        onclick="fillForm(' <%=JSON.stringify(adrs)%>','<%=index%>')">Use
+                                                        the Address</button>
+                                                    <!-- <button data-bs-toggle="modal" data-placement="top" data-bs-target="#exampleModa"><i class="bi bi-pen"></i></button> -->
+                                                    <a href="#" onclick="deleteAdddress('<%=index%>')"
+                                                        data-toggle="tooltip" data-placement="top" title="Delete"><i
+                                                            class="bi bi-trash ml-5"
+                                                            style="font-size: 1.2rem; color: rgb(255, 0, 0);"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                                        <% } %>
+                        </div>
+                        <div class="jumbotron shadow  bg-white rounded p-4">
+                            <div>
+                                <h4 class="mb-3">Billing address</h4>
+                                <form action="/user/checkout" method="post" class="needs-validation" id="checkoutForm">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="firstName">First name</label>
+                                            <input name="firstname" type="text" class="form-control" id="firstName"
+                                                placeholder="" value="" onkeyup="validateName()">
+                                            <span id="AddrName-error" class="text-danger font-weight-bold"></span>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="lastName">Last name</label>
+                                            <input name="lastname" type="text" class="form-control" id="lastName"
+                                                placeholder="" value="" onkeyup="validateName2()">
+                                            <span id="AddrName-error2" class="text-danger font-weight-bold"></span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="username">Phone Number</label>
+                                        <div class="input-group">
+                                            <input name="number" type="tel" class="form-control" id="mobileNumber"
+                                                placeholder="Mobile Number" value="" onkeyup="validatePhone()">
+                                            <span id="AddrPhone-error" class="text-danger font-weight-bold"></span>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="address">Address</label>
+                                <input name="address" type="text" class="form-control" id="address"
+                                    placeholder="address" onkeyup="validateAddress()">
+                                <span id="AddrAddress-error" class="text-danger font-weight-bold"></span>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5 mb-3">
+                                    <label for="state">State</label>
+                                    <select name="state" class="custom-select d-block w-100" id="state">
+                                        <option value="">Choose...</option>
+                                        <option>Kerala</option>
+                                        <option>Tamil Nadu</option>
+                                        <option>Karnadaka</option>
+                                    </select>
+                                    <div class="invalid-feedback"> Please provide a valid state. </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="">District </label>
+                                    <input name="district" type="text" class="form-control" id="district" placeholder=""
+                                        onkeyup="validateDistrict()">
+                                    <span id="AddrDistrict-error" class="text-danger font-weight-bold"></span>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="zip">PIN </label>
+                                    <input name="pin" type="text" class="form-control" id="pin" placeholder=""
+                                        onkeyup="validatePincode()">
+                                    <span id="AddrPincode-error" class="text-danger font-weight-bold"></span>
+                                </div>
+                                <input name="index" type="text" class="form-control" id="index" placeholder="" hidden>
+                            </div>
+                            <hr class="mb-4">
+                            <h4 class="mb-3">Payment</h4>
+                            <div class="d-block my-3">
+                                <div class="custom-control custom-radio">
+                                    <input id="credit" name="paymentType" type="radio" checked value="cod"
+                                        class="custom-control-input">
+                                    <label class="custom-control-label" for="credit">Cash on Delivery</label>
+                                </div>
+                                <div class="custom-control custom-radio">
+                                    <input id="paypal" name="paymentType" type="radio" value="Online Payment"
+                                        class="custom-control-input">
+                                    <label class="custom-control-label" for="paypal">Razorpay</label>
+                                </div>
+                                <input style="display:none ;" id="passlsttotal" type="text" name="total"
+                                    value="<%= cartProducts.total %>">
+                            </div>
+                            <hr class="mb-4">
+                            <span id="submit-error" class="text-danger font-weight-bold text-center"></span>
+                            <button class="  btn-lg btn-block specclr text-dark mb-5" type="submit"
+                                onclick="return validateForm()">Continue to checkout</button>
+                           
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <% } %>
+                <script src="/user/javascript/checkoutFormValidation.js"></script>
+
+                <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+                <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+                <script src="/user/javascript/checkout.js"></script>
+
+                <%- include('./includes/footer.ejs') -%>
+                

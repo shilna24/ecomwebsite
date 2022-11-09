@@ -20,7 +20,7 @@ router.route('/signup')
 router.route('/my-profile').get(sessionUser,userController.getMyProfile)
 // router.post('/updateProfile/:id', userController.postProfile)
 
-router.get('/editProfile', userController.getProfile)
+router.get('/editProfile', sessionUser,userController.getProfile)
 router.post('/editProfile/:id', userController.postProfile)
 
 /*--------user get one product details----------*/
@@ -80,7 +80,6 @@ router.route('/cancel-order/:orderId').post(userController.cancelOrder)
 
 // router.route('/notify-product').post(userController.addNotifyProduct)
 
-
 /*--------getting about page-------*/
 router.get('/contactUs',userController.getContact)
 
@@ -88,17 +87,13 @@ router.get('/contactUs',userController.getContact)
 router.get('/logout', userController.getlogout)
 
 
-// router.get('/internal-server-error', (req, res) => {
-//     res.status(500).render('user/500-error-page')
-// })
+
 
 
 router.get('/500-error',(req,res)=>{
     res.status(500).render('admin/error-500-page')
 })
 
-// router.get('*', function (req, res,next) {
-//     res.status(404).render('user/error')
-// });
+
 
 module.exports = router

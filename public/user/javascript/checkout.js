@@ -48,9 +48,9 @@ function redeem(total) {
                 let finalAmount
                 let couponDscnPerc = response.discount
                 let couponDiscountAmount = (total * couponDscnPerc) / 100
-                let x = Math.round(couponDiscountAmount)
+                let x = Math.floor(couponDiscountAmount)
                 if (x > response.maxLimit) {
-                    // x = response.maxLimit
+                    x = response.maxLimit
                     finalAmount = total - x
                 }
                 finalAmount = total - x
@@ -93,7 +93,7 @@ document.forms["checkoutForm"].addEventListener("submit", async (event) => {
             await razorpay(orderId, amount, data)
 
             console.log("2222222222");
-        } catch (err) {
+        } catch (error) {
             console.error(err)
         }
         // razorpay(orderId, amount)
