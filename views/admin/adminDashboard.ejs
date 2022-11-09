@@ -1,7 +1,7 @@
 <%- include('./includes/headers.ejs') -%>
-<%- include('./includes/navbar.ejs') -%>
+  <%- include('./includes/navbar.ejs') -%>
 
-<!--             
+    <!--             
 
               <div class="container-xxl flex-grow-1 container-p-y">
                 <div class="row">
@@ -84,7 +84,7 @@
                     </div>
                   </div>
                   <!- Total Revenue -->
-                  <!-- <div class="col-12 col-lg-8 order-2 order-md-3 order-lg-2 mb-4">
+    <!-- <div class="col-12 col-lg-8 order-2 order-md-3 order-lg-2 mb-4">
                     <div class="card">
                       <div class="row row-bordered g-0">
                         <div class="col-md-8">
@@ -136,8 +136,8 @@
                       </div>
                     </div>
                   </div> -->
-                  <!--/ Total Revenue -->
-                  <!-- <div class="col-12 col-md-8 col-lg-4 order-3 order-md-2">
+    <!--/ Total Revenue -->
+    <!-- <div class="col-12 col-md-8 col-lg-4 order-3 order-md-2">
                     <div class="row">
                       <div class="col-6 mb-4">
                         <div class="card">
@@ -189,9 +189,9 @@
                           </div>
                         </div>
                       </div> -->
-                      <!-- </div>
+    <!-- </div>
     <div class="row"> -->
-                      <!-- <div class="col-12 mb-4">
+    <!-- <div class="col-12 mb-4">
                         <div class="card">
                           <div class="card-body">
                             <div class="d-flex justify-content-between flex-sm-row flex-column gap-3">
@@ -215,8 +215,8 @@
                   </div>
                 </div>
                 <div class="row"> -->
-                  <!-- Order Statistics -->
-                  <!-- <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-4">
+    <!-- Order Statistics -->
+    <!-- <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-4">
                     <div class="card h-100">
                       <div class="card-header d-flex align-items-center justify-content-between pb-0">
                         <div class="card-title mb-0">
@@ -308,8 +308,8 @@
                   </div>
                   <!-/ Order Statistics -->
 
-                  <!-- Expense Overview -->
-                  <!-- <div class="col-md-6 col-lg-4 order-1 mb-4">
+    <!-- Expense Overview -->
+    <!-- <div class="col-md-6 col-lg-4 order-1 mb-4">
                     <div class="card h-100">
                       <div class="card-header">
                         <ul class="nav nav-pills" role="tablist">
@@ -361,10 +361,10 @@
                       </div>
                     </div>
                   </div>  -->
-                  <!--/ Expense Overview -->
+    <!--/ Expense Overview -->
 
-                  <!-- Transactions -->
-                  <!-- <div class="col-md-6 col-lg-4 order-2 mb-4">
+    <!-- Transactions -->
+    <!-- <div class="col-md-6 col-lg-4 order-2 mb-4">
                     <div class="card h-100">
                       <div class="card-header d-flex align-items-center justify-content-between">
                         <h5 class="card-title m-0 me-2">Transactions</h5>
@@ -476,147 +476,384 @@
                       </div>
                     </div>
                   </div> -->
-                  <!--/ Transactions -->
-                <!-- </div>
+    <!--/ Transactions -->
+    <!-- </div>
               </div> -->
-              <!-- / Content --> 
-              <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-                <nav class="navbar navbar-expand-lg   mt-3 border rounded-3" style="background-color:#B7B1B1 ;">
-                  <a class="navbar-brand text-dark" href="#">Dashboard</a>
-                </nav>
-              <div class="jumbotron shadow  bg-white rounded p-2 mt-4">
-                <h5 class="specclrText text-center">Sales Report</h5>
+    <!-- / Content -->
+    <!-- creating chart -->
+    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+      <nav class="navbar navbar-expand-lg    border rounded-3" style="background-color:#B7B1B1 ;">
+        <a class="navbar-brand text-dark" href="#">Dashboard</a>
+      </nav>
+      <div class="container-fluid py-4">
+        <div class="row">
+          <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+            <div class="card">
+              <div class="card-header p-3 pt-2">
+                <div
+                  class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute mt-2">
+                  <!-- <i class="material-icons opacity-10">weekend</i> -->
+                  <i class="fa-solid fa-coins"></i>
+                </div>
+                <div class="text-end pt-1">
+                  <p class="text-sm mb-0 text-capitalize">Total Sales</p>
+                  <h4 class="mb-0">₹ <%=totalSale%>
+                  </h4>
+                </div>
               </div>
-              <!-- datatable -->
-              <table class="table-responsive table " border="0" cellspacing="5" cellpadding="5">
-                <tbody><tr>
-                    <td>Minimum date:</td>
-                    <td><input type="text" id="min" name="min"></td>
-                </tr>
-                <tr>
-                    <td>Maximum date:</td>
-                    <td><input type="text" id="max" name="max"></td>
-                </tr>
-              </tbody></table>
-              <table id="salesData" class="display nowrap table-responsive table table-bordered" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>OrderId</th>
-                        <th>Delivery Address</th>
-                        <th>Payment</th>
-                        <th>Cost</th>
-                      
-                        <th>Bill Amout</th>
-                        <th>Profit</th>
-                        <th>Start date</th>
-                        <th>Order Status</th>
-                    </tr>
-                </thead>
-                <tbody class="table-border-bottom-0">
-                 <% allOrders.forEach((order)=>{%>
-                  <%if(order.orderActive){%>
-                    <tr >
-                        <td># <%=order._id%></td>
-                        <td>
-                          <div class="dropdown">
-                            <button class=" dropdown-toggle border-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              <%=order.deliveryAddress.firstName%> <%=order.deliveryAddress.lastName%>
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                              <p><%=order.deliveryAddress.address%><br>
-                                <%=order.deliveryAddress.district%> <%=order.deliveryAddress.state%><br>
-                                <%=order.deliveryAddress.pincode%>f<br>
-                                <%=order.deliveryAddress.phone%></p>
-                            </div>
-                          </div>
-                        
-                        </td>
-                        <td><%=order.paymentType.slice(0,6)%></td>
-                        <td>₹ <%=(order.total*110)/100%></td>
-                       
-                        <td>₹ <%=order.total%></td>
-                        <td>₹ <%=parseInt(((order.total*110)/100)-order.total)%></td>
-                        <td><%=order.createdAt.toJSON().slice(0, 10)%></td>
-                       
-                        <td><%=order.status%></td>
-                    </tr>
-                 <% }else{%>
-                    <tr class="text-danger">
-                      <td># <%=order._id%></td>
-                      <td>
-                        <div class="dropdown">
-                          <button class=" dropdown-toggle border-0 text-danger" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <%=order.deliveryAddress.firstName%> <%=order.deliveryAddress.lastName%>
-                          </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <p><%=order.deliveryAddress.address%><br>
-                              <%=order.deliveryAddress.district%> <%=order.deliveryAddress.state%><br>
-                              <%=order.deliveryAddress.pincode%>f<br>
-                              <%=order.deliveryAddress.phone%></p>
-                          </div>
-                        </div>
-                      
-                      </td>
-                      <td><%=order.paymentType.slice(0,6)%></td>
-                      <td>₹ <%=(order.total*110)/100%></td>
-                      <td>₹ <%=order.total%></td>
-                      <td>₹ <%=parseInt(((order.total*110)/100)-order.total)%></td>
-                      <td><%=order.createdAt.toJSON().slice(0, 10)%></td>       
-                      <td>Canceled</td>
-                  </tr>
-                 <% }%>
-                  <%})%>
-                    
-                </tbody>
-                
-              </table>
-            </main>
-          <!-- axios -->
+              <hr class="dark horizontal my-0">
+              <div class="card-footer p-3">
+                <!-- <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+55% </span>than last week</p> -->
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+            <div class="card">
+              <div class="card-header p-3 pt-2">
+                <div
+                  class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute mt-2">
+                  <!-- <i class="material-icons opacity-10">person</i> -->
+                  <i class="fa-regular fa-user"></i>
 
+                </div>
+                <div class="text-end pt-1">
+                  <p class="text-sm mb-0 text-capitalize"> Users</p>
+                  <h4 class="mb-0">
+                    <%=totalUsers%>
+                  </h4>
+                </div>
+              </div>
+              <hr class="dark horizontal my-0">
+              <div class="card-footer p-3">
+                <!-- <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+3% </span>than last month</p> -->
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+            <div class="card">
+              <div class="card-header p-3 pt-2">
+                <div
+                  class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute mt-2">
+                  <!-- <i class="material-icons opacity-10">AcUnit</i> -->
+                  <i class="fa-solid fa-cart-shopping"></i>
+
+                </div>
+                <div class="text-end pt-1">
+                  <p class="text-sm mb-0 text-capitalize">Orders</p>
+                  <h4 class="mb-0">
+                    <%= allOrders.length %>
+                  </h4>
+                </div>
+              </div>
+              <hr class="dark horizontal my-0">
+              <div class="card-footer p-3">
+                <!-- <p class="mb-0"><span class="text-danger text-sm font-weight-bolder">-2%</span> than yesterday</p> -->
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-sm-6">
+            <div class="card">
+              <div class="card-header p-3 pt-2">
+                <div
+                  class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute mt-2">
+                  <!-- <i class="material-icons opacity-10">weekend</i> -->
+                  <i class="fa-solid fa-business-time"></i>
+                </div>
+                <div class="text-end pt-1">
+                  <p class="text-sm mb-0 text-capitalize">Products</p>
+                  <h4 class="mb-0">
+                    <%= allProducts.length %>
+                  </h4>
+                </div>
+              </div>
+              <hr class="dark horizontal my-0">
+              <div class="card-footer p-3">
+                <!-- <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+5% </span>than yesterday</p> -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        
+      <div class="row mt-5">
+          
+          <div class="col-lg-6 grid-margin grid-margin-lg-0 stretch-card">
+            <div class="card" style="height:610;width:610;">
+              <div class="card-body">
+                <h3>Orders & Canceled Orders</h3>
+                <!-- <h4 class="card-title">Pie chart</h4> -->
+                <p>Last 7 days calculation</p>
+                <canvas id="pieChart"></canvas>
+              </div>
+            </div>
+          </div>
+        <div class="col-lg-6 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h3>category-wise-Sales</h3>
+              <!-- <h4 class="card-title">Doughnut chart</h4> -->
+              <p>Last 7 days calculation</p>
+              <canvas id="doughnutChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      </div>
+
+        <div class="jumbotron shadow  bg-white rounded  d-flex justify-content-center p-2 mt-4">
+
+          <a href="/admin/salesReport" class="btn text-primary text-center">SALES REPORT</a>
+        </div>
+       
+        </div>
+    </main>
+    <!-- chart -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-      var minDate, maxDate;
- 
- // Custom filtering function which will search data in column four between two values
- $.fn.dataTable.ext.search.push(
-     function( settings, data, dataIndex ) {
-         var min = minDate.val();
-         var max = maxDate.val();
-         var date = new Date( data[6] );
+     $(function() {
+  /* ChartJS
+   * -------
+   * Data and config for chartjs
+   */
+  'use strict';
   
-         if (
-             ( min === null && max === null ) ||
-             ( min === null && date <= max ) ||
-             ( min <= date   && max === null ) ||
-             ( min <= date   && date <= max )
-         ) {
-             return true;
-         }
-         return false;
-     }
- );
-  
- $(document).ready(function() {
-     // Create date inputs
-     minDate = new DateTime($('#min'), {
-         format: 'MMMM Do YYYY'
-     });
-     maxDate = new DateTime($('#max'), {
-         format: 'MMMM Do YYYY'
-     });
-  
-     // DataTables initialisation
-     var table = $('#salesData').DataTable( {
-        dom: 'lBfrtip',
-        buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print'
-        ]
-    } );;
-  
-     // Refilter the table
-     $('#min, #max').on('change', function () {
-         table.draw();
-     });
- });
+  var doughnutPieData = {
+    datasets: [{
+      data: ['<%=successOrder%>','<%=cancelOrder%>','<%=totalOrder%>'],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.5)',
+        'rgba(54, 162, 235, 0.5)',
+        'rgba(255, 206, 86, 0.5)',
+        'rgba(75, 192, 192, 0.5)',
+        'rgba(153, 102, 255, 0.5)',
+        'rgba(255, 159, 64, 0.5)'
+      ],
+      borderColor: [
+        'rgba(255,99,132,1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+      ],
+    }],
+
+    // These labels appear in the legend and in the tooltips when hovering different arcs
+    labels: [
+      'SuccessOrders',
+      'Cancelled Orders',
+      'TotalOrders'
+      
+    ]
+  };
+  var doughnutPieOptions = {
+    responsive: true,
+    animation: {
+      animateScale: true,
+      animateRotate: true
+    }
+  };
+  ////////////////////////////////////////////////
+  var doughnutData = {
+    datasets: [{
+      data: ['<%= categorywiseSales[0].count %>','<%= categorywiseSales[1].count %>'],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.5)',
+        'rgba(54, 162, 235, 0.5)',
+        'rgba(255, 206, 86, 0.5)',
+        'rgba(75, 192, 192, 0.5)',
+        'rgba(153, 102, 255, 0.5)',
+        'rgba(255, 159, 64, 0.5)'
+      ],
+      borderColor: [
+        'rgba(255,99,132,1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+      ],
+    }],
+
+    // These labels appear in the legend and in the tooltips when hovering different arcs
+    labels: [
+      'Western Wear',
+      'Indian Wear',
+      
+      
+    ]
+  };
+  var doughnutOptions = {
+    responsive: true,
+    animation: {
+      animateScale: true,
+      animateRotate: true
+    }
+  };
+  // var areaData = {
+  //   labels: ["2013", "2014", "2015", "2016", "2017"],
+  //   datasets: [{
+  //     label: '# of Votes',
+  //     data: [12, 19, 3, 5, 2, 3],
+  //     backgroundColor: [
+  //       'rgba(255, 99, 132, 0.2)',
+  //       'rgba(54, 162, 235, 0.2)',
+  //       'rgba(255, 206, 86, 0.2)',
+  //       'rgba(75, 192, 192, 0.2)',
+  //       'rgba(153, 102, 255, 0.2)',
+  //       'rgba(255, 159, 64, 0.2)'
+  //     ],
+  //     borderColor: [
+  //       'rgba(255,99,132,1)',
+  //       'rgba(54, 162, 235, 1)',
+  //       'rgba(255, 206, 86, 1)',
+  //       'rgba(75, 192, 192, 1)',
+  //       'rgba(153, 102, 255, 1)',
+  //       'rgba(255, 159, 64, 1)'
+  //     ],
+  //     borderWidth: 1,
+  //     fill: true, // 3: no fill
+  //   }]
+  // };
+
+  // var areaOptions = {
+  //   plugins: {
+  //     filler: {
+  //       propagate: true
+  //     }
+  //   }
+  // }
+
+  // var scatterChartData = {
+  //   datasets: [{
+  //       label: 'First Dataset',
+  //       data: [{
+  //           x: -10,
+  //           y: 0
+  //         },
+  //         {
+  //           x: 0,
+  //           y: 3
+  //         },
+  //         {
+  //           x: -25,
+  //           y: 5
+  //         },
+  //         {
+  //           x: 40,
+  //           y: 5
+  //         }
+  //       ],
+  //       backgroundColor: [
+  //         'rgba(255, 99, 132, 0.2)'
+  //       ],
+  //       borderColor: [
+  //         'rgba(255,99,132,1)'
+  //       ],
+  //       borderWidth: 1
+  //     },
+  //     {
+  //       label: 'Second Dataset',
+  //       data: [{
+  //           x: 10,
+  //           y: 5
+  //         },
+  //         {
+  //           x: 20,
+  //           y: -30
+  //         },
+  //         {
+  //           x: -25,
+  //           y: 15
+  //         },
+  //         {
+  //           x: -10,
+  //           y: 5
+  //         }
+  //       ],
+  //       backgroundColor: [
+  //         'rgba(54, 162, 235, 0.2)',
+  //       ],
+  //       borderColor: [
+  //         'rgba(54, 162, 235, 1)',
+  //       ],
+  //       borderWidth: 1
+  //     }
+  //   ]
+  // }
+
+  // var scatterChartOptions = {
+  //   scales: {
+  //     xAxes: [{
+  //       type: 'linear',
+  //       position: 'bottom'
+  //     }]
+  //   }
+  // }
+  // Get context with jQuery - using jQuery's .get() method.
+  if ($("#barChart").length) {
+    var barChartCanvas = $("#barChart").get(0).getContext("2d");
+    // This will get the first returned node in the jQuery collection.
+    var barChart = new Chart(barChartCanvas, {
+      type: 'bar',
+      data: data,
+      options: options
+    });
+  }
+
+  // if ($("#lineChart").length) {
+  //   var lineChartCanvas = $("#lineChart").get(0).getContext("2d");
+  //   var lineChart = new Chart(lineChartCanvas, {
+  //     type: 'line',
+  //     data: data,
+  //     options: options
+  //   });
+  // }
+
+  if ($("#doughnutChart").length) {
+    var doughnutChartCanvas = $("#doughnutChart").get(0).getContext("2d");
+    var doughnutChart = new Chart(doughnutChartCanvas, {
+      type: 'doughnut',
+      data: doughnutData,
+      options: doughnutOptions
+    });
+  }
+
+  if ($("#pieChart").length) {
+    var pieChartCanvas = $("#pieChart").get(0).getContext("2d");
+    var pieChart = new Chart(pieChartCanvas, {
+      type: 'pie',
+      data: doughnutPieData,
+      options: doughnutPieOptions
+    });
+  }
+
+  // if ($("#areaChart").length) {
+  //   var areaChartCanvas = $("#areaChart").get(0).getContext("2d");
+  //   var areaChart = new Chart(areaChartCanvas, {
+  //     type: 'line',
+  //     data: areaData,
+  //     options: areaOptions
+  //   });
+  // }
+
+  if ($("#scatterChart").length) {
+    var scatterChartCanvas = $("#scatterChart").get(0).getContext("2d");
+    var scatterChart = new Chart(scatterChartCanvas, {
+      type: 'scatter',
+      data: scatterChartData,
+      options: scatterChartOptions
+    });
+  }
+});
     </script>
 
-<%- include('./includes/footers.ejs') -%>
+
+
+   
+
+
+
+    <%- include('./includes/footers.ejs') -%>

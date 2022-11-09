@@ -15,7 +15,7 @@ router.post('/adminLogin',adminController.postlogin)
 /*-----------admin dashboard--------*/
 router.get('/adminDashboard',sessionAdmin,adminController.getDashboard)
 
-
+router.get('/salesReport',sessionAdmin,adminController.getReport)
 
 /*---------admin view category---------*/
 router.route('/adminCategory')
@@ -76,7 +76,15 @@ router.route('/status-order/:orderId/:status').post(adminController.orderStatusC
 /*--------block or unblock user----------------*/
  router.get('/userStage/:id',sessionAdmin,adminController.getStatus)
 
+ 
+
+// router.route('/get-invoice/:orderId').get(sessionAdmin,adminController.getInvoice)
+
  /*---------admin logout------------*/
 router.get('/logout',adminController.adminlogout)
+
+router.get('/500-error',(req,res)=>{
+    res.status(500).render('admin/error-500-page')
+})
 
 module.exports=router

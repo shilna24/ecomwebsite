@@ -13,19 +13,18 @@ const session = require('express-session');
 const Cart = require('../models/cartSchema')
 const Razorpay = require('razorpay');
 const { resourceLimits } = require('worker_threads')
+const { default: mongoose } = require('mongoose')
 const instance = new Razorpay({
     key_id: process.env.key_id,
     key_secret: process.env.key_secret,
 });
 login = false
-let loginerr = null
 module.exports = {
     /*---------------------user homepage---------------------*/
 
     get: async (req, res) => {
         try {
-            if (req.session.userloggedin) {
-
+            if (req.session.user) {
                 const userId = req.session.user._id
                 const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
                 if (viewcart) {
@@ -35,6 +34,11 @@ module.exports = {
                 if (wishlist) {
                     req.session.wishlistNumber = wishlist.myWish.length
                 }
+
+            }
+            else {
+                req.session.cartNumber = 0
+                req.session.wishlistNumber = 0
             }
             const pageNum = req.query.page
             const perPage = 4
@@ -50,7 +54,8 @@ module.exports = {
 
         }
         catch (error) {
-            console.log(error);
+            res.redirect('/500-error')
+
         }
 
     },
@@ -58,95 +63,114 @@ module.exports = {
     /*------------------user loginPage-----------------------*/
 
     getlogin: async (req, res, next) => {
-        if (req.session.userloggedin) {
-            res.redirect('/')
+try{
+    res.redirect('/')
+}
+catch(error)
+{
+    res.redirect('/500-error')
+}
+       
+    },
+    postlogin: async (req, res, next) => {
+try{
+    userData = req.body
+    await User.findOne({ Email: userData.email }).then((user) => {
+        if (user) {
+            if (!user.Access) {
+                loginerr = "you were blocked by admin"
+                res.redirect('/userLogin')
+            }
+            else {
+                // console.log(user);
+                console.log(user.Password);
+                console.log(userData.password);
+                bcrypt.compare(userData.password, user.Password, async function (error, isMatch) {
+                    console.log(isMatch);
+                    if (isMatch) {
+
+                        req.session.userloggedin = true
+                        req.session.user = user
+                        console.log(req.session.user);
+                        res.json({ loginStatus: true })
+
+                    }
+                    else {
+                        res.json({ passwordErr: true })
+
+                        // res.redirect('/userLogin')
+                    }
+                })
+            }
 
         }
         else {
+            res.json({ emailErr: true })
 
-            res.render('user/userLogin')
+
+            // res.redirect('/userLogin')
         }
+    })
 
-    },
-    postlogin: async (req, res, next) => {
+}
+catch(error)
+{
+    res.redirect('/500-error')
 
-        userData = req.body
-        await User.findOne({ Email: userData.email }).then((user) => {
-            if (user) {
-                if (!user.Access) {
-                    loginerr = "you were blocked by admin"
-                    res.redirect('/userLogin')
-                }
-                else {
-                    // console.log(user);
-                    console.log(user.Password);
-                    console.log(userData.password);
-                    bcrypt.compare(userData.password, user.Password, async function (error, isMatch) {
-                        console.log(isMatch);
-                        if (isMatch) {
-
-                            req.session.userloggedin = true
-                            req.session.user = user
-                            console.log(req.session.user);
-                            res.json({ loginStatus: true })
-
-                        }
-                        else {
-                            res.json({ passwordErr: true })
-
-                            // res.redirect('/userLogin')
-                        }
-                    })
-                }
-
-            }
-            else {
-                res.json({ emailErr: true })
-
-
-                // res.redirect('/userLogin')
-            }
-        })
-
+}
+        
 
     },
 
     /*-----------------user signup---------------------------*/
 
     dosignup: (req, res) => {
-        res.render('user/signup');
+        try{
+            res.render('user/signup');
+        }
+        catch(error)
+        {
+            res.redirect('/500-error')
+        }
+        
     },
     postsignup: (req, res, next) => {
+try{
+    console.log(req.body);
+    let details = req.body
+    req.session.details = details
+    User.find({ Email: req.body.Email }, async (err, data) => {
 
-        console.log(req.body);
-        let details = req.body
-        req.session.details = details
-        User.find({ Email: req.body.Email }, async (err, data) => {
-
-            console.log(data);
-            if (data.length == 0) {
-                // req.session.otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, digits: true, lowerCaseAlphabets: false })
-                details.Password = await bcrypt.hash(details.Password, 10)
-                client.verify.v2.services(process.env.service_id)
-                    .verifications
-                    .create({ to: '+91' + req.body.Phone, channel: 'sms' })
-                    .then(verification => console.log(verification.status));
-                res.json({ status: true })
-            }
-            else {
-                res.json({ emailExist: true })
-                // res.redirect('/')
-            }
-        })
+        console.log(data);
+        if (data.length == 0) {
+            // req.session.otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, digits: true, lowerCaseAlphabets: false })
+            details.Password = await bcrypt.hash(details.Password, 10)
+            client.verify.v2.services(process.env.service_id)
+                .verifications
+                .create({ to: '+91' + req.body.Phone, channel: 'sms' })
+                .then(verification => console.log(verification.status));
+            res.json({ status: true })
+        }
+        else {
+            res.json({ emailExist: true })
+            // res.redirect('/')
+        }
+    })
+}
+catch(error)
+{
+    res.redirect('/500-error')
+}
+        
     },
     /*-------------view all product-----------------------*/
     viewAllProducts: async (req, res) => {
         try {
             let categories = await Category.find()
             let products = await Product.find({ active: true })
-            console.log(products);
-            const userId = req.session.user._id
-            if (req.session.userloggedin) {
+            if (req.session.user) {
+                const userId = req.session.user._id
+
                 const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
                 if (viewcart) {
                     req.session.cartNumber = viewcart.Products.length
@@ -156,108 +180,142 @@ module.exports = {
                     req.session.wishlistNumber = wishlist.myWish.length
                 }
             }
-
+            else {
+                req.session.cartNumber = 0
+                req.session.wishlistNumber = 0
+            }
             res.render('user/viewAllProduct', { login: req.session.userloggedin, users: req.session.user, products, categories, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber })
 
         }
         catch (error) {
-            console.log(error)
+            res.redirect('/500-error')
         }
 
     },
 
 
     getProductView: async (req, res) => {
-        const proId = req.params.id
-        let products = await Product.findOne({ _id: proId })
-        if (req.session.userloggedin) {
-            const userId = req.session.user._id
-            const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
-            if (viewcart) {
-                req.session.cartNumber = viewcart.Products.length
-            }
-            const wishlist = await Wishlist.findOne({ userId: userId }).populate("myWish.productId").exec()
-            if (wishlist) {
-                req.session.wishlistNumber = wishlist.myWish.length
-            }
+        try {
+            const proId = req.params.id
+            let products = await Product.findOne({ _id: mongoose.Types.ObjectId(proId) })
+            // if(!products){                    
+            //     res.send('500')
+            // }
+            if (req.session.user) {
 
+                const userId = req.session.user._id
+                const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
+                if (viewcart) {
+                    req.session.cartNumber = viewcart.Products.length
+                }
+                const wishlist = await Wishlist.findOne({ userId: userId }).populate("myWish.productId").exec()
+                if (wishlist) {
+                    req.session.wishlistNumber = wishlist.myWish.length
+                }
+            }
+            else {
+                req.session.cartNumber = 0
+                req.session.wishlistNumber = 0
+            }
+            res.render('user/productDetails', { login: req.session.userloggedin, users: req.session.user, products, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber })
         }
-        res.render('user/productDetails', { login: req.session.userloggedin, users: req.session.user, products, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber })
+        catch (error) {
+            res.redirect('/500-error')
+        }
+
     },
 
     /*----------------otp setup-------------------------------*/
     getotp: (req, res, next) => {
-        res.render('user/verifyotp')
+        try{
+            res.render('user/verifyotp')
+        }
+        catch(error)
+        {
+            res.redirect('/500-error')
+        }
+        
     },
     postOtp: (req, res, next) => {
-        const otp = req.body.otp
-        const num = req.body.Phone
-        client.verify.v2.services(process.env.service_id)
-            .verificationChecks
-            .create({ to: '+91' + req.session.details.Phone, code: otp })
-            .then(verification_check => {
-                if (verification_check.status === 'approved') {
-
-                    let userData = req.session.details
-                    console.log(userData);
-                    let userSignData = new User({
-                        Name: userData.Name,
-                        Email: userData.Email,
-                        Password: userData.Password,
-                        Phone: userData.Phone,
-                    })
-                    userSignData.save().then((data) => {
-                        req.session.userloggedin = true
-                        req.session.user = data.Name
-                        res.redirect('/')
-                    })
-                }
-                else {
-                    res.redirect('/get-otp')
-                }
-            })
+        try{
+            const otp = req.body.otp
+            const num = req.body.Phone
+            client.verify.v2.services(process.env.service_id)
+                .verificationChecks
+                .create({ to: '+91' + req.session.details.Phone, code: otp })
+                .then(verification_check => {
+                    if (verification_check.status === 'approved') {
+    
+                        let userData = req.session.details
+                        console.log(userData);
+                        let userSignData = new User({
+                            Name: userData.Name,
+                            Email: userData.Email,
+                            Password: userData.Password,
+                            Phone: userData.Phone,
+                        })
+                        userSignData.save().then((data) => {
+                            req.session.userloggedin = true
+                            req.session.user = data.Name
+                            res.redirect('/')
+                        })
+                    }
+                    else {
+                        res.redirect('/get-otp')
+                    }
+                })
+        }
+        catch(error)
+        {
+            res.redirect('/500-error')
+        }
+        
         //  console.log(verification_check.status));
 
 
     },
     /*--------------user Profile----------------------------*/
     getProfile: async (req, res, next) => {
-
-        if (req.session.userloggedin) {
-            let users = req.session.user
-            const userId = req.session.user._id
-            const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
-            if (viewcart) {
-                req.session.cartNumber = viewcart.Products.length
-            }
-            const wishlist = await Wishlist.findOne({ userId: userId }).populate("myWish.productId").exec()
-            if (wishlist) {
-                req.session.wishlistNumber = wishlist.myWish.length
-            }
-            res.render('user/editProfile', { users, login: req.session.userloggedin, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber })
-        }
-        else {
-            res.redirect('/userLogin')
-        }
-
-
-    },
+try{
+    let users = req.session.user
+    const userId = req.session.user._id
+    const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
+    if (viewcart) {
+        req.session.cartNumber = viewcart.Products.length
+    }
+    const wishlist = await Wishlist.findOne({ userId: userId }).populate("myWish.productId").exec()
+    if (wishlist) {
+        req.session.wishlistNumber = wishlist.myWish.length
+    }
+    }
+    catch(error)
+    {
+        res.redirect('/500-error')
+    }
+},
     postProfile: (req, res) => {
-        console.log(req.body);
-        User.updateOne({ _id: req.params.id }, {
 
-            Name: req.body.Name,
-            Email: req.body.Email,
-            Phone: req.body.Phone
+        try{
+            User.updateOne({ _id: req.params.id }, {
 
-        }).then(async (err, data) => {
-            let newUser = await User.findById({ _id: req.params.id })
-            console.log(newUser);
-            req.session.user = newUser
-            req.session.userloggedin = true
-            res.redirect('/my-profile')
-
-        })
+                Name: req.body.Name,
+                Email: req.body.Email,
+                Phone: req.body.Phone
+    
+            }).then(async (err, data) => {
+                let newUser = await User.findById({ _id: req.params.id })
+                console.log(newUser);
+                req.session.user = newUser
+                req.session.userloggedin = true
+                res.redirect('/my-profile')
+    
+            })
+        }
+        catch(error)
+        {
+            res.redirect('/500-error')
+        }
+        
     },
     /*------------------cart------------------------------------*/
     getCart: async (req, res) => {
@@ -304,14 +362,14 @@ module.exports = {
                 res.json({ status: true })
             }
         }
-        catch (err) {
+        catch (error) {
             res.json({ status: true })
         }
 
     },
     /*-------------cart view-------------------------------*/
     cartView: async (req, res) => {
-        if (req.session.userloggedin) {
+        try {
             const userId = req.session.user._id
             const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
 
@@ -323,44 +381,59 @@ module.exports = {
                 req.session.wishlistNumber = wishlist.myWish.length
             }
             res.render('user/viewCart', { login: req.session.userloggedin, users: req.session.user, cartProducts: viewcart, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber })
-        } else {
-            res.redirect('/userLogin')
         }
+        catch (error) {
+            res.redirect('/500-error')
+        }
+
 
     },
 
     /*----------------change quantity--------------------------*/
     changeQuantity: async (req, res) => {
-        let productId = req.params.proId.toString()
-        let changeStatus = req.params.changeStatus
-        let userId = req.session.user._id
-        let cart = await Cart.findOne({ userId })
-        let itemIndex = cart.Products.findIndex(p => p._id == productId)
-        let productItem = cart.Products[itemIndex]
-        if (changeStatus == -1) {
-            productItem.quantity -= 1
-        } else {
-            productItem.quantity += 1
+        try{
+            let productId = req.params.proId.toString()
+            let changeStatus = req.params.changeStatus
+            let userId = req.session.user._id
+            let cart = await Cart.findOne({ userId })
+            let itemIndex = cart.Products.findIndex(p => p._id == productId)
+            let productItem = cart.Products[itemIndex]
+            if (changeStatus == -1) {
+                productItem.quantity -= 1
+            } else {
+                productItem.quantity += 1
+            }
+            cart.total = cart.Products.reduce((acc, curr) => {
+                return acc + curr.quantity * curr.price
+            }, 0)
+            await cart.save()
+            res.json({ status: true })
         }
-        cart.total = cart.Products.reduce((acc, curr) => {
-            return acc + curr.quantity * curr.price
-        }, 0)
-        await cart.save()
-        res.json({ status: true })
+        catch(error)
+        {
+            res.redirect('/500-error')
+        }
     },
 
     /*---------------delete cart item--------------------*/
     deleteCartItem: async (req, res) => {
-        let productId = req.params.proId
-        let userId = req.session.user._id
-        let cart = await Cart.findOne({ userId })
-        let itemIndex = cart.Products.findIndex(p => p._id == productId)
-        cart.Products.splice(itemIndex, 1)
-        cart.total = cart.Products.reduce((acc, curr) => {
-            return acc + curr.quantity * curr.price
-        }, 0)
-        await cart.save()
-        res.json({ status: true })
+        try{
+            let productId = req.params.proId
+            let userId = req.session.user._id
+            let cart = await Cart.findOne({ userId })
+            let itemIndex = cart.Products.findIndex(p => p._id == productId)
+            cart.Products.splice(itemIndex, 1)
+            cart.total = cart.Products.reduce((acc, curr) => {
+                return acc + curr.quantity * curr.price
+            }, 0)
+            await cart.save()
+            res.json({ status: true })
+        }
+        catch(error)
+        {
+            res.redirect('/500-error') 
+        }
+        
     },
     /*-----------------add wishlist---------------------------*/
     addToWishlist: async (req, res) => {
@@ -391,14 +464,14 @@ module.exports = {
                 await list.save()
                 res.json({ status: true })
             }
-        } catch (err) {
+        } catch (error) {
             res.json({ status: true })
         }
 
     },
     /*---------------view wishlist-----------------------*/
     viewWishList: async (req, res) => {
-        if (req.session.userloggedin) {
+        try {
             const userId = req.session.user._id
             const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
             if (viewcart) {
@@ -409,54 +482,69 @@ module.exports = {
                 req.session.wishlistNumber = wishlist.myWish.length
             }
             res.render('user/wishList', { login: req.session.userloggedin, users: req.session.user, wishProducts: wishlist, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber })
-        } else {
-            res.redirect('/userLogin')
         }
+        catch (error) {
+            res.redirect('/500-error')
+        }
+
     },
     /*---------------remove wishlist---------------------*/
     deleteWishlistItem: async (req, res) => {
-        let productId = req.params.proId
-        let userId = req.session.user._id
-        let wishlist = await Wishlist.findOne({ userId })
-        let itemIndex = wishlist.myWish.findIndex(p => p._id == productId)
-        wishlist.myWish.splice(itemIndex, 1)
-        await wishlist.save()
-        res.json({ status: true })
+        try{
+            let productId = req.params.proId
+            let userId = req.session.user._id
+            let wishlist = await Wishlist.findOne({ userId })
+            let itemIndex = wishlist.myWish.findIndex(p => p._id == productId)
+            wishlist.myWish.splice(itemIndex, 1)
+            await wishlist.save()
+            res.json({ status: true })
+        }
+        catch(error)
+        {
+            res.redirect('/500-error')
+        }
 
     },
     /*-----------about page-----------------------------*/
     getAbout: async (req, res) => {
-
-        const users = req.session.user
-
-        if (req.session.userloggedin) {
-            const userId = req.session.user._id
-            const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
-            if (viewcart) {
-                req.session.cartNumber = viewcart.Products.length
+        try {
+            const users = req.session.user
+            if (req.session.user) {
+                const userId = req.session.user._id
+                const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
+                if (viewcart) {
+                    req.session.cartNumber = viewcart.Products.length
+                }
+                const wishlist = await Wishlist.findOne({ userId: userId }).populate("myWish.productId").exec()
+                if (wishlist) {
+                    req.session.wishlistNumber = wishlist.myWish.length
+                }
+            } else {
+                req.session.cartNumber = 0
+                req.session.wishlistNumber = 0
             }
-            const wishlist = await Wishlist.findOne({ userId: userId }).populate("myWish.productId").exec()
-            if (wishlist) {
-                req.session.wishlistNumber = wishlist.myWish.length
-            }
+            res.render('user/aboutUs', { users, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber })
         }
-
-        res.render('user/aboutUs', { users, login: req.session.userloggedin, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber })
+        catch (error) {
+            res.redirect('/500-error')
+        }
     },
 
 
     /*--------------categories ---------------------------*/
     getCategories: (req, res) => {
-        if (req.session.userloggedin) {
+        try {
             let catName = req.params.catName
 
             Product.find({ category: catName }).then((products) => {
 
                 res.json(products)
             })
-        } else {
-            res.redirect('/')
         }
+        catch (error) {
+            res.redirect('/500-error')
+        }
+
 
 
     },
@@ -466,7 +554,7 @@ module.exports = {
         try {
 
             let users = req.session.user
-            if (req.session.userloggedin) {
+            if (req.session.user) {
                 const userId = req.session.user._id
                 const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
                 if (viewcart) {
@@ -477,12 +565,14 @@ module.exports = {
                     req.session.wishlistNumber = wishlist.myWish.length
                 }
             }
-
-            res.render('user/contactUs', { users, login: req.session.userloggedin, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber })
-
+            else {
+                req.session.cartNumber = 0
+                req.session.wishlistNumber = 0
+            }
+            res.render('user/contactUs', { users, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber })
         }
-        catch (err) {
-            console.log(err);
+        catch (error) {
+            res.redirect('/500-error')
         }
 
 
@@ -490,7 +580,7 @@ module.exports = {
 
     /*---------------order placing--------------------------*/
     checkOut: async (req, res) => {
-        if (req.session.userloggedin) {
+        try {
             let users = req.session.user
 
             const userId = req.session.user._id
@@ -506,46 +596,52 @@ module.exports = {
                 res.render('user/checkout', { users, login: req.session.userloggedin, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber, cartProducts: viewcart })
             else
                 res.redirect('/viewCart')
-
         }
-
+        catch (error) {
+            res.redirect('/500-error')
+        }
 
     },
     placeOrder: async (req, res) => {
-        let userId = req.session.user._id
-        let deliveryAddress = {
-            firstName: req.body.firstname,
-            lastName: req.body.lastname,
-            phone: req.body.number,
-            address: req.body.address,
-            pincode: req.body.pin,
-            state: req.body.state,
-            district: req.body.district
+        try {
+            let userId = req.session.user._id
+            let deliveryAddress = {
+                firstName: req.body.firstname,
+                lastName: req.body.lastname,
+                phone: req.body.number,
+                address: req.body.address,
+                pincode: req.body.pin,
+                state: req.body.state,
+                district: req.body.district
+            }
+            console.log(deliveryAddress);
+            const cart = await Cart.findOne({ userId: userId })
+            const paymentType = req.body.paymentType
+            const newOrder = new Order({
+                userId: userId,
+                deliveryAddress: deliveryAddress,
+                products: cart.Products,
+                quantity: cart.quantity,
+                total: cart.total,
+                paymentType: paymentType
+            })
+            req.session.cartNumber = null
+            await Cart.deleteOne({ userId: userId })
+            await newOrder.save()
+            if (req.session.coupon > 0) {
+                req.session.coupon = null
+            }
+            res.json({ status: true })
+
         }
-        console.log(deliveryAddress);
-        const cart = await Cart.findOne({ userId: userId })
-        const paymentType = req.body.paymentType
-        const newOrder = new Order({
-            userId: userId,
-            deliveryAddress: deliveryAddress,
-            products: cart.Products,
-            quantity: cart.quantity,
-            total: cart.total,
-            paymentType: paymentType
-        })
-        req.session.cartNumber = null
-        await cart.remove()
-        await newOrder.save()
-        if (req.session.coupon > 0) {
-            req.session.coupon = null
+        catch (error) {
+            res.redirect('/500-error')
         }
-        res.json({ status: true })
 
     },
     /*-----------order successPage--------------------*/
     orderSuccessPage: async (req, res) => {
-        console.log(req.session.userloggedin);
-        if (req.session.userloggedin) {
+        try {
             let users = req.session.user
             const userId = req.session.user._id
             const wishlist = await Wishlist.findOne({ userId: userId }).populate("myWish.productId").exec()
@@ -562,91 +658,93 @@ module.exports = {
 
             res.render('user/order-success', { cartProducts: viewcart, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber, users, login: req.session.userloggedin })
         }
-        else {
-
-            res.redirect('/userLogin')
-
+        catch (error) {
+            res.redirect('/500-error')
         }
 
     },
     /*----------------getorder------------------------------*/
     getOrder: async (req, res) => {
         try {
-            if (req.session.userloggedin) {
-                const userId = req.session.user._id
-                let users = req.session.user
+            const userId = req.session.user._id
+            let users = req.session.user
 
-                const wishlist = await Wishlist.findOne({ userId: userId }).populate("myWish.productId").exec()
-                if (wishlist) {
-                    req.session.wishlistNumber = wishlist.myWish.length
-                }
-                const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
-
-                if (viewcart) {
-                    req.session.cartNumber = viewcart.Products.length
-                } else {
-                    req.session.cartNumber = null
-                }
-            
-                const myOrders = await Order.find({ userId }).populate([
-                    {
-                        path: "userId",
-                        model: "user"
-                    },
-                    {
-                        path: "products.productId",
-                        model: "products"
-                    }
-                ]).exec()
-
-                res.render('user/orders', { myOrders: myOrders, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber, users, login: req.session.userloggedin })
+            const wishlist = await Wishlist.findOne({ userId: userId }).populate("myWish.productId").exec()
+            if (wishlist) {
+                req.session.wishlistNumber = wishlist.myWish.length
             }
-            else{
-                res.redirect('/userLogin')
+            const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
+
+            if (viewcart) {
+                req.session.cartNumber = viewcart.Products.length
+            } else {
+                req.session.cartNumber = null
             }
+
+            const myOrders = await Order.find({ userId }).sort( { 'createdAt': -1 } ).populate([
+                {
+                    path: "userId",
+                    model: "user"
+                },
+                {
+                    path: "products.productId",
+                    model: "products"
+                }
+            ]).exec()
+        
+            res.render('user/orders', { myOrders: myOrders, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber, users, login: req.session.userloggedin })
         }
-
-         catch (error) {
-            console.log(error);
+        catch (error) {
+            res.redirect('/500-error')
 
         }
 
     },
 
     generateOrder: (req, res) => {
-        // console.log(req.body.amount);
-        const amount = parseInt(req.body.amount) * 100
+        try {
+            const amount = parseInt(req.body.amount) * 100
 
-        const options = {
-            amount: amount,  // amount in the smallest currency unit
-            currency: "INR",
-            receipt: "order1001"
-        };
-        instance.orders.create(options, function (err, order) {
-            if (err) {
-                console.log(err)
-            } else {
-                res.send({ orderId: order.id })
-            }
-        });
+            const options = {
+                amount: amount,  // amount in the smallest currency unit
+                currency: "INR",
+                receipt: "order1001"
+            };
+            instance.orders.create(options, function (err, order) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    res.send({ orderId: order.id })
+                }
+            });
+        }
+        catch (error) {
+            res.redirect('/500-error')
+        }
+
     },
     /*--------------------payment verify-------------------*/
     verifyPayment: (req, res) => {
+        try {
+            const orderId = req.params.orderId
+            let body = orderId + "|" + req.body.response.razorpay_payment_id;
 
-        const orderId = req.params.orderId
-        let body = orderId + "|" + req.body.response.razorpay_payment_id;
+            const crypto = require("crypto");
+            const expectedSignature = crypto.createHmac('sha256', process.env.key_secret)
+                .update(body.toString())
+                .digest('hex');
+            console.log("sig received ", req.body.response.razorpay_signature);
+            console.log("sig generated ", expectedSignature);
+            let response = { "signatureIsValid": false }
+            if (expectedSignature === req.body.response.razorpay_signature) {
+                response = { "signatureIsValid": true }
+            }
+            res.send(response);
 
-        const crypto = require("crypto");
-        const expectedSignature = crypto.createHmac('sha256', process.env.key_secret)
-            .update(body.toString())
-            .digest('hex');
-        console.log("sig received ", req.body.response.razorpay_signature);
-        console.log("sig generated ", expectedSignature);
-        let response = { "signatureIsValid": false }
-        if (expectedSignature === req.body.response.razorpay_signature) {
-            response = { "signatureIsValid": true }
         }
-        res.send(response);
+        catch (error) {
+            res.redirect('/500-error')
+        }
 
     },
     /*----------coupon------------------------------------*/
@@ -686,80 +784,96 @@ module.exports = {
             } else {
                 res.json({ invalidCoupon: true })
             }
-        } catch (err) {
-            console.log(err);
+        } catch (error) {
+            res.redirect('/500-error')
         }
     },
 
     cancelOrder: async (req, res) => {
-        const orderId = req.params.orderId
-        await Order.findByIdAndRemove(orderId, { orderActive: false })
-        res.json({ status: true })
+        try{
+            const orderId = req.params.orderId
+            await Order.findByIdAndRemove(orderId, { orderActive: false })
+            res.json({ status: true })
+        }
+        catch(error)
+        {
+            res.redirect('/500-error')
+        }
+        
     },
     /*--------------add address------------------------------*/
     addAndEditAddress: async (req, res) => {
+        try {
+            console.log(req.body);
+            let addrexIndex = parseInt(req.body.index)
+            let _id = req.session.user._id
+            let userOne = await User.findById(_id)
+            console.log(userOne.Address[2]);
+            let address = {
+                firstName: req.body.firstname,
+                lastName: req.body.lastname,
+                phone: req.body.phone,
+                address: req.body.address,
+                pincode: req.body.pincode,
+                state: req.body.state,
+                district: req.body.district
+            }
+            if (addrexIndex > -1) {
+                console.log('hoooooooo');
+                userOne.Address[addrexIndex] = address
+            } else {
+                userOne.Address.push(address);
+            }
+            await userOne.save()
+            res.json({ status: true })
 
-        console.log(req.body);
-        let addrexIndex = parseInt(req.body.index)
-        let _id = req.session.user._id
-        let userOne = await User.findById(_id)
-        console.log(userOne.Address[2]);
-        let address = {
-            firstName: req.body.firstname,
-            lastName: req.body.lastname,
-            phone: req.body.phone,
-            address: req.body.address,
-            pincode: req.body.pincode,
-            state: req.body.state,
-            district: req.body.district
         }
-        if (addrexIndex > -1) {
-            console.log('hoooooooo');
-            userOne.Address[addrexIndex] = address
-        } else {
-            userOne.Address.push(address);
+        catch (error) {
+            res.redirect('/500-error')
         }
-        await userOne.save()
-        res.json({ status: true })
-
 
     },
 
     deleteAddress: async (req, res) => {
-        const userId = req.session.user._id
-        const addressIndex = req.body.addresIndex
-        const users = await User.findById(userId)
-        users.Address.splice(addressIndex, 1)
-        await users.save()
-        res.json({ status: true })
+        try{
+            const userId = req.session.user._id
+            const addressIndex = req.body.addresIndex
+            const users = await User.findById(userId)
+            users.Address.splice(addressIndex, 1)
+            await users.save()
+            res.json({ status: true })
+        }
+        catch(error)
+        {
+            res.redirect('/500-error')
+        }
 
 
     },
     getMyProfile: async (req, res) => {
-        if (req.session.userloggedin) {
-            const userId = req.session.user._id
-            let users = req.session.user
-            try {
-                const wishlist = await Wishlist.findOne({ userId: userId }).populate("myWish.productId").exec()
-                if (wishlist) {
-                    req.session.wishlistNumber = wishlist.myWish.length
-                }
-                const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
 
-                if (viewcart) {
-                    req.session.cartNumber = viewcart.Products.length
-                } else {
-                    req.session.cartNumber = null
-                }
-                res.render('user/my-profile', { users, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber, login: req.session.userloggedin })
-
-            } catch (error) {
-                console.log('error');
+        const userId = req.session.user._id
+        let users = req.session.user
+        try {
+            const wishlist = await Wishlist.findOne({ userId: userId }).populate("myWish.productId").exec()
+            if (wishlist) {
+                req.session.wishlistNumber = wishlist.myWish.length
             }
-        }
+            const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
 
-        // console.log(userAlldetails);
+            if (viewcart) {
+                req.session.cartNumber = viewcart.Products.length
+            } else {
+                req.session.cartNumber = null
+            }
+            res.render('user/my-profile', { users, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber, login: req.session.userloggedin })
+
+        } catch (error) {
+            res.redirect('/500-error')
+        }
     },
+
+
 
     /*---------------user logout----------------------------*/
     getlogout: (req, res) => {

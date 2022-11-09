@@ -332,9 +332,9 @@
                             let finalAmount
                             let couponDscnPerc = response.discount
                             let couponDiscountAmount = (total / 100)*couponDscnPerc
-                            let x = Math.floor(couponDiscountAmount)
+                            let x = Math.round(couponDiscountAmount)
                             if (x > response.maxLimit) {
-                                x = response.maxLimit
+                                
                                 finalAmount = total - x
                             }
                             finalAmount = total - x

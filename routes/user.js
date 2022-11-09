@@ -1,14 +1,14 @@
 let express = require('express')
 let router = express.Router()
 const userController = require('../controllers/userControlers')
-
+const sessionUser=require('../middleware/userSessionChecking')
 
 /*-------user homepage----------*/
 
-router.get('/', userController.get)
+router.get('/',userController.get)
 
 /*-------user login-------------*/
-router.get('/userLogin', userController.getlogin)
+router.get('/userLogin',sessionUser,userController.getlogin)
 router.post('/login', userController.postlogin)
 
 /*--------user signup----------------*/
@@ -17,7 +17,7 @@ router.route('/signup')
     .post(userController.postsignup)
 
 /*--------user update profile--------*/
-router.route('/my-profile').get(userController.getMyProfile)
+router.route('/my-profile').get(sessionUser,userController.getMyProfile)
 // router.post('/updateProfile/:id', userController.postProfile)
 
 router.get('/editProfile', userController.getProfile)
@@ -30,10 +30,10 @@ router.get('/productDetails/:id', userController.getProductView)
 router.get('/viewAllProduct',userController.viewAllProducts)
 
 /*--------user cartPage-------------------*/
-router.get('/add-to-cart/:proId/:qty', userController.getCart)
+router.get('/add-to-cart/:proId/:qty',sessionUser, userController.getCart)
 
 /*--------user view cart------------------*/
-router.get('/viewCart', userController.cartView)
+router.get('/viewCart',sessionUser, userController.cartView)
 
 /*--------change product quantity----------*/
 router.post('/change-quantity/:proId/:changeStatus', userController.changeQuantity)
@@ -43,7 +43,7 @@ router.delete('/delete-from-cart/:proId', userController.deleteCartItem)
 /*----------wishlist----------------------*/
 router.post('/add-to-wishlist/:proId',userController.addToWishlist)
 
-router.get('/wishList',userController.viewWishList)
+router.get('/wishList',sessionUser,userController.viewWishList)
 
 router.delete('/delete-from-wishlist/:proId',userController.deleteWishlistItem)
 
@@ -54,15 +54,15 @@ router.post('/verifyotp', userController.postOtp)
 /*--------getting aAbout page-------*/
 router.get('/aboutUs',userController.getAbout)
 
-router.get('/get-category/:catName',userController.getCategories)
+router.route('/get-category/:catName').get(userController.getCategories)
 
-router.route('/order-success').get(userController.orderSuccessPage)
+router.route('/order-success').get(sessionUser,userController.orderSuccessPage)
 
 router.route('/payment/orderId').post(userController.generateOrder)
 
-router.route('/orders').get(userController.getOrder)
+router.route('/orders').get(sessionUser,userController.getOrder)
 
-router.route('/checkout').get(userController.checkOut)
+router.route('/checkout').get(sessionUser,userController.checkOut)
 
 router.route('/redeem/:coupCode/:total').post(userController.redeemCoupnAmount)
 
@@ -87,10 +87,18 @@ router.get('/contactUs',userController.getContact)
 /*--------user logout-----------*/
 router.get('/logout', userController.getlogout)
 
-// router.get('*',(req,res)=>{
-//     res.render('user/error')
+
+// router.get('/internal-server-error', (req, res) => {
+//     res.status(500).render('user/500-error-page')
 // })
 
 
+router.get('/500-error',(req,res)=>{
+    res.status(500).render('admin/error-500-page')
+})
+
+// router.get('*', function (req, res,next) {
+//     res.status(404).render('user/error')
+// });
 
 module.exports = router
