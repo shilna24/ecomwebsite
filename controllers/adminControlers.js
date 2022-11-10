@@ -219,10 +219,10 @@ getInvoice : async (req, res, next) => {
       res.redirect('/admin/500-error')
     }
     },
-
+/*----------------------------------------*/
   getReport:async(req,res)=>{
 try{
-  const allOrders = await Order.find().populate([
+  const allOrders = await Order.find().sort( { 'createdAt': -1 } ).populate([
     {
       path: "userId",
       model: "user"
