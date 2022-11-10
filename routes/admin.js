@@ -78,7 +78,7 @@ router.route('/status-order/:orderId/:status').post(adminController.orderStatusC
 
  
 
-// router.route('/get-invoice/:orderId').get(sessionAdmin,adminController.getInvoice)
+router.route('/get-invoice/:orderId').get(sessionAdmin,adminController.getInvoice)
 
  /*---------admin logout------------*/
 router.get('/logout',adminController.adminlogout)

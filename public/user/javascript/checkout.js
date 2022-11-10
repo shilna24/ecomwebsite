@@ -89,8 +89,8 @@ document.forms["checkoutForm"].addEventListener("submit", async (event) => {
             console.log(orderId)
             await razorpay(orderId, amount, data)
 
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            console.error(err)
         }
         // razorpay(orderId, amount)
     }

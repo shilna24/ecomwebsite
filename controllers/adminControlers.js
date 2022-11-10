@@ -16,6 +16,8 @@ module.exports = {
   /*--------admin login-----------*/
   getlogin: async (req, res) => {
     try {
+      let ha = await Order.find()
+      console.log(ha);
       let totalSales = await Order.aggregate([
         {
             $match: {
@@ -147,27 +149,28 @@ const totalSale1 = await Order.aggregate([
         $limit: 7
     }
 ])
-    res.render('admin/adminDashboard', { totalOrder, totalSale,totalUsers, totalMoney, orderCount, allOrders,allProducts ,successOrder, cancelOrder, orderStatus, categorywiseSales})
+    res.render('admin/adminDashboard', { totalOrder, totalSale,totalUsers,allOrders,allProducts ,successOrder, cancelOrder,categorywiseSales})
       
   }  
     catch (error) {
+      console.log(error);
       res.redirect('/admin/500-error')
     }
 
   },
   
-// getInvoice : async (req, res, next) => {
-//   try {
+getInvoice : async (req, res, next) => {
+  try {
 
-//       let orderId = req.params.orderId
-//       let billData = await Order.findById(orderId).populate("products.productId").exec()
+      let orderId = req.params.orderId
+      let billData = await Order.findById(orderId).populate("products.productId").exec()
 
-//       res.render('admin/Invoice', { billData })
-//   } catch (error) {
-//     res.redirect('/admin/500-error')
+      res.render('admin/Invoice', { billData })
+  } catch (error) {
+    res.redirect('/admin/500-error')
 
-//   }
-// },
+  }
+},
 
   /*----------admin postlogin---------*/
   postlogin: (req, res) => {
@@ -209,9 +212,10 @@ const totalSale1 = await Order.aggregate([
   /*-----------admin dashboard-------------*/
   getDashboard: (req, res) => {
     try {
-      res.render('admin/adminDashboard', { totalSale, totalUsers, totalMoney, orderCount, allOrders,totalOrder,cancelOrder,successOrder,tot_sales })
+      res.redirect('/admin' )
     }
     catch (error) {
+      console.log(error);
       res.redirect('/admin/500-error')
     }
     },
@@ -294,7 +298,7 @@ catch(error)
           Category.deleteOne({ categoryName: req.params.catName }).then((result) => {
             console.log(result);
           }).catch((err) => {
-            res.redirect('/admin/error-500-page')
+            console.log(err);
       
           })
           res.redirect('/admin/adminCategory')

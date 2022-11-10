@@ -91,7 +91,7 @@ router.get('/logout', userController.getlogout)
 
 
 router.get('/500-error',(req,res)=>{
-    res.status(500).render('admin/error-500-page')
+    res.status(500).render('user/error-500-page')
 })
 
 
