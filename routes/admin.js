@@ -3,6 +3,7 @@ let router=express.Router()
 const adminController=require('../controllers/adminControlers')
 const store = require('../middleware/multer')
 const sessionAdmin=require('../middleware/adminSessionChecking')
+let createError = require('http-errors');
 
 
 
@@ -83,8 +84,14 @@ router.route('/get-invoice/:orderId').get(sessionAdmin,adminController.getInvoic
  /*---------admin logout------------*/
 router.get('/logout',adminController.adminlogout)
 
-router.get('/500-error',(req,res)=>{
-    res.status(500).render('admin/error-500-page')
-})
+// router.use(function (req, res, next) {
+//     next(createError(404));
+//   });
+  
+//   router.use(function (err, req, res, next) {
+//     console.log(err,"admin error route handler")
+//     res.status(err.status || 500);
+//     res.render('admin/error');
+//   });
 
 module.exports=router

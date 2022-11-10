@@ -22,7 +22,7 @@ login = false
 module.exports = {
     /*---------------------user homepage---------------------*/
 
-    get: async (req, res) => {
+    get: async (req, res,next) => {
         try {
             if (req.session.user) {
                 const userId = req.session.user._id
@@ -53,9 +53,9 @@ module.exports = {
             res.render('user/home', { login: req.session.userloggedin, users: req.session.user, products, categories, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber, banners, currentPage: pageNum, totalDocuments: docCount, pages: Math.ceil(docCount / perPage) })
 
         }
-        catch (error) {
-            res.redirect('/500-error')
-
+        catch (err) {
+            console.log(err);
+            next(err)
         }
 
     },
@@ -66,9 +66,9 @@ module.exports = {
 try{
     res.redirect('/')
 }
-catch(error)
-{
-    res.redirect('/500-error')
+catch (err) {
+    console.log(err);
+    next(err)
 }
        
     },
@@ -113,10 +113,9 @@ try{
     })
 
 }
-catch(error)
-{
-    res.redirect('/500-error')
-
+catch (err) {
+    console.log(err);
+    next(err)
 }
         
 
@@ -124,13 +123,13 @@ catch(error)
 
     /*-----------------user signup---------------------------*/
 
-    dosignup: (req, res) => {
+    dosignup: (req, res,next) => {
         try{
             res.render('user/signup');
         }
-        catch(error)
-        {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
         
     },
@@ -157,14 +156,14 @@ try{
         }
     })
 }
-catch(error)
-{
-    res.redirect('/500-error')
+catch (err) {
+    console.log(err);
+    next(err)
 }
         
     },
     /*-------------view all product-----------------------*/
-    viewAllProducts: async (req, res) => {
+    viewAllProducts: async (req, res,next) => {
         try {
             let categories = await Category.find()
             let products = await Product.find({ active: true })
@@ -187,14 +186,15 @@ catch(error)
             res.render('user/viewAllProduct', { login: req.session.userloggedin, users: req.session.user, products, categories, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber })
 
         }
-        catch (error) {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
 
     },
 
 
-    getProductView: async (req, res) => {
+    getProductView: async (req, res,next) => {
         try {
             const proId = req.params.id
             let products = await Product.findOne({ _id: mongoose.Types.ObjectId(proId) })
@@ -219,8 +219,9 @@ catch(error)
             }
             res.render('user/productDetails', { login: req.session.userloggedin, users: req.session.user, products, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber })
         }
-        catch (error) {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
 
     },
@@ -230,9 +231,9 @@ catch(error)
         try{
             res.render('user/verifyotp')
         }
-        catch(error)
-        {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
         
     },
@@ -265,9 +266,9 @@ catch(error)
                     }
                 })
         }
-        catch(error)
-        {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
         
         //  console.log(verification_check.status));
@@ -289,12 +290,12 @@ try{
     }
     res.render('user/editProfile',{ login: req.session.userloggedin, users: req.session.user, cartProducts: viewcart, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber })
     }
-    catch(error)
-    {
-        res.redirect('/500-error')
+    catch (err) {
+        console.log(err);
+        next(err)
     }
 },
-    postProfile: (req, res) => {
+    postProfile: (req, res,next) => {
 
         try{
             User.updateOne({ _id: req.params.id }, {
@@ -312,14 +313,14 @@ try{
     
             })
         }
-        catch(error)
-        {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
         
     },
     /*------------------cart------------------------------------*/
-    getCart: async (req, res) => {
+    getCart: async (req, res,next) => {
         const productId = req.params.proId
         const quantity = parseInt(req.params.qty)
         try {
@@ -363,13 +364,14 @@ try{
                 res.json({ status: true })
             }
         }
-        catch (error) {
-            res.json({ status: true })
+        catch (err) {
+            console.log(err);
+            next(err)
         }
 
     },
     /*-------------cart view-------------------------------*/
-    cartView: async (req, res) => {
+    cartView: async (req, res,next) => {
         try {
             const userId = req.session.user._id
             const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
@@ -383,15 +385,15 @@ try{
             }
             res.render('user/viewCart', { login: req.session.userloggedin, users: req.session.user, cartProducts: viewcart, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber })
         }
-        catch (error) {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
-
 
     },
 
     /*----------------change quantity--------------------------*/
-    changeQuantity: async (req, res) => {
+    changeQuantity: async (req, res,next) => {
         try{
             let productId = req.params.proId.toString()
             let changeStatus = req.params.changeStatus
@@ -410,14 +412,14 @@ try{
             await cart.save()
             res.json({ status: true })
         }
-        catch(error)
-        {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
     },
 
     /*---------------delete cart item--------------------*/
-    deleteCartItem: async (req, res) => {
+    deleteCartItem: async (req, res,next) => {
         try{
             let productId = req.params.proId
             let userId = req.session.user._id
@@ -430,14 +432,14 @@ try{
             await cart.save()
             res.json({ status: true })
         }
-        catch(error)
-        {
-            res.redirect('/500-error') 
+        catch (err) {
+            console.log(err);
+            next(err)
         }
         
     },
     /*-----------------add wishlist---------------------------*/
-    addToWishlist: async (req, res) => {
+    addToWishlist: async (req, res,next) => {
         const productId = req.params.proId
         try {
             const userId = req.session.user._id
@@ -465,13 +467,14 @@ try{
                 await list.save()
                 res.json({ status: true })
             }
-        } catch (error) {
-            res.json({ status: true })
+        } catch (err) {
+            console.log(err);
+            next(err)
         }
 
     },
     /*---------------view wishlist-----------------------*/
-    viewWishList: async (req, res) => {
+    viewWishList: async (req, res,next) => {
         try {
             const userId = req.session.user._id
             const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
@@ -484,13 +487,14 @@ try{
             }
             res.render('user/wishList', { login: req.session.userloggedin, users: req.session.user, wishProducts: wishlist, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber })
         }
-        catch (error) {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
 
     },
     /*---------------remove wishlist---------------------*/
-    deleteWishlistItem: async (req, res) => {
+    deleteWishlistItem: async (req, res,next) => {
         try{
             let productId = req.params.proId
             let userId = req.session.user._id
@@ -500,14 +504,14 @@ try{
             await wishlist.save()
             res.json({ status: true })
         }
-        catch(error)
-        {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
 
     },
     /*-----------about page-----------------------------*/
-    getAbout: async (req, res) => {
+    getAbout: async (req, res,next) => {
         try {
             const users = req.session.user
             if (req.session.user) {
@@ -526,14 +530,15 @@ try{
             }
             res.render('user/aboutUs', { users, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber })
         }
-        catch (error) {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
     },
 
 
     /*--------------categories ---------------------------*/
-    getCategories: (req, res) => {
+    getCategories: (req, res,next) => {
         try {
             let catName = req.params.catName
 
@@ -542,8 +547,9 @@ try{
                 res.json(products)
             })
         }
-        catch (error) {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
 
 
@@ -551,7 +557,7 @@ try{
     },
 
     /*---------------contact page--------------------------*/
-    getContact: async (req, res) => {
+    getContact: async (req, res,next) => {
         try {
 
             let users = req.session.user
@@ -572,15 +578,16 @@ try{
             }
             res.render('user/contactUs', { users, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber })
         }
-        catch (error) {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
 
 
     },
 
     /*---------------order placing--------------------------*/
-    checkOut: async (req, res) => {
+    checkOut: async (req, res,next) => {
         try {
             let users = req.session.user
 
@@ -598,12 +605,13 @@ try{
             else
                 res.redirect('/viewCart')
         }
-        catch (error) {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
 
     },
-    placeOrder: async (req, res) => {
+    placeOrder: async (req, res,next) => {
         try {
             let userId = req.session.user._id
             let deliveryAddress = {
@@ -635,13 +643,14 @@ try{
             res.json({ status: true })
 
         }
-        catch (error) {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
 
     },
     /*-----------order successPage--------------------*/
-    orderSuccessPage: async (req, res) => {
+    orderSuccessPage: async (req, res,next) => {
         try {
             let users = req.session.user
             const userId = req.session.user._id
@@ -659,13 +668,14 @@ try{
 
             res.render('user/order-success', { cartProducts: viewcart, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber, users, login: req.session.userloggedin })
         }
-        catch (error) {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
 
     },
     /*----------------getorder------------------------------*/
-    getOrder: async (req, res) => {
+    getOrder: async (req, res,next) => {
         try {
             const userId = req.session.user._id
             let users = req.session.user
@@ -695,14 +705,14 @@ try{
         
             res.render('user/orders', { myOrders: myOrders, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber, users, login: req.session.userloggedin })
         }
-        catch (error) {
-            res.redirect('/500-error')
-
+        catch (err) {
+            console.log(err);
+            next(err)
         }
 
     },
 
-    generateOrder: (req, res) => {
+    generateOrder: (req, res,next) => {
         try {
             const amount = parseInt(req.body.amount) * 100
 
@@ -719,13 +729,14 @@ try{
                 }
             });
         }
-        catch (error) {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
 
     },
     /*--------------------payment verify-------------------*/
-    verifyPayment: (req, res) => {
+    verifyPayment: (req, res,next) => {
         try {
             const orderId = req.params.orderId
             let body = orderId + "|" + req.body.response.razorpay_payment_id;
@@ -743,13 +754,14 @@ try{
             res.send(response);
 
         }
-        catch (error) {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
 
     },
     /*----------coupon------------------------------------*/
-    redeemCoupnAmount: async (req, res) => {
+    redeemCoupnAmount: async (req, res,next) => {
         const coupCode = req.params.coupCode
         const totalAmount = req.params.total
         try {
@@ -785,25 +797,26 @@ try{
             } else {
                 res.json({ invalidCoupon: true })
             }
-        } catch (error) {
-            res.redirect('/500-error')
+        } catch (err) {
+            console.log(err);
+            next(err)
         }
     },
 
-    cancelOrder: async (req, res) => {
+    cancelOrder: async (req, res,next) => {
         try{
             const orderId = req.params.orderId
             await Order.findByIdAndRemove(orderId, { orderActive: false })
             res.json({ status: true })
         }
-        catch(error)
-        {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
         
     },
     /*--------------add address------------------------------*/
-    addAndEditAddress: async (req, res) => {
+    addAndEditAddress: async (req, res,next) => {
         try {
             console.log(req.body);
             let addrexIndex = parseInt(req.body.index)
@@ -828,13 +841,14 @@ try{
             res.json({ status: true })
 
         }
-        catch (error) {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
 
     },
 
-    deleteAddress: async (req, res) => {
+    deleteAddress: async (req, res,next) => {
         try{
             const userId = req.session.user._id
             const addressIndex = req.body.addresIndex
@@ -843,14 +857,14 @@ try{
             await users.save()
             res.json({ status: true })
         }
-        catch(error)
-        {
-            res.redirect('/500-error')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
 
 
     },
-    getMyProfile: async (req, res) => {
+    getMyProfile: async (req, res,next) => {
 
         const userId = req.session.user._id
         let users = req.session.user
@@ -868,8 +882,9 @@ try{
             }
             res.render('user/my-profile', { users, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber, login: req.session.userloggedin })
 
-        } catch (error) {
-            res.redirect('/500-error')
+        } catch (err) {
+            console.log(err);
+            next(err)
         }
     },
     

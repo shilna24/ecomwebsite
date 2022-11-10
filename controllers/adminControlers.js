@@ -14,7 +14,7 @@ const Multer = require('../middleware/multer')
 module.exports = {
 
   /*--------admin login-----------*/
-  getlogin: async (req, res) => {
+  getlogin: async (req, res,next) => {
     try {
       let ha = await Order.find()
       console.log(ha);
@@ -152,10 +152,10 @@ const totalSale1 = await Order.aggregate([
     res.render('admin/adminDashboard', { totalOrder, totalSale,totalUsers,allOrders,allProducts ,successOrder, cancelOrder,categorywiseSales})
       
   }  
-    catch (error) {
-      console.log(error);
-      res.redirect('/admin/500-error')
-    }
+  catch (err) {
+    console.log(err);
+    next(err)
+}
 
   },
   
@@ -166,14 +166,14 @@ getInvoice : async (req, res, next) => {
       let billData = await Order.findById(orderId).populate("products.productId").exec()
 
       res.render('admin/Invoice', { billData })
-  } catch (error) {
-    res.redirect('/admin/500-error')
-
-  }
+  } catch (err) {
+    console.log(err);
+    next(err)
+}
 },
 
   /*----------admin postlogin---------*/
-  postlogin: (req, res) => {
+  postlogin: (req, res,next) => {
     try {
       const email = req.body.email
       console.log(email);
@@ -203,24 +203,25 @@ getInvoice : async (req, res, next) => {
       })
 
     }
-    catch (error) {
-      res.redirect('/admin/500-error')
-    }
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
     
 
   },
   /*-----------admin dashboard-------------*/
-  getDashboard: (req, res) => {
+  getDashboard: (req, res,next) => {
     try {
       res.redirect('/admin' )
     }
-    catch (error) {
-      console.log(error);
-      res.redirect('/admin/500-error')
-    }
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
     },
 /*----------------------------------------*/
-  getReport:async(req,res)=>{
+  getReport:async(req,res,next)=>{
 try{
   const allOrders = await Order.find().sort( { 'createdAt': -1 } ).populate([
     {
@@ -234,23 +235,24 @@ try{
   ]).exec()
   res.render('admin/salesReport',{allOrders})
 }
-catch(error)
-{
-  res.redirect('/admin/500-error')
-    }
+catch (err) {
+  console.log(err);
+  next(err)
+}
 
   },
   /*------------view category list------------*/
-  getviewCategory: (req, res) => {
+  getviewCategory: (req, res,next) => {
     try {
       Category.find().then(categories => {
         res.render('admin/adminCategory', { categories, catLogErr: req.flash('catLogErr') })
 
       })
     }
-    catch (error) {
-      res.redirect('/admin/500-error')
-    }
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
     
 
   },
@@ -280,10 +282,10 @@ catch(error)
 
       }
     }
-    catch (error) {
-      res.redirect('/admin/500-error')
-    
-    }
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
 
 
   },
@@ -311,15 +313,15 @@ catch(error)
       })
   
     }
-    catch(error)
-    {
-      res.redirect('/admin/500-error')
-    }
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
   },
 
 
   /*------------admin categoryWiseView--------*/
-  viewCategoryWise: (req, res) => {
+  viewCategoryWise: (req, res,next) => {
     try {
       let catName = req.params.category
       Category.find().then((categories) => {
@@ -328,9 +330,10 @@ catch(error)
         })
       })
     }
-    catch (error) {
-      res.redirect('/admin/500-error')
-    }
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
   },
 
   /*----------admin viewproduct----------*/
@@ -344,14 +347,14 @@ catch(error)
         })
       })
     }
-    catch (error) {
-      res.redirect('/admin/500-error')
-    
-    }
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
   },
 
   /*---------admin postproduct------------*/
-  postproduct: (req, res) => {
+  postproduct: (req, res,next) => {
     try{
       const { name, price, description, category, checkbox, quantity, image } = req.body
       console.log(req.body.checkbox);
@@ -371,10 +374,10 @@ catch(error)
         )
       }
     }
-catch(error){
-  res.redirect('/admin/500-error')
-    
-    }
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
   },
   /*-----------view product list-------------*/
   getviewproductlist: (req, res, next) => {
@@ -384,10 +387,10 @@ catch(error){
         res.render('admin/viewProduct', { products })
       })
     }
-    catch (error) {
-      res.redirect('/admin/500-error')
-    
-    }
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
   },
   /*---------------------------------------------*/
   viewusers: (req, res, next) => {
@@ -397,10 +400,10 @@ catch(error){
         res.render('admin/viewUser', { users })
       })
     }
-    catch (error) {
-      res.redirect('/admin/500-error')
-    
-    }
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
   },
   /*----------------------------------------------------------------------------------*/
   getStatus: (req, res, next) => {
@@ -429,10 +432,10 @@ catch(error){
   
       })
     }
-    catch(error)
-    {
-      res.redirect('/admin/500-error')
-    }
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
     
   },
   deleteProduct: (req, res, next) => {
@@ -459,10 +462,10 @@ catch(error){
   
       })
     }
-    catch(error)
-    {
-      res.redirect('/admin/500-error')
-    }
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
   },
 
   /*---------admin editproduct---------*/
@@ -475,13 +478,13 @@ catch(error){
         })
       })
 
-    } catch (error) {
-      res.redirect('/admin/500-error')
-    
-    }
+    } catch (err) {
+      console.log(err);
+      next(err)
+  }
   },
   /*--------------------------------------------------------------------*/
-  posteditproduct: async (req, res) => {
+  posteditproduct: async (req, res,next) => {
     try
     {
       const prodId = req.params.id
@@ -508,27 +511,27 @@ catch(error){
       res.redirect('/admin/addProduct')
   
     }
-    catch(error)
-    {
-      res.redirect('/admin/500-error')
-    }
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
     
   },
 
   /*---------------banner management---------------------*/
-  getBanner: (req, res) => {
+  getBanner: (req, res,next) => {
     try {
       Banner.find().then((banners) => {
         res.render('admin/addBanner', { banners })
       })
     }
-    catch (error) {
-      res.redirect('/admin/500-error')
-    
-    }
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
 
   },
-  postBanner: async (req, res) => {
+  postBanner: async (req, res,next) => {
     try{
       console.log(req.body);
       const { name, name1, image } = req.body
@@ -550,10 +553,10 @@ catch(error){
         console.log(err);
       }
     }
-    catch(error)
-    {
-      res.redirect('/admin/500-error')
-    }
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
     
   },
 
@@ -572,11 +575,10 @@ catch(error){
           res.json({ status: true })
         })
       }
-    } catch (error) {
-      res.redirect('/admin/500-error')
-    
-    
-    }
+    } catch (err) {
+      console.log(err);
+      next(err)
+  }
   },
 
   editbanner: (req, res, next) => {
@@ -585,14 +587,14 @@ catch(error){
         res.render('admin/editBanner', { banners })
       })
     }
-    catch (error) {
-      res.redirect('/admin/500-error')
-    
-    }
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
 
   },
   /*--------------------------------------------------------------------*/
-  posteditbanner: async (req, res) => {
+  posteditbanner: async (req, res,next) => {
     try{
       const bannerId = req.params.id
       let Images = []
@@ -613,27 +615,25 @@ catch(error){
       })
       res.redirect('/admin/addBanner')
     }
-    catch(error)
-    {
-      res.redirect('/admin/500-error')
-    }
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
 
   },
 
   /*-------------coupon management---------------*/
-  viewAllCoupens: async (req, res) => {
+  viewAllCoupens: async (req, res,next) => {
     try {
       const coupon = await couponModel.find()
       res.render('admin/view-coupens', { coupon })
     }
-    catch (error) {
-      res.redirect('/admin/500-error')
-    
-
-    }
-
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
   },
-  addCoupen: async (req, res) => {
+  addCoupen: async (req, res,next) => {
     console.log(req.body);
     const { name, couponCode, discount, maxLimit, minPurchase, expDate } = req.body
     try {
@@ -647,13 +647,12 @@ catch(error){
       })
       res.redirect('back')
 
-    } catch (error) {
-      res.redirect('/admin/500-error')
-    
-
-    }
+    } catch (err) {
+      console.log(err);
+      next(err)
+  }
   },
-  couponStatusChange: async (req, res) => {
+  couponStatusChange: async (req, res,next) => {
     console.log(req.params.couponId);
     let couponId = req.params.couponId
     try {
@@ -667,15 +666,14 @@ catch(error){
           res.json({ status: true })
         })
       }
-    } catch (error) {
-      res.redirect('/admin/500-error')
-    
-
-    }
+    } catch (err) {
+      console.log(err);
+      next(err)
+  }
   },
 
   /*----------admin orders--------------*/
-  getAllOrders: async (req, res) => {
+  getAllOrders: async (req, res,next) => {
     try {
       const allOrders = await Order.find({}).sort( { 'createdAt': -1 } ).populate([
         {
@@ -691,14 +689,13 @@ catch(error){
       console.log(allOrders);
       res.render('admin/view-orders', { allOrders })
     }
-    catch (error) {
-      res.redirect('/admin/500-error')
-    
-    }
-
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
   },
 
-  cancelOrder: async (req, res) => {
+  cancelOrder: async (req, res,next) => {
     try{
       let orderId = req.params.orderId
       await Order.findByIdAndUpdate(orderId, {
@@ -706,15 +703,14 @@ catch(error){
       })
       res.json({ status: true })
     }
-    catch(error)
-    {
-      res.redirect('/admin/500-error')
-    
-    }
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
     
   },
 
-  orderStatusChange: async (req, res) => {
+  orderStatusChange: async (req, res,next) => {
     try{
       console.log(req.params.orderId);
       console.log(req.params.status);
@@ -740,11 +736,10 @@ catch(error){
       }
       res.json({ status: true })
     }
-    catch(error)
-    {
-      res.redirect('/admin/500-error')
-    
-    }
+    catch (err) {
+      console.log(err);
+      next(err)
+  }
 
   },
 

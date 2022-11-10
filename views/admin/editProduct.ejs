@@ -35,17 +35,42 @@
                     <label for="">Quantity</label>
                     <input type="Number" name="quantity" class="form-control" value="<%=products.quantity %>"required>
 
-                    
-
-                    <label for="">Image</label>
+                    <label for="moreimage1" class="form-label">Image</label>
                     <img src="/product-images/<%=products.image[0]%>"alt=""style="width:100px;height:auto">
-                    <input type="file" name="image" class="form-control" multiple >
 
+                    <input type="file" id="moreimage1" name="image" class="form-control"
+                        onchange="return fileValidation()" multiple required>
+                    <div>
+                        <p class="text-danger" id="imageError1"></p>
+                    </div>
                     <button type="submit" class="btn btn-success mt-4">Submit</button>
 
                 </form>
             </div>
         </div>
-    
+        <script>
+   
+        function fileValidation(){
+         var fileInput = document.getElementById('moreimage1');
+         var filePath = fileInput.value;
+         var allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+         if(!allowedExtensions.exec(filePath)){
+             // imageError
+             document.getElementById('imageError1').innerHTML = "Please upload file having extensions .jpeg/.jpg/.png/.gif only"
+             fileInput.value = '';
+             return false;
+         }else{
+             //Image preview
+             if (fileInput.files && fileInput.files[0]) {
+                 var reader = new FileReader();
+                 reader.onload = function(e) {
+                     document.getElementById('imageError1').innerHTML = ""
+                     document.getElementById('imagePreview').innerHTML = '<img src="'+e.target.result+'"/>';
+                 };
+                 reader.readAsDataURL(fileInput.files[0]);
+             }
+         }
+     }
+     </script>
 
         <%- include('./includes/footers.ejs') -%>

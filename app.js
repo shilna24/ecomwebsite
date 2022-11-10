@@ -2,7 +2,6 @@ require('dotenv').config()
 const express = require('express')
 const app = express();
 let ejs = require('ejs');
-let createError = require('http-errors');
 const path = require('path');
 const flash = require('connect-flash');
 let cookieParser = require('cookie-parser')
@@ -32,29 +31,19 @@ app.set('view engine', 'ejs');
 // app.engine('ejs', ejs.engine({ extname: 'ejs', defaultLayout: 'layout', layoutsDir: __dirname + '/views/layout/' }));
 app.use(express.static(path.join(__dirname, 'public')));
 // catch 404 and forward to error handler
+
 app.use(function (req, res, next) {
-  createError(404)
-  res.render('user/error');
+  next(createError(404));
 });
 // error handler
-// app.use(function (err, req, res, next) {
-//     // set locals, only providing error in development
-//     res.locals.message = err.message;
-//     res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-//     // render the error page
-//     res.status(err.status || 500);
-//     res.render('error');
-//   });
-
-// app.route('*',(req,res,next)=>{
-//     res.status(404).render('user/error')
-// });
-
-// app.use(function (req, res) {
-//   res.status(404).render('user/error');
-// });
-
+app.use(function (err, req, res, next) {
+    // set locals, only providing error in development
+res.locals.message = err.message;
+res.locals.error = req.app.get("env") === "development" ? err : {};
+// render the error page
+res.status(err.status || 500);
+res.render("error");
+});
 app.listen(8000, () => {
   console.log('server is running')
 })
