@@ -1,5 +1,5 @@
 const mongoose=require('mongoose')
-mongoose.connect('mongodb+srv://shilna:LTuLYj4lMZI91TO3@cluster0.csnhdv3.mongodb.net/ecommerce?retryWrites=true&w=majority')
+mongoose.connect(process.env.MONGODB_URL)
 
 
 mongoose.connection
