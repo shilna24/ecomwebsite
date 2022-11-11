@@ -22,7 +22,7 @@ login = false
 module.exports = {
     /*---------------------user homepage---------------------*/
 
-    get: async (req, res,next) => {
+    get: async (req, res, next) => {
         try {
             if (req.session.user) {
                 const userId = req.session.user._id
@@ -63,107 +63,107 @@ module.exports = {
     /*------------------user loginPage-----------------------*/
 
     getlogin: async (req, res, next) => {
-try{
-    res.redirect('/')
-}
-catch (err) {
-    console.log(err);
-    next(err)
-}
-       
+        try {
+            res.redirect('/')
+        }
+        catch (err) {
+            console.log(err);
+            next(err)
+        }
+
     },
     postlogin: async (req, res, next) => {
-try{
-    userData = req.body
-    await User.findOne({ Email: userData.email }).then((user) => {
-        if (user) {
-            if (!user.Access) {
-                loginerr = "you were blocked by admin"
-                res.redirect('/userLogin')
-            }
-            else {
-                // console.log(user);
-                console.log(user.Password);
-                console.log(userData.password);
-                bcrypt.compare(userData.password, user.Password, async function (error, isMatch) {
-                    console.log(isMatch);
-                    if (isMatch) {
-
-                        req.session.userloggedin = true
-                        req.session.user = user
-                        console.log(req.session.user);
-                        res.json({ loginStatus: true })
-
+        try {
+            userData = req.body
+            await User.findOne({ Email: userData.email }).then((user) => {
+                if (user) {
+                    if (!user.Access) {
+                        loginerr = "you were blocked by admin"
+                        res.redirect('/userLogin')
                     }
                     else {
-                        res.json({ passwordErr: true })
+                        // console.log(user);
+                        console.log(user.Password);
+                        console.log(userData.password);
+                        bcrypt.compare(userData.password, user.Password, async function (error, isMatch) {
+                            console.log(isMatch);
+                            if (isMatch) {
 
-                        // res.redirect('/userLogin')
+                                req.session.userloggedin = true
+                                req.session.user = user
+                                console.log(req.session.user);
+                                res.json({ loginStatus: true })
+
+                            }
+                            else {
+                                res.json({ passwordErr: true })
+
+                                // res.redirect('/userLogin')
+                            }
+                        })
                     }
-                })
-            }
+
+                }
+                else {
+                    res.json({ emailErr: true })
+
+
+                    // res.redirect('/userLogin')
+                }
+            })
 
         }
-        else {
-            res.json({ emailErr: true })
-
-
-            // res.redirect('/userLogin')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
-    })
 
-}
-catch (err) {
-    console.log(err);
-    next(err)
-}
-        
 
     },
 
     /*-----------------user signup---------------------------*/
 
-    dosignup: (req, res,next) => {
-        try{
+    dosignup: (req, res, next) => {
+        try {
             res.render('user/signup');
         }
         catch (err) {
             console.log(err);
             next(err)
         }
-        
+
     },
     postsignup: (req, res, next) => {
-try{
-    console.log(req.body);
-    let details = req.body
-    req.session.details = details
-    User.find({ Email: req.body.Email }, async (err, data) => {
+        try {
+            console.log(req.body);
+            let details = req.body
+            req.session.details = details
+            User.find({ Email: req.body.Email }, async (err, data) => {
 
-        console.log(data);
-        if (data.length == 0) {
-            // req.session.otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, digits: true, lowerCaseAlphabets: false })
-            details.Password = await bcrypt.hash(details.Password, 10)
-            client.verify.v2.services(process.env.service_id)
-                .verifications
-                .create({ to: '+91' + req.body.Phone, channel: 'sms' })
-                .then(verification => console.log(verification.status));
-            res.json({ status: true })
+                console.log(data);
+                if (data.length == 0) {
+                    // req.session.otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, digits: true, lowerCaseAlphabets: false })
+                    details.Password = await bcrypt.hash(details.Password, 10)
+                    client.verify.v2.services(process.env.service_id)
+                        .verifications
+                        .create({ to: '+91' + req.body.Phone, channel: 'sms' })
+                        .then(verification => console.log(verification.status));
+                    res.json({ status: true })
+                }
+                else {
+                    res.json({ emailExist: true })
+                    // res.redirect('/')
+                }
+            })
         }
-        else {
-            res.json({ emailExist: true })
-            // res.redirect('/')
+        catch (err) {
+            console.log(err);
+            next(err)
         }
-    })
-}
-catch (err) {
-    console.log(err);
-    next(err)
-}
-        
+
     },
     /*-------------view all product-----------------------*/
-    viewAllProducts: async (req, res,next) => {
+    viewAllProducts: async (req, res, next) => {
         try {
             console.log("tesitng view all")
             let categories = await Category.find()
@@ -195,7 +195,7 @@ catch (err) {
     },
 
 
-    getProductView: async (req, res,next) => {
+    getProductView: async (req, res, next) => {
         try {
             const proId = req.params.id
             let products = await Product.findOne({ _id: mongoose.Types.ObjectId(proId) })
@@ -229,17 +229,17 @@ catch (err) {
 
     /*----------------otp setup-------------------------------*/
     getotp: (req, res, next) => {
-        try{
+        try {
             res.render('user/verifyotp')
         }
         catch (err) {
             console.log(err);
             next(err)
         }
-        
+
     },
     postOtp: (req, res, next) => {
-        try{
+        try {
             const otp = req.body.otp
             const num = req.body.Phone
             client.verify.v2.services(process.env.service_id)
@@ -247,7 +247,7 @@ catch (err) {
                 .create({ to: '+91' + req.session.details.Phone, code: otp })
                 .then(verification_check => {
                     if (verification_check.status === 'approved') {
-    
+
                         let userData = req.session.details
                         console.log(userData);
                         let userSignData = new User({
@@ -271,57 +271,57 @@ catch (err) {
             console.log(err);
             next(err)
         }
-        
+
         //  console.log(verification_check.status));
 
 
     },
     /*--------------user Profile----------------------------*/
     getProfile: async (req, res, next) => {
-try{
-    let users = req.session.user
-    const userId = req.session.user._id
-    const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
-    if (viewcart) {
-        req.session.cartNumber = viewcart.Products.length
-    }
-    const wishlist = await Wishlist.findOne({ userId: userId }).populate("myWish.productId").exec()
-    if (wishlist) {
-        req.session.wishlistNumber = wishlist.myWish.length
-    }
-    res.render('user/editProfile',{ login: req.session.userloggedin, users: req.session.user, cartProducts: viewcart, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber })
-    }
-    catch (err) {
-        console.log(err);
-        next(err)
-    }
-},
-    postProfile: (req, res,next) => {
+        try {
+            let users = req.session.user
+            const userId = req.session.user._id
+            const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
+            if (viewcart) {
+                req.session.cartNumber = viewcart.Products.length
+            }
+            const wishlist = await Wishlist.findOne({ userId: userId }).populate("myWish.productId").exec()
+            if (wishlist) {
+                req.session.wishlistNumber = wishlist.myWish.length
+            }
+            res.render('user/editProfile', { login: req.session.userloggedin, users: req.session.user, cartProducts: viewcart, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber })
+        }
+        catch (err) {
+            console.log(err);
+            next(err)
+        }
+    },
+    postProfile: (req, res, next) => {
 
-        try{
+        try {
             User.updateOne({ _id: req.params.id }, {
 
                 Name: req.body.Name,
                 Email: req.body.Email,
                 Phone: req.body.Phone
-    
+
             }).then(async (err, data) => {
                 let newUser = await User.findById({ _id: req.params.id })
                 console.log(newUser);
                 req.session.user = newUser
                 req.session.userloggedin = true
                 res.redirect('/my-profile')
-    
+
             })
         }
         catch (err) {
             console.log(err);
             next(err)
         }
-        
+
     },
     /*------------------cart------------------------------------*/
-    getCart: async (req, res,next) => {
+    getCart: async (req, res, next) => {
         const productId = req.params.proId
         const quantity = parseInt(req.params.qty)
         try {
@@ -372,7 +372,7 @@ try{
 
     },
     /*-------------cart view-------------------------------*/
-    cartView: async (req, res,next) => {
+    cartView: async (req, res, next) => {
         try {
             const userId = req.session.user._id
             const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
@@ -394,8 +394,8 @@ try{
     },
 
     /*----------------change quantity--------------------------*/
-    changeQuantity: async (req, res,next) => {
-        try{
+    changeQuantity: async (req, res, next) => {
+        try {
             let productId = req.params.proId.toString()
             let changeStatus = req.params.changeStatus
             let userId = req.session.user._id
@@ -420,8 +420,8 @@ try{
     },
 
     /*---------------delete cart item--------------------*/
-    deleteCartItem: async (req, res,next) => {
-        try{
+    deleteCartItem: async (req, res, next) => {
+        try {
             let productId = req.params.proId
             let userId = req.session.user._id
             let cart = await Cart.findOne({ userId })
@@ -437,10 +437,10 @@ try{
             console.log(err);
             next(err)
         }
-        
+
     },
     /*-----------------add wishlist---------------------------*/
-    addToWishlist: async (req, res,next) => {
+    addToWishlist: async (req, res, next) => {
         const productId = req.params.proId
         try {
             const userId = req.session.user._id
@@ -475,7 +475,7 @@ try{
 
     },
     /*---------------view wishlist-----------------------*/
-    viewWishList: async (req, res,next) => {
+    viewWishList: async (req, res, next) => {
         try {
             const userId = req.session.user._id
             const viewcart = await Cart.findOne({ userId: userId }).populate("Products.productId").exec()
@@ -495,8 +495,8 @@ try{
 
     },
     /*---------------remove wishlist---------------------*/
-    deleteWishlistItem: async (req, res,next) => {
-        try{
+    deleteWishlistItem: async (req, res, next) => {
+        try {
             let productId = req.params.proId
             let userId = req.session.user._id
             let wishlist = await Wishlist.findOne({ userId })
@@ -512,7 +512,7 @@ try{
 
     },
     /*-----------about page-----------------------------*/
-    getAbout: async (req, res,next) => {
+    getAbout: async (req, res, next) => {
         try {
             const users = req.session.user
             if (req.session.user) {
@@ -539,7 +539,7 @@ try{
 
 
     /*--------------categories ---------------------------*/
-    getCategories: (req, res,next) => {
+    getCategories: (req, res, next) => {
         try {
             let catName = req.params.catName
 
@@ -558,7 +558,7 @@ try{
     },
 
     /*---------------contact page--------------------------*/
-    getContact: async (req, res,next) => {
+    getContact: async (req, res, next) => {
         try {
 
             let users = req.session.user
@@ -588,7 +588,7 @@ try{
     },
 
     /*---------------order placing--------------------------*/
-    checkOut: async (req, res,next) => {
+    checkOut: async (req, res, next) => {
         try {
             let users = req.session.user
 
@@ -612,7 +612,7 @@ try{
         }
 
     },
-    placeOrder: async (req, res,next) => {
+    placeOrder: async (req, res, next) => {
         try {
             let userId = req.session.user._id
             let deliveryAddress = {
@@ -651,7 +651,7 @@ try{
 
     },
     /*-----------order successPage--------------------*/
-    orderSuccessPage: async (req, res,next) => {
+    orderSuccessPage: async (req, res, next) => {
         try {
             let users = req.session.user
             const userId = req.session.user._id
@@ -676,7 +676,7 @@ try{
 
     },
     /*----------------getorder------------------------------*/
-    getOrder: async (req, res,next) => {
+    getOrder: async (req, res, next) => {
         try {
             const userId = req.session.user._id
             let users = req.session.user
@@ -693,7 +693,7 @@ try{
                 req.session.cartNumber = null
             }
 
-            const myOrders = await Order.find({ userId }).sort( { 'createdAt': -1 } ).populate([
+            const myOrders = await Order.find({ userId }).sort({ 'createdAt': -1 }).populate([
                 {
                     path: "userId",
                     model: "user"
@@ -703,7 +703,7 @@ try{
                     model: "products"
                 }
             ]).exec()
-        
+
             res.render('user/orders', { myOrders: myOrders, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber, users, login: req.session.userloggedin })
         }
         catch (err) {
@@ -713,7 +713,7 @@ try{
 
     },
 
-    generateOrder: (req, res,next) => {
+    generateOrder: (req, res, next) => {
         try {
             const amount = parseInt(req.body.amount) * 100
 
@@ -737,7 +737,7 @@ try{
 
     },
     /*--------------------payment verify-------------------*/
-    verifyPayment: (req, res,next) => {
+    verifyPayment: (req, res, next) => {
         try {
             const orderId = req.params.orderId
             let body = orderId + "|" + req.body.response.razorpay_payment_id;
@@ -762,7 +762,7 @@ try{
 
     },
     /*----------coupon------------------------------------*/
-    redeemCoupnAmount: async (req, res,next) => {
+    redeemCoupnAmount: async (req, res, next) => {
         const coupCode = req.params.coupCode
         const totalAmount = req.params.total
         try {
@@ -804,8 +804,8 @@ try{
         }
     },
 
-    cancelOrder: async (req, res,next) => {
-        try{
+    cancelOrder: async (req, res, next) => {
+        try {
             const orderId = req.params.orderId
             await Order.findByIdAndRemove(orderId, { orderActive: false })
             res.json({ status: true })
@@ -814,10 +814,10 @@ try{
             console.log(err);
             next(err)
         }
-        
+
     },
     /*--------------add address------------------------------*/
-    addAndEditAddress: async (req, res,next) => {
+    addAndEditAddress: async (req, res, next) => {
         try {
             console.log(req.body);
             let addrexIndex = parseInt(req.body.index)
@@ -849,8 +849,8 @@ try{
 
     },
 
-    deleteAddress: async (req, res,next) => {
-        try{
+    deleteAddress: async (req, res, next) => {
+        try {
             const userId = req.session.user._id
             const addressIndex = req.body.addresIndex
             const users = await User.findById(userId)
@@ -865,7 +865,7 @@ try{
 
 
     },
-    getMyProfile: async (req, res,next) => {
+    getMyProfile: async (req, res, next) => {
 
         const userId = req.session.user._id
         let users = req.session.user
@@ -888,7 +888,7 @@ try{
             next(err)
         }
     },
-    
+
 
     /*---------------user logout----------------------------*/
     getlogout: (req, res) => {
