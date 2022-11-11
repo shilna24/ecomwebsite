@@ -183,7 +183,7 @@ catch (err) {
                 req.session.cartNumber = 0
                 req.session.wishlistNumber = 0
             }
-            res.render('user/viewAllProduct', { login: req.session.userloggedin, users: req.session.user, products, categories, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber })
+            res.render('user/view-product', { login: req.session.userloggedin, users: req.session.user, products, categories, cartNumber: req.session.cartNumber, wishlistNumber: req.session.wishlistNumber })
 
         }
         catch (err) {
