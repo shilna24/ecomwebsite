@@ -1,6 +1,7 @@
 <%- include('./includes/header.ejs') %>
     <%- include('./includes/nav.ejs') %>
     <div id="cartfill" class="container mt-5">
+      <% if(myOrders){ %>
       <% if(myOrders.length>0) { %>
         <div class="row mt-5">
           <div class="col-lg-12 col-xl-12 m-lr-auto m-b-50">
@@ -117,8 +118,36 @@
                       </table>
               </div>
               <% }) %>
+                <% } else{ %>
+                  <div class="container mt-5">
+                    <div class="row text-center">
+                        <div class="col-md-12">
+                            <div>
+                                <h3>Order List Empty</h3>
+                            </div>
+                            <div>
+                                <a class="btn btn-success" href="/">Start
+                                    Shopping</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <% } %>
-
+                <% } else{ %>
+                  <div class="container mt-5">
+                    <div class="row text-center">
+                        <div class="col-md-12">
+                            <div>
+                                <h3>Order List Empty</h3>
+                            </div>
+                            <div>
+                                <a class="btn btn-success" href="/">Start
+                                    Shopping</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
 
 
 
@@ -141,7 +170,7 @@
       function cancelOrder(orderId) {
         Swal.fire({
           title: 'Are you sure?',
-          text: "You won't be able to revert this!",
+          text: "You won't be able to cancel this!",
           icon: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#013542',

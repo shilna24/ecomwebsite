@@ -86,14 +86,4 @@ router.get('/contactUs', userController.getContact)
 /*--------user logout-----------*/
 router.get('/logout', userController.getlogout)
 
-
-
-
-
-router.get('/500-error', (req, res) => {
-    res.status(500).render('user/error-500-page')
-})
-
-
-
 module.exports = router
