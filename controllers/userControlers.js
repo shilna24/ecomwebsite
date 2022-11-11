@@ -165,6 +165,7 @@ catch (err) {
     /*-------------view all product-----------------------*/
     viewAllProducts: async (req, res,next) => {
         try {
+            console.log("tesitng view all")
             let categories = await Category.find()
             let products = await Product.find({ active: true })
             if (req.session.user) {
