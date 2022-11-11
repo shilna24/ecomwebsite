@@ -27,7 +27,7 @@ router.post('/editProfile/:id', userController.postProfile)
 router.get('/productDetails/:id', userController.getProductView)
 
 /*------- get all product details--------------*/
-router.get('/viewAllProduct',userController.viewAllProducts)
+router.get('/viewAllProducts',userController.viewAllProducts)
 
 /*--------user cartPage-------------------*/
 router.get('/add-to-cart/:proId/:qty',sessionUser, userController.getCart)

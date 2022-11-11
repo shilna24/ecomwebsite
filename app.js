@@ -32,26 +32,18 @@ app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 // catch 404 and forward to error handler
 
-// app.use(function (req, res, next) {
-//   next(createError(404));
-// });
+app.use(function (req, res, next) {
+  next(createError(404));
+});
 // error handler
-// app.use(function (err, req, res, next) {
-//   console.log(err);
+app.use(function (err, req, res, next) {
     // set locals, only providing error in development
-// res.locals.message = err.message;
-// res.locals.error = req.app.get("env") === "development" ? err : {};
+res.locals.message = err.message;
+res.locals.error = req.app.get("env") === "development" ? err : {};
 // render the error page
-// res.status(err.status || 500);
-// res.render("error");
-// });
-
-app.use((req,res,nex)=>{
-  res.status(404);
-  if(req.accepts("html")){
-   return res.render("error")
-  }
-})
+res.status(err.status || 500);
+res.render("error");
+});
 app.listen(8000, () => {
   console.log('server is running')
 })
