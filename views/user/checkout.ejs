@@ -90,13 +90,13 @@
                                         <div class="col-md-6 mb-3">
                                             <label for="firstName">First name</label>
                                             <input name="firstname" type="text" class="form-control" id="firstName"
-                                                placeholder="" value="" onkeyup="validateName()">
+                                                placeholder="" value="" onkeyup="validateName()" required>
                                             <span id="AddrName-error" class="text-danger font-weight-bold"></span>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="lastName">Last name</label>
                                             <input name="lastname" type="text" class="form-control" id="lastName"
-                                                placeholder="" value="" onkeyup="validateName2()">
+                                                placeholder="" value="" onkeyup="validateName2()" required>
                                             <span id="AddrName-error2" class="text-danger font-weight-bold"></span>
                                         </div>
                                     </div>
@@ -104,7 +104,7 @@
                                         <label for="username">Phone Number</label>
                                         <div class="input-group">
                                             <input name="number" type="tel" class="form-control" id="mobileNumber"
-                                                placeholder="Mobile Number" value="" onkeyup="validatePhone()">
+                                                placeholder="Mobile Number" value="" onkeyup="validatePhone()" required>
                                             <span id="AddrPhone-error" class="text-danger font-weight-bold"></span>
                                         </div>
                                     </div>
@@ -112,7 +112,7 @@
                             <div class="mb-3">
                                 <label for="address">Address</label>
                                 <input name="address" type="text" class="form-control" id="address"
-                                    placeholder="address" onkeyup="validateAddress()">
+                                    placeholder="address" onkeyup="validateAddress()" required>
                                 <span id="AddrAddress-error" class="text-danger font-weight-bold"></span>
                             </div>
                             <div class="row">
@@ -129,13 +129,13 @@
                                 <div class="col-md-4 mb-3">
                                     <label for="">District </label>
                                     <input name="district" type="text" class="form-control" id="district" placeholder=""
-                                        onkeyup="validateDistrict()">
+                                        onkeyup="validateDistrict()" required>
                                     <span id="AddrDistrict-error" class="text-danger font-weight-bold"></span>
                                 </div>
                                 <div class="col-md-3 mb-3">
                                     <label for="zip">PIN </label>
                                     <input name="pin" type="text" class="form-control" id="pin" placeholder=""
-                                        onkeyup="validatePincode()">
+                                        onkeyup="validatePincode()" required>
                                     <span id="AddrPincode-error" class="text-danger font-weight-bold"></span>
                                 </div>
                                 <input name="index" type="text" class="form-control" id="index" placeholder="" hidden>
@@ -159,7 +159,7 @@
                             <hr class="mb-4">
                             <span id="submit-error" class="text-danger font-weight-bold text-center"></span>
                             <button class="  btn-lg btn-block specclr text-dark mb-5" type="submit"
-                                onclick="return validateForm()">Continue to checkout</button>
+                                onclick="return validateForm()">Place Order</button>
                            
                             </form>
                         </div>
