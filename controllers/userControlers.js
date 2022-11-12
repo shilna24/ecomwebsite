@@ -251,8 +251,9 @@ module.exports = {
                             Phone: userData.Phone,
                         })
                         userSignData.save().then((data) => {
+                            console.log(data);
                             req.session.userloggedin = true
-                            req.session.user = data.Name
+                            req.session.user = data
                             res.redirect('/')
                         })
                     }
@@ -283,6 +284,7 @@ module.exports = {
             if (wishlist) {
                 req.session.wishlistNumber = wishlist.myWish.length
             }
+            
             res.render('user/editProfile', { login: req.session.userloggedin, users: req.session.user, cartProducts: viewcart, wishlistNumber: req.session.wishlistNumber, cartNumber: req.session.cartNumber })
         }
         catch (err) {
@@ -861,7 +863,7 @@ module.exports = {
 
     },
     getMyProfile: async (req, res, next) => {
-
+console.log(req.session.user);
         const userId = req.session.user._id
         let users = req.session.user
         try {
