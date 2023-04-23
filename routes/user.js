@@ -78,10 +78,12 @@ router.route('/delete-address/:addresIndex').delete(userController.deleteAddress
 router.route('/cancel-order/:orderId').post(userController.cancelOrder)
 
 
-// router.route('/notify-product').post(userController.addNotifyProduct)
+
 
 /*--------getting about page-------*/
 router.get('/contactUs', userController.getContact)
+
+
 
 /*--------user logout-----------*/
 router.get('/logout', userController.getlogout)

@@ -180,7 +180,7 @@ getInvoice : async (req, res, next) => {
       const password = req.body.password
       console.log(password);
       Admin.findOne({ email: email }, (err, data) => {
-        console.log(data)
+        
 
         if (data) {
 

@@ -14,6 +14,8 @@ const Cart = require('../models/cartSchema')
 const Razorpay = require('razorpay');
 const { resourceLimits } = require('worker_threads')
 const { default: mongoose } = require('mongoose')
+
+require('dotenv').config()
 const instance = new Razorpay({
     key_id: process.env.key_id,
     key_secret: process.env.key_secret,
@@ -584,6 +586,7 @@ module.exports = {
 
     },
 
+    
     /*---------------order placing--------------------------*/
     checkOut: async (req, res, next) => {
         try {

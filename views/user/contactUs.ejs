@@ -1,95 +1,70 @@
 <%- include('./includes/header.ejs') %>
 	<%- include('./includes/nav.ejs') %>
 <!-- Content page -->
-<section class="bg0 p-t-104 p-b-116" id="msgeFormdiv">
-    
-    <div class="container">
-        <h4 class="mtext-105 cl2 txt-center p-b-30">
-            Contact Us
-        </h4>
-        <div class="flex-w flex-tr">
-            <div class="size-210 bor10 p-lr-70 p-t-55 p-b-70 p-lr-15-lg w-full-md" >
-                
-                <form action="" method="post" id="messageForm">
-                    <h4 class="mtext-105 cl2 txt-center p-b-30">
-                        Send Us A Message
-                    </h4>
-
-                    <div class="bor8 m-b-20 how-pos4-parent">
-                        <input class="stext-111 cl2 plh3 size-116 p-l-62 p-r-30" type="text" name="email1" placeholder="Your Email Address" required>
-                        <img class="how-pos4 pointer-none" src="images/icons/icon-email.png" alt="ICON">
-                    </div>
-
-                    <div class="bor8 m-b-30">
-                        <textarea class="stext-111 cl2 plh3 size-120 p-lr-28 p-tb-25" name="msg" placeholder="How Can We Help?" required></textarea>
-                    </div>
-
-                    <button type="submit" class="flex-c-m stext-101 cl0 size-121 bg3 bor1 hov-btn3 p-lr-15 trans-04 pointer ">
-                        Submit
-                    </button>
-                </form>
-            </div>
-
-            <div class="size-210 bor10 flex-w flex-col-m p-lr-93 p-tb-30 p-lr-15-lg w-full-md">
-                <div class="flex-w w-full p-b-42">
-                    <span class="fs-18 cl5 txt-center size-211">
-                        <span class="lnr lnr-map-marker "></span>
-                    </span>
-
-                    <div class="size-212 p-t-2">
-                        <span class="mtext-110 cl2">
-                            Address
-                        </span>
-
-                        <p class="stext-115 cl6 size-213 p-t-18">
-                            Her Style Fashion Store Private Limited, Kinfra Buildings,Kakkanchery, Malappuram, Kerala, India
-                        </p>
-                    </div>
+<section class="contact"  style="background-color: rgb(245, 242, 242); ">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="contactus_heading"
+                    style="font-family:Georgia, 'Times New Roman', Times, serif, Times, serif ; text-align: center;margin-top: 150px; color: rgb(112, 114, 116);margin-bottom: 40px;">
+                    Contact Us</h1>
+                <div class="contact_map d-flex justify-content-center">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125218.42895681533!2d75.7407733067305!3d11.255826554589143!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba65bbe359ced81%3A0xc17c381f72b87e02!2sHiLITE%20Mall!5e0!3m2!1sen!2sin!4v1652867171629!5m2!1sen!2sin"
+                        width="1000" height="400" style="border:0;" allowfullscreen="" loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
+                <div class="row  d-flex justify-content-center" style="margin-top: 40px;">
 
-                <div class="flex-w w-full p-b-42">
-                    <span class="fs-18 cl5 txt-center size-211">
-                        <span class="lnr lnr-phone-handset"></span>
-                    </span>
+                    <div class="main  " style="width: 900px;  font-family: cursive;">
+                        <p class="text-center w-responsive mx-auto mb-5" style="font-size: 15px; font-weight: 400;">Do you have any questions? Please do not
+                            hesitate to contact us directly. Our team will come back to you within
+                            a matter of hours to help you.</p>
 
-                    <div class="size-212 p-t-2">
-                        <span class="mtext-110 cl2">
-                            Lets Talk
-                        </span>
-
-                        <p class="stext-115 cl1 size-213 p-t-18">
-                            +91 800 1234567
-                        </p>
-                    </div>
-                </div>
-
-                <div class="flex-w w-full">
-                    <span class="fs-18 cl5 txt-center size-211">
-                        <span class="lnr lnr-envelope"></span>
-                    </span>
-
-                    <div class="size-212 p-t-2">
-                        <span class="mtext-110 cl2">
-                            Sale Support
-                        </span>
-
-                        <p class="stext-115 cl1 size-213 p-t-18">
-                            herstylefashion.com
-                        </p>
+                        <form action="/contactUs" method="post" role="form" class="mail-form" id="mail_form"
+                            name="contact-us">
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="name">Your Name</label>
+                                    <input type="text" name="name" class="form-control" id="name" required>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="name">Your Email</label>
+                                    <input type="email" class="form-control" name="email" id="email" required>
+                                </div>
+                            </div>
+                            <!-- <div class="form-group">
+                                <label for="name">Subject</label>
+                                <input type="text" class="form-control" name="subject" id="subject" required>
+                            </div> -->
+                            <div class="form-group">
+                                <label for="name">Message</label>
+                                <textarea class="form-control" name="message" id="message" rows="10"
+                                    required></textarea>
+                            </div>
+                            <div class="text-center"><button type="submit" class="btn"
+                                    style="background-color: rgb(33, 83, 130); color: white; margin: 10px;">Send
+                                    Message</button></div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</section>	
+</section>
 
-
-<!-- Map -->
-<div class="map">
-    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3914.472737524781!2d75.89019191401236!3d11.152591592066932!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba6502f41ef4e8b%3A0xf4c653a7548cccd!2sKinfra%20Techno%20Industrial%20Park!5e0!3m2!1sen!2sin!4v1667905209043!5m2!1sen!2sin" frameborder="0" style="border:0; width: 100%; height: 290px;" allowfullscreen></iframe>
-
-    <!-- <div  class="size-303" id="google_map" data-map-x="40.691446" data-map-y="-73.886787" data-pin="images/icons/pin.png" data-scrollwhell="0" data-draggable="1" data-zoom="11"></div> -->
-</div>
-
-<script src="/javascript/userjs/contact.js"></script>
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzr6uFi1ahSOPj6bCNr4fTni5VO0oyl0V_g-iTQpGN4euxWdpJFzYrBRt-72DGnxSEO8w/exec'
+    const form = document.forms['contact-us']
+  
+    form.addEventListener('submit', e => {
+      e.preventDefault()
+      fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+        .then(response =>{
+            form.reset() 
+        alert('Success!')
+        })
+         .catch(error => console.error('Error!', error.message))
+    })
+  </script>
 <%- include('./includes/footer.ejs') -%>
